@@ -121,7 +121,7 @@
                     <div class="col-lg-12">
                             <div class="card">
                                 <div class="table-stats order-table ov-h">
-                                    <table class="table ">
+                                    <table class="table">
                                         <thead>
                                             <tr>
                                                 <th class="serial"><center><b>#</b></center></th>

@@ -69,8 +69,14 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="http://malsup.github.io/jquery.blockUI.js"></script>
     <script src="{{ asset('TableToExcel.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
    <style>
-
+    .content {
+        float: left;
+        padding: 1.875em;
+        width: 100%; 
+        min-height: 800px !important;
+    }
     .red-icon{
         color: #af1417 !important;
         cursor: pointer;
@@ -184,6 +190,7 @@
             height: 100%;
             font-style: 25px;
             color: #ffffff;
+            font-size: 22px;
         }
 
         .fab{
@@ -231,6 +238,10 @@
             margin-right: 10px;
         }
 
+        .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+            color: #fff;
+            background-color: #23558a;
+        }
     </style>
 </head>
 
