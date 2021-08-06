@@ -312,10 +312,10 @@
                             </div>
                         </div>
                         <div class="dropdown for-notification">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="facturar" alt="Facturar">
+                            <a class="btn btn-secondary dropdown-toggle" href="{{ route('factura/facturador') }}" alt="Facturar">
                                 <i class="fa fa-plus-square"></i>
                                <!-- <span class="count bg-danger">3</span> -->
-                            </button>
+                            </a>
                         </div>
 
                         <div class="dropdown for-notification">
