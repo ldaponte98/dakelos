@@ -7,6 +7,7 @@ use App\Factura;
 use App\FacturaDetalle;
 use App\FormaPago;
 use App\Licencia;
+use App\Producto;
 use App\ResolucionFactura;
 use App\Tercero;
 use Illuminate\Http\Request;
@@ -150,6 +151,11 @@ class FacturaController extends Controller
             ->where('id_licencia', session('id_licencia'))
             ->orderBy('nombre', 'desc')
             ->get();
-        return view("factura.facturador", compact(['categorias']));
+
+        $productos = Producto::where('estado', 1)
+            ->where('id_licencia', session('id_licencia'))
+            ->orderBy('nombre', 'desc')
+            ->get();
+        return view("factura.facturador", compact(['categorias', 'productos']));
     }
 }

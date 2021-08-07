@@ -4,10 +4,7 @@
 @endphp
 
 <!doctype html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="es"> <!--<![endif]-->
+<html class="no-js" lang="es"> 
 
 
 <head>
@@ -41,7 +38,8 @@
     <script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.9.0/dist/fullcalendar.min.js"></script>
     <script src="{{ asset('plantilla/assets/js/init/fullcalendar-init.js') }}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js"></script>
 
 
@@ -61,6 +59,11 @@
     <link href="https://cdn.jsdelivr.net/npm/weathericons@2.1.0/css/weather-icons.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@3.9.0/dist/fullcalendar.min.css" rel="stylesheet" />
     
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.0/css/flag-icon.min.css">
+    <link rel="stylesheet" href="{{ asset('plantilla/assets/css/cs-skin-elastic.css') }}">
+    <link rel="stylesheet" href="{{ asset('plantilla/assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('plantilla/assets/css/lib/chosen/chosen.min.css') }}">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css">
@@ -69,21 +72,22 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="http://malsup.github.io/jquery.blockUI.js"></script>
     <script src="{{ asset('TableToExcel.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
    <style>
-    .content {
-        float: left;
-        padding: 1.875em;
-        width: 100%; 
-        min-height: 800px !important;
-    }
-    .red-icon{
-        color: #af1417 !important;
-        cursor: pointer;
-    }
-    #weatherWidget .currentDesc {
-        color: #ffffff!important;
-    }
+        .content {
+            float: left;
+            padding: 1.875em;
+            width: 100%; 
+            min-height: 800px !important;
+        }
+        .red-icon{
+            color: #af1417 !important;
+            cursor: pointer;
+        }
+        #weatherWidget .currentDesc {
+            color: #ffffff!important;
+        }
         .traffic-chart {
             min-height: 335px;
         }
@@ -117,6 +121,19 @@
         .media{
             padding-top: 10px !important;
             padding-bottom: 10px !important;
+        }
+        .chosen-container-multi .chosen-choices {
+            padding: .3rem .75rem;
+            border-radius: .25rem;
+        }
+        .pointer{
+            cursor: pointer;
+        }
+        .pointer:hover{
+            -webkit-transform: scale(1.05);
+            -ms-transform: scale(1.05);
+            transform: scale(1.05);
+            transition-duration: 0.5s;
         }
 
     </style>
@@ -376,7 +393,17 @@
 
     
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <script src="{{ asset('plantilla/assets/js/lib/chosen/chosen.jquery.min.js') }}"></script>
 
+    <script>
+        jQuery(document).ready(function() {
+            jQuery(".standardSelect").chosen({
+                disable_search_threshold: 10,
+                no_results_text: "Oops, nothing found!",
+                width: "100%"
+            });
+        });
+    </script>
     
 </body>
 </html>

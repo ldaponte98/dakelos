@@ -17,11 +17,10 @@
 @section('content')
 <h4><b>Datos del producto / servicio</b></h4><br>
 <div class="row">
-
 	<div class="col-md-2"></div>
 	<div class="col-md-8">
 	    <div class="card">
-	        <img class="card-img-top" src="{{ $producto->get_imagen() }}" alt="Card image cap">
+	        <img class="card-img-top" width="300" height="300" src="{{ $producto->get_imagen() }}" alt="Card image cap">
 	        <div class="card-body">
 	            <center><h4 class="card-title "><b>{{ strtoupper($producto->nombre) }}</b></h4></center>
 	            <center><p class="card-text" style="font-size: 12px;">{{ $producto->descripcion }}</p></center>

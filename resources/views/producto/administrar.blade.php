@@ -6,9 +6,9 @@
         </div>
         <ul class="fab-options">
             <li onclick="location.href = '/producto/crear'">
-                <span class="fab-label">Nuevo producto</span>
+                <span class="fab-label"><b>Nuevo</b> producto / servicio / ingrediente</span>
                 <div class="fab-icon-holder">
-                    <i class="ti-user"></i>
+                    <i class="fa fa-laptop"></i>
                 </div>
             </li>
         </ul>
@@ -19,7 +19,7 @@
     <div class="col-sm-12">
         <div class="card">
             <div class="card-header">
-                <strong class="card-title">Administrar productos / servicios</strong>
+                <strong class="card-title">Administrar productos / servicios / ingredientes</strong>
             </div>
             <div class="card-body">
                 <div class="row">

@@ -62,16 +62,29 @@
                 			 id="nav-category-{{ $item->id_categoria }}" 
                 			 role="tabpanel" 
                 			 aria-labelledby="nav-category-{{ $item->id_categoria }}-tab">
+                             <div class="row">
                 			 @if (count($item->productos()) > 0)
                 			 	@foreach ($item->productos() as $producto)
-                        	 	
+                                <div class="col-sm-3">
+                                    <div class="card pointer">
+                                        <div class="card-body">
+                                            <div class="mx-auto d-block">
+                                                <img width="100" height="100" class="rounded-circle mx-auto d-block" src="{{ $producto->get_imagen() }}" alt="Producto">
+                                                <h5 class="text-sm-center mt-2 mb-1">{{ $producto->nombre }}</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                         	 	@endforeach
                 			 @else
-                			 <center>
-                			 	<img width="350" height="350" src="{{ asset('plantilla/images/empty_product.svg') }}">
-                			 	<h3>No hay productos en esta categoria</h3>
-                			 </center>
+                             <div class="col-sm-12">
+                                 <center>
+                                    <img width="350" height="350" src="{{ asset('plantilla/images/empty_product.svg') }}">
+                                    <h3>No hay productos en esta categoria</h3>
+                                 </center>
+                             </div> 
                 			 @endif
+                             </div>
                      	</div>
 	                    @php $cont++; @endphp
                 	@endforeach
@@ -92,8 +105,7 @@
                     	 height="90" 
                     	 src="{{ asset('plantilla/images/app/user.jpg') }}" 
                     	 alt="Imagen del usuario">
-                    <h5 class="text-sm-center mt-2 mb-1" id="cliente-nombre">
-                    	Cliente <a style="cursor: pointer;" onclick="ModalCliente()"><i class="fa fa-edit"></i></a>
+                    <h5 class="text-sm-center mt-2 mb-1" ><b id="cliente-nombre">Cliente</b> <a style="cursor: pointer;" onclick="ModalCliente()"><i class="fa fa-edit"></i></a>
                     </h5>
                     <div class="location text-sm-center"><i class="fa fa-map-marker"></i> {{ $licencia->ciudad }}</div>
                 </div>
@@ -184,7 +196,9 @@
 	$(document).ready(()=>{
 		 $('.nav-pills').scrollingTabs()
 		 $('body').addClass("open")
+         Llenar_productos()
 	})
+    var productos = []
 	var factura = {
 		cliente: {
 			nombre: null,
@@ -194,9 +208,26 @@
 		servicioVoluntario: 0,
 		detalles : []
 	}
+
+    function Llenar_productos() {
+        @foreach ($productos as $producto)
+            this.productos.push({
+                'id_producto' : '{{ $producto->nombre }}',
+                'nombre' : '{{ $producto->nombre }}',
+                'precio_venta' : {{ $producto->precio_venta }},
+                'presentacion' : '{{ $producto->presentacion->nombre }}',
+                'imagen' : '{{ $producto->imagen }}',
+                'cantidad_actual' : '{{ $producto->cantidad_actual }}',
+                'categorias' : JSON.parse('{{ json_encode($producto->get_id_categorias()) }}')
+            });
+        @endforeach
+        console.log(this.productos)
+    }
+
 	function ModalCliente() {
 		$("#modal-cliente").modal("show")
 	}
+
 
 	function GuardarInfoCliente() {
 		$("#modal-cliente").modal("hide")

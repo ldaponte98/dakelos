@@ -39,9 +39,13 @@ Route::any('factura/facturador', 'FacturaController@facturador')->name('factura/
 
 Route::any('producto/buscar/{id_producto}', 'ProductoController@buscar')->name('producto/buscar');
 Route::any('producto/administrar', 'ProductoController@administrar')->name('producto/administrar');
-Route::any('producto/crear', 'ProductoController@crear')->name('producto/crear');
-Route::any('producto/editar/{id_producto}', 'ProductoController@crear')->name('producto/editar');
+Route::any('producto/crear', 'ProductoController@guardar')->name('producto/crear');
+Route::any('producto/editar/{id_producto}', 'ProductoController@guardar')->name('producto/editar');
 Route::any('producto/view/{id_producto}', 'ProductoController@view')->name('producto/view');
+
+Route::any('categoria/administrar', 'CategoriaController@administrar')->name('categoria/administrar');
+Route::any('categoria/crear', 'CategoriaController@guardar')->name('categoria/crear');
+Route::any('categoria/editar/{id_producto}', 'CategoriaController@guardar')->name('categoria/editar');
 
 Route::any('reportes/facturas', 'ReporteController@facturas')->name('producto/buscar');
 Route::get('factura_email', function () {
