@@ -138,17 +138,26 @@
 
     </style>
     <script>
-    $(document).ready(function () {
-        $('#filtro').keyup(function () {
-            var rex = new RegExp($(this).val(), 'i');
-            $('#bodytable tr').hide();
-            $('#bodytable tr').filter(function () {
-                return rex.test($(this).text());
-            }).show();
-        })
-    });
-    </script>
-    <script>
+        $(document).ready(function () {
+            $('#filtro').keyup(function () {
+                var rex = new RegExp($(this).val(), 'i');
+                $('#bodytable tr').hide();
+                $('#bodytable tr').filter(function () {
+                    return rex.test($(this).text());
+                }).show();
+            })
+        });
+
+        function setFiltro(id_input_filtro, id_tabla) {
+            $(`#${id_input_filtro}`).keyup(function () {
+                var rex = new RegExp($(this).val(), 'i');
+                $(`#${id_tabla} tbody tr`).hide();
+                $(`#${id_tabla} tbody tr`).filter(function () {
+                    return rex.test($(this).text());
+                }).show();
+            })
+        }
+
         function buscar(caracteres) {
             console.log(caracteres)
             if (caracteres.length > 3) {

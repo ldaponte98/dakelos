@@ -27,10 +27,7 @@
                         {{ Form::open(array('method' => 'post')) }}
                         <div class="row">
                             
-                            <div class="col-sm-4">
-                                
-                            </div>
-                            <div class="col-sm-5">
+                            <div class="col-sm-9">
                             </div>
                             <div class="col-sm-3" style="text-align: right !important;">
                                 <input id="filtro" type="text" class="form-control" placeholder="Consulte aqui..." autocomplete="on">
@@ -40,7 +37,7 @@
                     </div><br><br>
                     <div class="col-lg-12">
                             <div class="card">
-                                <div class="table-stats order-table ov-h">
+                                <div class="table-stats order-table ov-h table-responsive">
                                     <table class="table ">
                                         <thead>
                                             <tr>
@@ -61,13 +58,13 @@
                                             @foreach($terceros as $tercero)
                                             <tr>
                                                 <td><center><img class="rounded-circle" src="{{ $tercero->get_imagen() }}" width="45" height="45" alt="tercero"></center></td>
-                                                <td>{{ $tercero->nombre_completo() }}</td>
-                                                <td>{{ $tercero->identificacion }}</td>
-                                                <td>{{ $tercero->email }}</td>
-                                                <td>{{ $tercero->sexo->nombre }}</td>
-                                                <td>{{ $tercero->telefono }}</td>
-                                                <td>{{ $tercero->direccion }}</td>
-                                                <td>{{ $tercero->get_estado() }}</td>
+                                                <td><center>{{ $tercero->nombre_completo() }}</center></td>
+                                                <td><center>{{ $tercero->identificacion }}</center></td>
+                                                <td><center>{{ $tercero->email }}</center></td>
+                                                <td><center>{{ $tercero->sexo->nombre }}</center></td>
+                                                <td><center>{{ $tercero->telefono }}</center></td>
+                                                <td><center>{{ $tercero->direccion }}</center></td>
+                                                <td><center>{{ $tercero->get_estado() }}</center></td>
                                                 <td><a href="{{ route('tercero/view', $tercero->id_tercero) }}">Ver</a></td>
                                                 <td><a href="{{ route('tercero/editar', $tercero->id_tercero) }}">Editar</a></td>
                                                 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Dominio;
 use App\Producto;
 use App\ProductoCategoria;
 use Illuminate\Http\Request;
@@ -17,9 +18,9 @@ class ProductoController extends Controller
 
     public function administrar(Request $request)
     {
-        $post      = (object) $request->all();
-        $productos = Producto::all()->where('id_licencia', session('id_licencia'));
-        return view('producto.administrar', compact('productos'));
+        $post  = (object) $request->all();
+        $tipos = Dominio::all()->where('id_padre', 35);
+        return view('producto.administrar', compact('tipos'));
     }
 
     public function guardar(Request $request, $id_producto = null)

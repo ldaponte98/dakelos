@@ -41,34 +41,28 @@
                                </div>
                            </div><br><br>
                            <div class="row">
-                               <div class="col-sm-6">
-                                <center>
-                                    <button class="btn btn-primary" data-toggle="modal" data-target="#modal1" onclick="deshabilitar_producto_nuevo()">Agregar producto registrado</button>&nbsp;&nbsp;
-                                    <button class="btn btn-primary" data-toggle="modal" data-target="#modal1" onclick="habilitar_producto_nuevo()">Agregar producto no registrado</button>
-                                </center>
-                               </div>
-                               <div class="col-sm-6">
-                                    <center>
-                                        <button class="btn btn-primary" class="btn btn-primary" data-toggle="modal" data-target="#modal2" >Agregar forma de pago</button>&nbsp;&nbsp;
-                                        <button class="btn btn-primary" onclick="alert('Opcion en proceso de elaboración')">Agregar abono</button>
-                                    </center>
-                               </div>
-                           </div>
 
-                           <div class="row">
                                <div class="col-sm-6">
-                                   <div class="table-stats order-table ov-h">
-                                        <table class="table table table-responsive">
+                                <div class="row">
+                                  <div class="col-sm-12">
+                                    <center>
+                                      <button class="btn btn-primary" data-toggle="modal" data-target="#modal1" onclick="deshabilitar_producto_nuevo()">Agregar producto registrado</button>&nbsp;&nbsp;
+                                      <button class="btn btn-primary" data-toggle="modal" data-target="#modal1" onclick="habilitar_producto_nuevo()">Agregar producto no registrado</button>
+                                    </center>
+                                  </div>
+                                  <div class="col-sm-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-stripe">
                                             <thead>
                                                 <tr>
-                                                    <th class="serial">#</th>
-                                                    <th>Producto</th>
-                                                    <th>Descripción</th>
-                                                    <th>Valor</th>
-                                                    <th>Iva</th>
-                                                    <th>Desc</th>
-                                                    <th>Total</th>
-                                                    <th>Cantidad</th>
+                                                    <th><center>#</center></th>
+                                                    <th><center>Producto</center></th>
+                                                    <th><center>Descripción</center></th>
+                                                    <th><center>Valor</center></th>
+                                                    <th><center>Iva</center></th>
+                                                    <th><center>Desc</center></th>
+                                                    <th><center>Cantidad</center></th>
+                                                    <th><center>Total</center></th>
                                                     <th></th>
                                                 </tr>
                                             </thead>
@@ -77,16 +71,26 @@
                                             </tbody>
                                         </table>
                                     </div>
+                                  </div>
+                                </div>
                                </div>
 
                                <div class="col-sm-6">
-                                   <div class="table-stats order-table ov-h">
-                                        <table class="table">
+                                <div class="row">
+                                  <div class="col-12">
+                                     <center>
+                                        <button class="btn btn-primary" class="btn btn-primary" data-toggle="modal" data-target="#modal2" >Agregar forma de pago</button>&nbsp;&nbsp;
+                                        <button class="btn btn-primary" onclick="alert('Opcion en proceso de elaboración')">Agregar abono</button>
+                                    </center>
+                                  </div>
+                                  <div class="col-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-stripe">
                                             <thead>
                                                 <tr>
-                                                    <th class="serial">#</th>
-                                                    <th>Forma de pago</th>
-                                                    <th>Valor pagado</th>
+                                                    <th class="serial"><center>#</center></th>
+                                                    <th><center>Forma de pago</center></th>
+                                                    <th><center>Valor pagado</center></th>
                                                     <th></th>
                                                 </tr>
                                             </thead>
@@ -95,6 +99,8 @@
                                             </tbody>
                                         </table>
                                     </div>
+                                  </div>
+                                </div>
                                </div>
                            </div>
                            <div class="row">
@@ -163,8 +169,8 @@
                   </div>
                   <div class="col-sm-12">
                        <div class="form-group">
-                          <label for="cc-payment" class="control-label mb-1"><b>Valor sin iva</b></label>
-                          <input id="precio" type="number" class="form-control" readonly>
+                          <label for="cc-payment" class="control-label mb-1"><b>Valor</b></label>
+                          <input id="precio" type="number" class="form-control">
                       </div>
                   </div>
                   <div class="col-sm-12">
@@ -290,7 +296,7 @@
         'id_producto' : $("#id_producto").val(),
         'nombre' : $("#nombre_producto").val(),
         'descripcion' : $("#descripcion").val(),
-	'precio' : $("#precio").val(),
+	      'precio' : $("#precio").val(),
         'precio_iva' : parseFloat($("#precio").val()) + parseFloat(iva),
         'descuento': $("#descuento").val(),
         'iva': $("#iva_producto").val(),
@@ -403,7 +409,7 @@
       $("#select_producto").fadeIn()
       $("#nombre_producto").fadeOut()
       $("#descripcion").prop("readonly",true);
-      $("#precio").prop("readonly",true);
+      $("#precio").prop("readonly",false);
       $("#iva_producto").prop("readonly",true);
       $("#nombre_producto").val("")
       $("#descripcion").val("")

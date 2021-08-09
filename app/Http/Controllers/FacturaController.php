@@ -113,14 +113,18 @@ class FacturaController extends Controller
                         'id_factura'      => $factura->id_factura,
                     );
 
-                    Mail::send('email.factura', $data_email, function ($msj) use ($subject, $for) {
-                        $msj->from(config('global.email_zorax'), session('nombre_licencia'));
-                        $msj->subject($subject);
-                        $msj->to($for);
-                    });
-                    $error      = false;
                     $id_factura = $factura->id_factura;
                     $mensaje    = "Documento registrado exitosamente";
+                    $error      = false;
+                    try {
+                        Mail::send('email.factura', $data_email, function ($msj) use ($subject, $for) {
+                            $msj->from(config('global.email_zorax'), session('nombre_licencia'));
+                            $msj->subject($subject);
+                            $msj->to($for);
+                        });
+                    } catch (Exception $e) {
+                        $mensaje = "Documento registrado exitosamente, no se pudo enviar factura a cliente";
+                    }
                 } else {
                     $mensaje = "Error al registrar la factura";
                     $errors  = $factura->errors;
