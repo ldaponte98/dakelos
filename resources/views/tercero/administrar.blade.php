@@ -49,7 +49,6 @@
                                                 <th><center><b>Telefono</b></center></th>
                                                 <th><center><b>Direccion</b></center></th>
                                                 <th><center><b>Estado</b></center></th>
-                                                <th><center><b></b></center></th>
                                                 <th></th>
                                             </tr>
                                         </thead>
@@ -65,9 +64,12 @@
                                                 <td><center>{{ $tercero->telefono }}</center></td>
                                                 <td><center>{{ $tercero->direccion }}</center></td>
                                                 <td><center>{{ $tercero->get_estado() }}</center></td>
-                                                <td><a href="{{ route('tercero/view', $tercero->id_tercero) }}">Ver</a></td>
-                                                <td><a href="{{ route('tercero/editar', $tercero->id_tercero) }}">Editar</a></td>
-                                                
+                                                <td>
+                                                    <center>
+                                                        <a href="{{ route('tercero/view', $tercero->id_tercero) }}">Ver</a>
+                                                        <a class="ml-3" href="{{ route('tercero/editar', $tercero->id_tercero) }}">Editar</a>
+                                                    </center>
+                                                </td>
                                             </tr>
                                             @php $cont++; @endphp
                                             @endforeach

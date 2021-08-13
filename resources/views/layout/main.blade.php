@@ -72,9 +72,31 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="http://malsup.github.io/jquery.blockUI.js"></script>
     <script src="{{ asset('TableToExcel.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
+
 
 
    <style>
+        .error{
+            color: red;
+        }
+        .select2-container .select2-selection--single {
+            height: 38px;
+        }
+        .select2-selection__rendered{
+            margin-top: 3px;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            top: 6px;
+        }
+        .chosen-container-single .chosen-single{
+            background: #fff !important;
+            padding: 5px 0 5px 8px !important;
+            height: 38px !important;
+        }
+        .chosen-container-single .chosen-single div {
+            top: 6px;
+        }
         .content {
             float: left;
             padding: 1.875em;
@@ -411,6 +433,7 @@
                 no_results_text: "Oops, nothing found!",
                 width: "100%"
             });
+            $(".select2").select2({ width: "100%" })
         });
     </script>
     

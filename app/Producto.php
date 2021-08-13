@@ -40,6 +40,11 @@ class Producto extends Model
     {
         return $this->belongsTo(Dominio::class, 'id_dominio_presentacion');
     }
+    public function ingredientes()
+    {
+        return $this->hasMany(ProductoIngrediente::class, 'id_producto');
+    }
+
     public function get_imagen()
     {
         if ($this->imagen != null and $this->imagen != '') {

@@ -63,7 +63,6 @@
                                         </div><br><br>
                                         <div class="col-lg-12">
                                             <div class="card">
-                                                
                                                 <div class="table-stats order-table ov-h table-responsive">
                                                     <table class="table" id="table-productos-{{ $item->id_dominio }}">
                                                         <thead>

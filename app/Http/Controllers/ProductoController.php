@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Dominio;
 use App\Producto;
 use App\ProductoCategoria;
+use App\ProductoIngrediente;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -25,17 +26,18 @@ class ProductoController extends Controller
 
     public function guardar(Request $request, $id_producto = null)
     {
-        $post                             = $request->all();
-        $producto                         = new Producto;
-        $producto->estado                 = null;
-        $producto->precio_venta           = 0;
-        $producto->precio_compra          = 0;
-        $producto->iva                    = 0;
-        $producto->descontado             = 0;
-        $producto->contenido              = 1;
-        $producto->cantidad_actual        = 0;
-        $producto->cantidad_minimo_alerta = 0;
-        $categorias                       = [];
+        $post                              = $request->all();
+        $producto                          = new Producto;
+        $producto->estado                  = null;
+        $producto->precio_venta            = 0;
+        $producto->precio_compra           = 0;
+        $producto->iva                     = 0;
+        $producto->descontado              = 0;
+        $producto->descontado_ingredientes = 0;
+        $producto->contenido               = 1;
+        $producto->cantidad_actual         = 0;
+        $producto->cantidad_minimo_alerta  = 0;
+        $categorias                        = [];
         if ($id_producto != null) {
             $producto   = Producto::find($id_producto);
             $categorias = $producto->get_id_categorias();
@@ -52,12 +54,17 @@ class ProductoController extends Controller
                 ->first();
             if (isset($post->descontado)) {
                 $producto->descontado = 1;
-
             } else {
                 $producto->contenido              = 1;
                 $producto->cantidad_actual        = 0;
                 $producto->cantidad_minimo_alerta = 0;
                 $producto->descontado             = 0;
+            }
+
+            if (isset($post->descontado_ingredientes)) {
+                $producto->descontado_ingredientes = 1;
+            } else {
+                $producto->descontado_ingredientes = 0;
             }
 
             if (isset($post->categorias) or $producto->id_dominio_tipo_producto != 36) {
@@ -82,6 +89,24 @@ class ProductoController extends Controller
                             $item->id_producto  = $producto->id_producto;
                             $item->id_categoria = $id_categoria;
                             $item->save();
+                        }
+
+                        //AHORA REGISTRAMOS LOS INGREDIENTES
+                        $delete = ProductoIngrediente::where('id_producto', $producto->id_producto)->delete();
+                        if ($producto->descontado_ingredientes == 1) {
+                            $ingredientes = [];
+                            if (isset($post->ingredientes)) {
+                                $ingredientes = json_decode($post->ingredientes);
+                            }
+
+                            foreach ($ingredientes as $ingrediente) {
+                                $item                 = new ProductoIngrediente;
+                                $item->id_producto    = $producto->id_producto;
+                                $item->id_ingrediente = $ingrediente->id;
+                                $item->cantidad       = $ingrediente->cantidad;
+                                $item->save();
+                            }
+
                         }
                         return redirect()->route('producto/view', $producto->id_producto);
                     } else {
