@@ -9,7 +9,6 @@
         </div>
     </div>
 @endsection
-
 @section('content')
 <link rel="stylesheet" href="{{ asset('scroll-tabs/jquery.scrolling-tabs.css') }}" />
 <link rel="stylesheet" href="{{ asset('scroll-tabs/st-demo.css') }}" />
@@ -31,6 +30,12 @@
 	.card-products{
 		min-height: 810px;
 	}
+    .box-quantity{
+        box-shadow: 0 0 20px rgb(0 0 0 / 8%);
+        border: 0;
+        padding: 10px;
+        border-radius: 5px;
+    }
 </style>
 <div class="row">
     <div class="col-sm-8">
@@ -66,7 +71,7 @@
                 			 @if (count($item->productos()) > 0)
                 			 	@foreach ($item->productos() as $producto)
                                 <div class="col-sm-3">
-                                    <div class="card pointer">
+                                    <div class="card pointer" onclick="agregar_producto({{ $producto->id_producto }})">
                                         <div class="card-body">
                                             <div class="mx-auto d-block">
                                                 <img width="100" height="100" class="rounded-circle mx-auto d-block" src="{{ $producto->get_imagen() }}" alt="Producto">
@@ -113,17 +118,18 @@
                 <strong class="card-title">Productos adquiridos</strong>
                 <br>
                 <div class="table-stats order-table ov-h mt-2">
-                    <table class="table" id="detalles">
+                    <table class="table" id="table-detalles">
                         <thead>
                             <tr>
                                 <th><center><b>Producto</b></center></th>
                                 <th><center><b>Cantidad</b></center></th>
                                 <th><center><b>Total</b></center></th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
                         	<tr>
-                        		<td colspan="3"><center><i>No hay productos seleccionados</i></center></td>
+                        		<td colspan="4"><center><i>No hay productos seleccionados</i></center></td>
                         	</tr>
                         </tbody>
                     </table>
@@ -135,11 +141,11 @@
                 </div>
                 <div class="form-group d-flex">
                 	<label class="lb-flex"><span class="green"><b>+</b></span> Servicio Voluntario ($)</label>
-                	<input type="text" id="factura-servicio-voluntario" placeholder="0" class="form-control">
+                	<input onkeyup="validar_descuento_servicio()" type="number" id="factura-servicio-voluntario" placeholder="0" class="form-control">
                 </div>
                 <div class="form-group d-flex">
                 	<label class="lb-flex"><span class="red"><b>-</b></span> Descuento ($)</label>
-                	<input type="text" id="factura-descuento" placeholder="0" class="form-control">
+                	<input onkeyup="validar_descuento_servicio()" type="number" id="factura-descuento" placeholder="0" class="form-control">
                 </div>
                 <div class="form-group d-flex">
                 	<label class="lb-flex"><b>Total</b></label>
@@ -205,18 +211,20 @@
 			telefono: null,
 			identificacion: null 
 		},
-		servicioVoluntario: 0,
-		detalles : []
+        detalles : [],
+        servicio_voluntario: 0,
+        descuentos: 0,
+        total: 0		
 	}
 
     function Llenar_productos() {
         @foreach ($productos as $producto)
             this.productos.push({
-                'id_producto' : '{{ $producto->nombre }}',
+                'id_producto' : {{ $producto->id_producto }},
                 'nombre' : '{{ $producto->nombre }}',
                 'precio_venta' : {{ $producto->precio_venta }},
                 'presentacion' : '{{ $producto->presentacion->nombre }}',
-                'imagen' : '{{ $producto->imagen }}',
+                'imagen' : '{{ $producto->get_imagen() }}',
                 'cantidad_actual' : '{{ $producto->cantidad_actual }}',
                 'categorias' : JSON.parse('{{ json_encode($producto->get_id_categorias()) }}')
             });
@@ -224,10 +232,56 @@
         console.log(this.productos)
     }
 
+    function agregar_producto(id_producto) {
+        let producto = this.productos.find(item => item.id_producto == id_producto)
+        let busqueda = this.factura.detalles.find(item => item.id_producto == id_producto)
+        if (busqueda) {
+            busqueda.cantidad += 1;
+            let pos = 0;
+            this.factura.detalles.forEach((item) => {
+                if (item.id_producto == busqueda.id_producto) this.factura.detalles.splice(pos, 1, busqueda)
+                pos++
+            })
+        }else{
+            this.factura.detalles.push({
+                'id_producto' : producto.id_producto,
+                'nombre' : producto.nombre,
+                'precio_venta' : producto.precio_venta,
+                'presentacion' : producto.presentacion,
+                'cantidad' : 1
+            })
+        }
+        this.ActualizarVistaPedido()
+    }
+
+    function eliminar_producto(id_producto) {
+        let resp = confirm("¿Seguro que desea eliminar este producto de la compra?")
+        if (resp) {
+            let pos = 0;
+            this.factura.detalles.forEach((item) => {
+                if (item.id_producto == id_producto) this.factura.detalles.splice(pos, 1)
+                pos++
+            })
+            this.ActualizarVistaPedido()
+        }
+    }
+
+    function validar_descuento_servicio() {
+        let descuento = $("#factura-descuento").val()
+        let servicio  = $("#factura-servicio-voluntario").val()
+        this.factura.descuentos = 0
+        this.factura.servicio_voluntario = 0
+        if ($.isNumeric(descuento))this.factura.descuentos = parseFloat(descuento)
+        if ($.isNumeric(servicio)) this.factura.servicio_voluntario = parseFloat(servicio)
+            this.ActualizarVistaPedido()
+    }
+
 	function ModalCliente() {
 		$("#modal-cliente").modal("show")
+        if (this.factura.cliente.nombre) $("#modal-cliente-nombre").val(this.factura.cliente.nombre)
+        if (this.factura.cliente.telefono) $("#modal-cliente-telefono").val(this.factura.cliente.telefono)
+        if (this.factura.cliente.identificacion) $("#modal-cliente-identificacion").val(this.factura.cliente.identificacion)
 	}
-
 
 	function GuardarInfoCliente() {
 		$("#modal-cliente").modal("hide")
@@ -245,7 +299,81 @@
 
 	function ActualizarVistaPedido() {
 		$("#cliente-nombre").html(this.factura.cliente.nombre == null ? "Cliente" : this.factura.cliente.nombre)
+        let tabla = ""
+        let sub_total = 0
+        if (this.factura.detalles.length == 0) {
+            tabla = `<tr>
+                        <td colspan="4"><center><i>No hay productos seleccionados</i></center></td>
+                    </tr>`
+        }else{
+            this.factura.detalles.forEach((item) => {
+                let valor_producto = item.cantidad * item.precio_venta;
+                tabla += `<tr>
+                            <td><center>${item.nombre}</center></td>
+                            <td><center>
+                            <div class="dropdown for-notification">
+                                <button class="btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true">
+                                    ${item.cantidad} ${item.presentacion}
+                                </button>
+                                <div class="dropdown-menu box-quantity">
+                                    <div class="input-group dropdowncontent" >
+                                        <input type="text" id="cantidad-item-${item.id_producto}" value="${item.cantidad}" class="form-control">
+                                        <div class="input-group-btn"><span onclick="establecer_cantidad(${item.id_producto})" class="btn btn-success"><i class="fa fa-check"></i></span></div>
+                                    </div>  
+                                </div>
+                            </div>
+                            </center></td>
+                            <td><center>$${format(valor_producto)}</center></td>
+                            <td>
+                                <span onclick='eliminar_producto(${item.id_producto})'>
+                                    <i class='fa fa-times-circle red-icon'></i>
+                                </span>
+                            </td>
+                        </tr>`
+                sub_total += valor_producto
+            })
+        }
+        $("#table-detalles tbody").html(tabla)
+
+        //ACTUALIZAMOS CAMPOS DE TOTALES
+        let total = 0
+        $("#factura-subtotal").val("$" + format(sub_total))
+        total += sub_total
+        let servicio = $("#factura-servicio-voluntario").val()
+        if ($.isNumeric(servicio)) total += parseFloat(servicio)
+        let descuentos = $("#factura-descuento").val()
+        if ($.isNumeric(descuentos)) total -= parseFloat(descuentos)
+        $("#factura-total").val("$" + format(total))
+        this.factura.total = parseFloat(total)
 	}
+
+    function establecer_cantidad(id_producto) {
+        let cantidad = $(`#cantidad-item-${id_producto}`).val()
+        debugger
+        if ($.isNumeric(cantidad)){
+            let busqueda = this.factura.detalles.find(item => item.id_producto == id_producto)
+            if (busqueda) {
+                busqueda.cantidad = parseFloat(cantidad);
+                let pos = 0;
+                this.factura.detalles.forEach((item) => {
+                    if (item.id_producto == busqueda.id_producto) this.factura.detalles.splice(pos, 1, busqueda)
+                    pos++
+                })
+                this.ActualizarVistaPedido()
+            }
+        } 
+    }
+
+    function format(number) {
+        return new Intl.NumberFormat("de-DE").format(number)
+    }
+
+    $(document).on("contextmenu", "body", function (event) {
+    //we won't show the default context menu
+        event.preventDefault();
+
+        
+    });
 </script>
 <script src="{{ asset('scroll-tabs/jquery.scrolling-tabs.js') }}"></script>
 <script src="{{ asset('scroll-tabs/st-demo.js') }}"></script>
