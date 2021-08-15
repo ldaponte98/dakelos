@@ -4,7 +4,7 @@
 @extends('layout.main')
 @section('menu')
     <div class="fab-container">
-        <div class="fab fab-icon-holder" style="background: #23558a;">
+        <div class="fab fab-icon-holder" style="background: #23558a;" onclick="Guardar()">
             <i class="fa fa-floppy-o"></i>
         </div>
     </div>
@@ -36,9 +36,33 @@
         padding: 10px;
         border-radius: 5px;
     }
+    .search{
+        padding: .75rem .95rem;
+        height: auto;
+        border: none;
+        border-radius: 30px;
+        box-shadow: 0 0 20px rgb(0 0 0 / 8%);
+    }
+    .dropdown-search{
+        width: 100%;
+        box-shadow: 0 0 20px rgb(0 0 0 / 8%);
+        border-radius: 5px;
+    }
+    .btn-erase{
+        background: transparent;
+        margin-bottom: 7px;
+    }
 </style>
 <div class="row">
     <div class="col-sm-8">
+        <div class="d-flex">
+            <input type="text" placeholder="Consulta productos aqui..." onkeyup="BuscarProductos(this.value)" class="form-control search mb-2" id="filtro-productos">
+            <button class="btn btn-secundary btn-erase" onclick="$('#filtro-productos').val(''); BuscarProductos('')"><i class="fa fa-times"></i></button>
+        </div>
+        
+        <div class="dropdown for-notification">
+            <div class="dropdown-menu dropdown-search" aria-labelledby="notification" id="div-busqueda-productos"></div>
+        </div>
         <div class="card card-products">
         	<div class="card-header">
                 <i class="fa fa-cutlery"></i><strong class="card-title pl-2">Productos</strong>
@@ -71,7 +95,7 @@
                 			 @if (count($item->productos()) > 0)
                 			 	@foreach ($item->productos() as $producto)
                                 <div class="col-sm-3">
-                                    <div class="card pointer" onclick="agregar_producto({{ $producto->id_producto }})">
+                                    <div class="card pointer" onclick="AgregarProducto({{ $producto->id_producto }})">
                                         <div class="card-body">
                                             <div class="mx-auto d-block">
                                                 <img width="100" height="100" class="rounded-circle mx-auto d-block" src="{{ $producto->get_imagen() }}" alt="Producto">
@@ -141,11 +165,11 @@
                 </div>
                 <div class="form-group d-flex">
                 	<label class="lb-flex"><span class="green"><b>+</b></span> Servicio Voluntario ($)</label>
-                	<input onkeyup="validar_descuento_servicio()" type="number" id="factura-servicio-voluntario" placeholder="0" class="form-control">
+                	<input onkeyup="ValidarDescuentoServicio()" type="number" id="factura-servicio-voluntario" placeholder="0" class="form-control">
                 </div>
                 <div class="form-group d-flex">
                 	<label class="lb-flex"><span class="red"><b>-</b></span> Descuento ($)</label>
-                	<input onkeyup="validar_descuento_servicio()" type="number" id="factura-descuento" placeholder="0" class="form-control">
+                	<input onkeyup="ValidarDescuentoServicio()" type="number" id="factura-descuento" placeholder="0" class="form-control">
                 </div>
                 <div class="form-group d-flex">
                 	<label class="lb-flex"><b>Total</b></label>
@@ -202,8 +226,10 @@
 	$(document).ready(()=>{
 		 $('.nav-pills').scrollingTabs()
 		 $('body').addClass("open")
-         Llenar_productos()
+         LlenarProductos()
+         //$("#div-busqueda-productos").fadeIn()
 	})
+
     var productos = []
 	var factura = {
 		cliente: {
@@ -211,13 +237,14 @@
 			telefono: null,
 			identificacion: null 
 		},
+        observaciones : "",
         detalles : [],
         servicio_voluntario: 0,
         descuentos: 0,
         total: 0		
 	}
 
-    function Llenar_productos() {
+    function LlenarProductos() {
         @foreach ($productos as $producto)
             this.productos.push({
                 'id_producto' : {{ $producto->id_producto }},
@@ -226,13 +253,14 @@
                 'presentacion' : '{{ $producto->presentacion->nombre }}',
                 'imagen' : '{{ $producto->get_imagen() }}',
                 'cantidad_actual' : '{{ $producto->cantidad_actual }}',
+                'tipo' : '{{ $producto->id_dominio_tipo_producto }}',
                 'categorias' : JSON.parse('{{ json_encode($producto->get_id_categorias()) }}')
             });
         @endforeach
         console.log(this.productos)
     }
 
-    function agregar_producto(id_producto) {
+    function AgregarProducto(id_producto) {
         let producto = this.productos.find(item => item.id_producto == id_producto)
         let busqueda = this.factura.detalles.find(item => item.id_producto == id_producto)
         if (busqueda) {
@@ -254,7 +282,7 @@
         this.ActualizarVistaPedido()
     }
 
-    function eliminar_producto(id_producto) {
+    function EliminarProducto(id_producto) {
         let resp = confirm("¿Seguro que desea eliminar este producto de la compra?")
         if (resp) {
             let pos = 0;
@@ -266,7 +294,7 @@
         }
     }
 
-    function validar_descuento_servicio() {
+    function ValidarDescuentoServicio() {
         let descuento = $("#factura-descuento").val()
         let servicio  = $("#factura-servicio-voluntario").val()
         this.factura.descuentos = 0
@@ -318,14 +346,14 @@
                                 <div class="dropdown-menu box-quantity">
                                     <div class="input-group dropdowncontent" >
                                         <input type="text" id="cantidad-item-${item.id_producto}" value="${item.cantidad}" class="form-control">
-                                        <div class="input-group-btn"><span onclick="establecer_cantidad(${item.id_producto})" class="btn btn-success"><i class="fa fa-check"></i></span></div>
+                                        <div class="input-group-btn"><span onclick="EstablecerCantidad(${item.id_producto})" class="btn btn-success"><i class="fa fa-check"></i></span></div>
                                     </div>  
                                 </div>
                             </div>
                             </center></td>
                             <td><center>$${format(valor_producto)}</center></td>
                             <td>
-                                <span onclick='eliminar_producto(${item.id_producto})'>
+                                <span onclick='EliminarProducto(${item.id_producto})'>
                                     <i class='fa fa-times-circle red-icon'></i>
                                 </span>
                             </td>
@@ -347,9 +375,8 @@
         this.factura.total = parseFloat(total)
 	}
 
-    function establecer_cantidad(id_producto) {
+    function EstablecerCantidad(id_producto) {
         let cantidad = $(`#cantidad-item-${id_producto}`).val()
-        debugger
         if ($.isNumeric(cantidad)){
             let busqueda = this.factura.detalles.find(item => item.id_producto == id_producto)
             if (busqueda) {
@@ -364,16 +391,53 @@
         } 
     }
 
-    function format(number) {
-        return new Intl.NumberFormat("de-DE").format(number)
+    function BuscarProductos(caracteres) {
+        if (caracteres.trim() != "" && caracteres.length >= 3) {
+            let filtros = this.productos.filter(item => item.nombre.toUpperCase().includes(caracteres.toUpperCase()) && item.tipo == 36)
+            var resultados = ""
+            if(filtros.length > 0){
+                let cont = 0
+                filtros.forEach((item)=>{
+                    if (cont != 0) resultados += `<hr class="mb-1 mt-1">`
+                    resultados += `
+                        <div class="dropdown-item media pointer-low" onclick="AgregarProducto(${item.id_producto})">
+                            <img class="rounded-circle mr-2" src="${item.imagen}" width="45" height="45" >
+                            <div class="content-dropdown">
+                                <label class="mb-0">${item.nombre.toUpperCase()}</label><br>
+                                <b>$${format(item.precio_venta)}</b>
+                            </div>
+                        </div>`
+                    cont++
+                })
+                if (resultados != "") {
+                    $("#div-busqueda-productos").html(resultados)
+                    $("#div-busqueda-productos").fadeIn()
+                }else{
+                    $("#div-busqueda-productos").html("")
+                    $("#div-busqueda-productos").fadeOut()
+                }
+            }else{
+                $("#div-busqueda-productos").html("")
+                $("#div-busqueda-productos").fadeOut()
+            }
+        }else{
+            $("#div-busqueda-productos").html("")
+            $("#div-busqueda-productos").fadeOut()
+        }
     }
 
-    $(document).on("contextmenu", "body", function (event) {
-    //we won't show the default context menu
-        event.preventDefault();
+    function Guardar() {
+        this.factura.observaciones = $("#factura-observaciones").val()
+        if (this.factura.detalles.length == 0) {
+            toastr.error("Es necesario escoger por lo menos un producto para el pedido", "Error")
+            return;
+        }
+        Loading(true, "Guardando factura...")
+        console.log("bien")
+    }
 
-        
-    });
+    const format = (number) => new Intl.NumberFormat("de-DE").format(number)
+    
 </script>
 <script src="{{ asset('scroll-tabs/jquery.scrolling-tabs.js') }}"></script>
 <script src="{{ asset('scroll-tabs/st-demo.js') }}"></script>

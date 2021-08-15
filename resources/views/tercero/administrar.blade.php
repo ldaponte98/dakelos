@@ -5,7 +5,7 @@
             <i class="fa fa-bars"></i>
         </div>
         <ul class="fab-options">
-            <li onclick="location.href = '/tercero/crear'">
+            <li onclick="location.href = '{{ config('global.url_base') }}/tercero/crear'">
                 <span class="fab-label">Nuevo tercero</span>
                 <div class="fab-icon-holder">
                     <i class="ti-user"></i>

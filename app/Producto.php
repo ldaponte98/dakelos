@@ -15,6 +15,7 @@ class Producto extends Model
         'id_dominio_tipo_producto',
         'descripcion',
         'cantidad_minimo_alerta',
+        'alerta',
         'cantidad_actual',
         'contenido',
         'descontado',

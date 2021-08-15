@@ -142,7 +142,7 @@
                                 </div>
                                 <div id="div_inventario" @if($producto->descontado == 0) style="display: none;" @endif>
                                     <div class="row">
-                                         <div class="col-sm-4">
+                                         <div class="col-sm-6">
                                             <div class="form-group">
                                                 <label for="cc-payment" class="control-label mb-1"><b>*Contenido por producto</b></label> <i class="fa fa-info-circle" title="Este campo es el contenido total del producto, si es por unidad el valor por defecto es 1."></i>
                                                 <div class="input-group mb-3">
@@ -153,24 +153,13 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-6">
                                              <div class="form-group">
                                                 <label for="cc-payment" class="control-label mb-1"><b>*Cantidad actual</b></label>
                                                 <div class="input-group mb-3">
                                                     <input name="cantidad_actual" type="number" class="form-control" aria-required="true" aria-invalid="false" value="{{ $producto->cantidad_actual }}" >
                                                     <div class="input-group-prepend">
                                                         <label class="input-group-text" for="cantidad_actual" id="presentacion_cantidad_actual">Unidades</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                         <div class="col-sm-4">
-                                            <div class="form-group">
-                                                <label for="cc-payment" class="control-label mb-1"><b>*Cantidad de alerta </b></label> <i class="fa fa-info-circle" title="Este campo indica la cantidad minima para que el sistema informe faltantes en el inventario de este producto."></i>
-                                                <div class="input-group mb-3">
-                                                    <input name="cantidad_minimo_alerta" type="number" class="form-control" aria-required="true" aria-invalid="false" value="{{ $producto->cantidad_minimo_alerta }}">
-                                                    <div class="input-group-prepend">
-                                                        <label class="input-group-text" for="cantidad_minimo_alerta" id="presentacion_cantidad_alerta">Unidades</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -184,6 +173,29 @@
                                             <label for="descontado_ingredientes" class="form-check-label ">
                                                 <input onclick="validar_ingredientes()" type="checkbox" id="descontado_ingredientes" name="descontado_ingredientes" @if($producto->descontado_ingredientes == 1) checked @endif class="form-check-input"><i>Deseo que este producto sea descontado segun sus ingredientes.</i>
                                             </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group" style="margin-left: 18px;">
+                                            <label for="alerta" class="form-check-label ">
+                                                <input onclick="validar_aviso()" type="checkbox" id="alerta" name="alerta" @if($producto->alerta == 1) checked @endif class="form-check-input"><i>Deseo que el sistema me notifique cuando este por acabarse este producto.</i>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="div-alerta" @if($producto->alerta == 0) style="display: none;" @endif>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label for="cc-payment" class="control-label mb-1"><b>*Cantidad minima de aviso </b></label> <i class="fa fa-info-circle" title="Este campo indica la cantidad minima para que el sistema informe faltantes en el inventario de este producto."></i>
+                                            <div class="input-group mb-3">
+                                                <input name="cantidad_minimo_alerta" type="number" class="form-control" aria-required="true" aria-invalid="false" value="{{ $producto->cantidad_minimo_alerta }}">
+                                                <div class="input-group-prepend">
+                                                    <label class="input-group-text" for="cantidad_minimo_alerta" id="presentacion_cantidad_alerta">Unidades</label>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -379,6 +391,14 @@
         }
     }
 
+    function validar_aviso() {
+        if($("#alerta").prop('checked') == true){
+            $("#div-alerta").fadeIn()
+        }else{
+            $("#div-alerta").fadeOut()
+        }
+    }
+
     function validar_inventario() {
         if($("#descontado").prop('checked') == true){
             $("#div_inventario").fadeIn()
@@ -407,15 +427,31 @@
             $("#descontado_ingredientes").prop("disabled", false)
             validar_inventario()
             validar_ingredientes()
+            validar_aviso()
         }
-        if (id_dominio_tipo == 37 || id_dominio_tipo == 38) { //SERVICIO
+        if (id_dominio_tipo == 37) { //SERVICIO
             $("#div-categorias").fadeOut()
             $("#descontado").prop("checked", false)
             $("#descontado").prop("disabled", true)
             $("#descontado_ingredientes").prop("checked", false)
             $("#descontado_ingredientes").prop("disabled", true)
+            $("#alerta").prop("checked", false)
+            $("#alerta").prop("disabled", true)
             validar_inventario()
             validar_ingredientes()
+            validar_aviso()
+        }
+        if (id_dominio_tipo == 38) { //INGREDIENTE
+            $("#div-categorias").fadeOut()
+            $("#descontado").prop("checked", false)
+            $("#descontado").prop("disabled", true)
+            $("#descontado_ingredientes").prop("checked", false)
+            $("#descontado_ingredientes").prop("disabled", true)
+            $("#alerta").prop("checked", true)
+            $("#alerta").prop("disabled", false)
+            validar_inventario()
+            validar_ingredientes()
+            validar_aviso()
         }
     }
 
@@ -481,6 +517,7 @@
         });
 
         validar_tipo_producto({{ $producto->id_dominio_tipo_producto }})
+        validar_presentacion()
     })
 </script>
 @endsection

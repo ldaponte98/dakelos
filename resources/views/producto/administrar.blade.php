@@ -5,7 +5,7 @@
             <i class="fa fa-bars"></i>
         </div>
         <ul class="fab-options">
-            <li onclick="location.href = '/producto/crear'">
+            <li onclick="location.href = '{{ config('global.url_base') }}/producto/crear'">
                 <span class="fab-label"><b>Nuevo</b> producto / servicio / ingrediente</span>
                 <div class="fab-icon-holder">
                     <i class="fa fa-laptop"></i>

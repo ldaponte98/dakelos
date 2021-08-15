@@ -6,7 +6,6 @@
 <!doctype html>
 <html class="no-js" lang="es"> 
 
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -73,245 +72,25 @@
     <script src="http://malsup.github.io/jquery.blockUI.js"></script>
     <script src="{{ asset('TableToExcel.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
+    <script src="{{ asset('blockUI.js') }}"></script>
+    <script src="{{ asset('js-general.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ asset('css-general.css') }}">
 
-
-
-   <style>
-        .error{
-            color: red;
-        }
-        .select2-container .select2-selection--single {
-            height: 38px;
-        }
-        .select2-selection__rendered{
-            margin-top: 3px;
-        }
-        .select2-container--default .select2-selection--single .select2-selection__arrow {
-            top: 6px;
-        }
-        .chosen-container-single .chosen-single{
-            background: #fff !important;
-            padding: 5px 0 5px 8px !important;
-            height: 38px !important;
-        }
-        .chosen-container-single .chosen-single div {
-            top: 6px;
-        }
-        .content {
-            float: left;
-            padding: 1.875em;
-            width: 100%; 
-            min-height: 800px !important;
-        }
-        .red-icon{
-            color: #af1417 !important;
-            cursor: pointer;
-        }
-        #weatherWidget .currentDesc {
-            color: #ffffff!important;
-        }
-        .traffic-chart {
-            min-height: 335px;
-        }
-        #flotPie1  {
-            height: 150px;
-        }
-        #flotPie1 td {
-            padding:3px;
-        }
-        #flotPie1 table {
-            top: 20px!important;
-            right: -10px!important;
-        }
-        .chart-container {
-            display: table;
-            min-width: 270px ;
-            text-align: left;
-            padding-top: 10px;
-            padding-bottom: 10px;
-        }
-        #flotLine5  {
-             height: 105px;
-        }
-
-        #flotBarChart {
-            height: 150px;
-        }
-        #cellPaiChart{
-            height: 160px;
-        }
-        .media{
-            padding-top: 10px !important;
-            padding-bottom: 10px !important;
-        }
-        .chosen-container-multi .chosen-choices {
-            padding: .3rem .75rem;
-            border-radius: .25rem;
-        }
-        .pointer{
-            cursor: pointer;
-        }
-        .pointer:hover{
-            -webkit-transform: scale(1.05);
-            -ms-transform: scale(1.05);
-            transform: scale(1.05);
-            transition-duration: 0.5s;
-        }
-
-    </style>
-    <script>
-        $(document).ready(function () {
-            $('#filtro').keyup(function () {
-                var rex = new RegExp($(this).val(), 'i');
-                $('#bodytable tr').hide();
-                $('#bodytable tr').filter(function () {
-                    return rex.test($(this).text());
-                }).show();
-            })
-        });
-
-        function setFiltro(id_input_filtro, id_tabla) {
-            $(`#${id_input_filtro}`).keyup(function () {
-                var rex = new RegExp($(this).val(), 'i');
-                $(`#${id_tabla} tbody tr`).hide();
-                $(`#${id_tabla} tbody tr`).filter(function () {
-                    return rex.test($(this).text());
-                }).show();
-            })
-        }
-
-        function buscar(caracteres) {
-            console.log(caracteres)
-            if (caracteres.length > 3) {
-                url = "/tercero/buscar/"+caracteres
-                $.get(url, (response) =>{
-                    var resultados = ""
-                    if(response.length > 0){
-                        response.forEach((tercero)=>{
-                            resultados += "<a class='dropdown-item media' href='/tercero/view/"+tercero.id_tercero+"'><b>"+tercero.identificacion+" - "+tercero.nombres+" "+tercero.apellidos+"</b></a>"
-                        })
-                        if (resultados != "") {
-                            $("#div_busqueda").html(resultados)
-                            $("#div_busqueda").fadeIn()
-                        }else{
-                            $("#div_busqueda").html("")
-                            $("#div_busqueda").fadeOut()
-                        }
-                    }else{
-                        $("#div_busqueda").html("")
-                        $("#div_busqueda").fadeOut()
-                    }
-                })
-            }
-            else{
-                $("#div_busqueda").html("")
-                $("#div_busqueda").fadeOut()
-            }
-        }
-    </script>
-
-    <style type="text/css">
-        .fab-container{
-            position: fixed;
-            top: 70px;
-            right: 50px;
-            z-index: 999;
-            cursor: pointer;
-        }
-
-        .fab-icon-holder{
-            width: 50px;
-            height: 50px;
-            border-radius: 100%;
-            background: #016fb9;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-        }
-
-        .fab-icon-holder:hover{
-            opacity: 0.8;
-
-        }
-        .fab-icon-holder i{
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            font-style: 25px;
-            color: #ffffff;
-            font-size: 22px;
-        }
-
-        .fab{
-            width: 60px;
-            height: 60px;
-            background: #d23f31;
-        }
-
-        .fab-options{
-            list-style-type: none;
-            margin: 0;
-            position: absolute;
-            top: 80px;
-            right: 0;
-            opacity: 0;
-            transition: all 0.3s ease;
-            transform: scale(0);
-            transform-origin: 85% top;
-        }
-
-        .fab:hover + .fab-options, .fab-options:hover{
-            opacity: 1;
-            transform: scale(1);
-        }
-        .fab:hover + .right-panel{
-            background: #000000 !important;
-        }
-
-        .fab-options li{
-            display: flex;
-            justify-content: flex-end;
-            padding: 5px;
-        }
-
-        .fab-label{
-            padding: 2px 5px;
-            align-self: center;
-            user-select: none;
-            white-space: nowrap;
-            border-radius: 3px;
-            font-size: 16px;
-            background: #666666;
-            color: #ffffff;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-            margin-right: 10px;
-        }
-
-        .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
-            color: #fff;
-            background-color: #23558a;
-        }
-    </style>
 </head>
 
-<body onclick="$('#div_busqueda').fadeOut()">
+<body onclick="$('.dropdown-menu-util').fadeOut()">
 
-
-    <!-- Left Panel -->
     <aside id="left-panel" class="left-panel">
         <nav class="navbar navbar-expand-sm navbar-default">
             <div id="main-menu" class="main-menu collapse navbar-collapse">
                 @php
                 \App\Menu::loadMenu();
                 @endphp
-            </div><!-- /.navbar-collapse -->
+            </div>
         </nav>
     </aside>
     @yield('menu','')
-    
-    <!-- /#left-panel -->
-    <!-- Right Panel -->
     <div id="right-panel" class="right-panel">
-        <!-- Header-->
         <header id="header" class="header">
             <div class="top-left">
                 <div class="navbar-header">
@@ -330,7 +109,7 @@
                             <form class="search-form">
                                 <input id="caracteres" class="form-control mr-sm-2" type="text" placeholder="Buscar tercero..." onkeyup="buscar(this.value)" aria-label="Search">
                                 <button class="search-close" type="submit"><i class="fa fa-close"></i></button>
-                                 <div class="dropdown-menu div_busqueda" id="div_busqueda">
+                                 <div class="dropdown-menu dropdown-menu-util" id="div_busqueda">
                                 </div>
                             </form>
                             
@@ -339,7 +118,6 @@
                         <div class="dropdown for-notification">
                             <button class="btn dropdown-toggle" type="button" id="notification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fa fa-bell"></i>
-                               <!-- <span class="count bg-danger">3</span> -->
                             </button>
                             <div class="dropdown-menu" aria-labelledby="notification">
                                 <p class="red">No tienes notificaciones</p>
@@ -367,8 +145,11 @@
                         </div>
 
                         <div class="dropdown for-notification">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="caja" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button class="btn btn-secondary dropdown-toggle open-box" type="button" id="caja" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fa fa-money"></i> <b>Abrir caja</b>                               
+                            </button>
+                            <button class="btn btn-secondary dropdown-toggle open-box-movil" type="button" id="caja" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-money"></i> <b style="font-size: 10px;">Abrir caja</b>                              
                             </button>
                         </div>
 
@@ -382,26 +163,19 @@
                         <div class="user-menu dropdown-menu">
                             <a class="nav-link" href="#"><i class="fa fa-user"></i>Configuracion de cuenta</a>
 
-                            <a class="nav-link" href="{{ route('logout') }}"><i class="fa fa-power -off"></i>Cerrar sesion</a>
+                            <a class="nav-link" href="{{ route('logout') }}"><i class="fa fa-power-off"></i>Cerrar sesion</a>
                         </div>
                     </div>
 
                 </div>
             </div>
         </header>
-        <!-- /#header -->
-        <!-- Content -->
         <div class="content">
-            <!-- Animated -->
             <div class="animated fadeIn">
                  @yield('content','')
-            <!-- /#add-category -->
             </div>
-            <!-- .animated -->
         </div>
-        <!-- /.content -->
         <div class="clearfix"></div>
-        <!-- Footer -->
         <footer class="site-footer">
             <div class="footer-inner bg-white">
                 <div class="row">
@@ -414,15 +188,9 @@
                 </div>
             </div>
         </footer>
-        <!-- /.site-footer -->
     </div>
-    <!-- /#right-panel -->
-
-    <!-- Scripts -->
-     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-
-    
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <script src="{{ asset('plantilla/assets/js/lib/chosen/chosen.jquery.min.js') }}"></script>
 

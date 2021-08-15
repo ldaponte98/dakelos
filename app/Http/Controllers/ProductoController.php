@@ -37,6 +37,7 @@ class ProductoController extends Controller
         $producto->contenido               = 1;
         $producto->cantidad_actual         = 0;
         $producto->cantidad_minimo_alerta  = 0;
+        $producto->alerta                  = 0;
         $categorias                        = [];
         if ($id_producto != null) {
             $producto   = Producto::find($id_producto);
@@ -55,16 +56,21 @@ class ProductoController extends Controller
             if (isset($post->descontado)) {
                 $producto->descontado = 1;
             } else {
-                $producto->contenido              = 1;
-                $producto->cantidad_actual        = 0;
-                $producto->cantidad_minimo_alerta = 0;
-                $producto->descontado             = 0;
+                $producto->contenido       = 1;
+                $producto->cantidad_actual = 0;
+                $producto->descontado      = 0;
             }
 
             if (isset($post->descontado_ingredientes)) {
                 $producto->descontado_ingredientes = 1;
             } else {
                 $producto->descontado_ingredientes = 0;
+            }
+
+            if (isset($post->alerta)) {
+                $producto->alerta = 1;
+            } else {
+                $producto->alerta = 0;
             }
 
             if (isset($post->categorias) or $producto->id_dominio_tipo_producto != 36) {

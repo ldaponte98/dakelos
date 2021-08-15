@@ -47,6 +47,8 @@ Route::any('categoria/administrar', 'CategoriaController@administrar')->name('ca
 Route::any('categoria/crear', 'CategoriaController@guardar')->name('categoria/crear');
 Route::any('categoria/editar/{id_producto}', 'CategoriaController@guardar')->name('categoria/editar');
 
+Route::any('inventario/movimientos', 'InventarioController@administrar')->name('inventario/movimientos');
+
 Route::any('reportes/facturas', 'ReporteController@facturas')->name('producto/buscar');
 Route::get('factura_email', function () {
     return view('email.factura');
