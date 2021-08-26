@@ -42,6 +42,7 @@
                                         <thead>
                                             <tr>
                                                 <th class="serial"><center><i class="fa fa-user"></i></center></th>
+                                                <th><center><b>Tipo</b></center></th>
                                                 <th><center><b>Tercero</b></center></th>
                                                 <th><center><b>Identificación</b></center></th>
                                                 <th><center><b>Email</b></center></th>
@@ -57,6 +58,7 @@
                                             @foreach($terceros as $tercero)
                                             <tr>
                                                 <td><center><img class="rounded-circle" src="{{ $tercero->get_imagen() }}" width="45" height="45" alt="tercero"></center></td>
+                                                <td><center>{{ $tercero->tipo->nombre }}</center></td>
                                                 <td><center>{{ $tercero->nombre_completo() }}</center></td>
                                                 <td><center>{{ $tercero->identificacion }}</center></td>
                                                 <td><center>{{ $tercero->email }}</center></td>

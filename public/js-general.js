@@ -7,6 +7,7 @@ $(document).ready(function() {
         }).show();
     })
 });
+const format = (number) => new Intl.NumberFormat("de-DE").format(number)
 
 function setFiltro(id_input_filtro, id_tabla) {
     $(`#${id_input_filtro}`).keyup(function() {

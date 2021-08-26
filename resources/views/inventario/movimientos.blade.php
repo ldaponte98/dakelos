@@ -1,11 +1,11 @@
- @extends('layout.main')
+@extends('layout.main')
 @section('menu')
     <div class="fab-container">
         <div class="fab fab-icon-holder">
             <i class="fa fa-bars"></i>
         </div>
         <ul class="fab-options">
-            <li onclick="location.href = '{{ config('global.url_base') }}/movimiento/crear'">
+            <li onclick="location.href = '{{ config('global.url_base') }}/inventario/crear'">
                 <span class="fab-label">Nuevo movimiento de inventario</span>
                 <div class="fab-icon-holder">
                     <i class="ti-plus"></i>
@@ -62,7 +62,7 @@
                                             <td><center>{{ $item->estado == 1 ? "Activa" : "Anulada" }}</center></td>
                                             <td>
                                                 <center>
-                                                    <a href="{{ route('tercero/view', $item->id_inventario) }}">Ver</a>
+                                                    <a href="{{ route('inventario/vista', $item->id_inventario) }}">Ver</a>
                                                 </center>
                                             </td>
                                         </tr>
@@ -70,7 +70,6 @@
                                         @endforeach
                                     </tbody>
                                 </table>
-                                {{ $inventarios->links() }}
                             </div> 
                         </div>
                     </div>

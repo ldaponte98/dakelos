@@ -48,6 +48,8 @@ Route::any('categoria/crear', 'CategoriaController@guardar')->name('categoria/cr
 Route::any('categoria/editar/{id_producto}', 'CategoriaController@guardar')->name('categoria/editar');
 
 Route::any('inventario/movimientos', 'InventarioController@administrar')->name('inventario/movimientos');
+Route::any('inventario/crear', 'InventarioController@guardar')->name('inventario/crear');
+Route::any('inventario/vista/{id_inventario}', 'InventarioController@vista')->name('inventario/vista');
 
 Route::any('reportes/facturas', 'ReporteController@facturas')->name('producto/buscar');
 Route::get('factura_email', function () {

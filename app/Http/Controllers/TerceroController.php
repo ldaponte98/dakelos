@@ -29,6 +29,9 @@ class TerceroController extends Controller
             $post = (object) $post;
             $tercero->fill($request->except(['_token', 'imagen']));
 
+            if ($tercero->identificacion == null or $tercero->identificacion == "") {
+                $tercero->identificacion = date('YmdHis') . rand(1000, 9999);
+            }
             $tercero_identificacion = Tercero::where('identificacion', $post->identificacion)
                 ->where('id_licencia', session('id_licencia'))
                 ->where('id_tercero', '<>', $id_tercero)

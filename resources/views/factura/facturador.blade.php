@@ -123,6 +123,21 @@
     </div>
 
     <div class="col-sm-4">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <select id="select-producto" onchange="ValidarCanal(this.value)" data-placeholder="Selecciona un canal" class="form-control select2">
+                        <option value="" label="default"></option>
+                        @php
+                            $items = \App\Dominio::all()->where('id_padre', 44);
+                        @endphp
+                        @foreach($items as $item)
+                            <option value="{{ $item->id_dominio }}">{{ strtoupper($item->nombre) }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+        </div>
     	<div class="card">
             <div class="card-header">
                 <i class="fa fa-shopping-basket"></i><strong class="card-title pl-2">Factura de venta</strong>
@@ -426,6 +441,10 @@
         }
     }
 
+    function ValidarCanal(id_dominio_canal) {
+        // body...
+    }
+
     function Guardar() {
         this.factura.observaciones = $("#factura-observaciones").val()
         if (this.factura.detalles.length == 0) {
@@ -436,7 +455,7 @@
         console.log("bien")
     }
 
-    const format = (number) => new Intl.NumberFormat("de-DE").format(number)
+    
     
 </script>
 <script src="{{ asset('scroll-tabs/jquery.scrolling-tabs.js') }}"></script>
