@@ -50,7 +50,7 @@ function buscar(caracteres) {
 function Loading(show = true, message = "Por favor espere...") {
     if (show) {
         $.blockUI({
-            message: `<i class="fa fa-spinner mt-3 fa-spin fa-5x fa-fw" style="color: #23558a;"></i><h1><b>${message}</b></h1>`,
+            message: `<i class="fa fa-spinner mt-3 fa-spin fa-5x fa-fw" style="color: #ffffff;"></i><h1><b>${message}</b></h1>`,
             css: {
                 border: 'none',
                 padding: '70px 5px 30px 5px',
@@ -58,7 +58,7 @@ function Loading(show = true, message = "Por favor espere...") {
                 '-webkit-border-radius': '10px',
                 '-moz-border-radius': '10px',
                 opacity: 1,
-                color: '#23558a'
+                color: '#ffffff'
             }
         });
     } else {

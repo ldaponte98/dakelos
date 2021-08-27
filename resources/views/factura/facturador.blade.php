@@ -4,9 +4,29 @@
 @extends('layout.main')
 @section('menu')
     <div class="fab-container">
-        <div class="fab fab-icon-holder" style="background: #23558a;" onclick="Guardar()">
-            <i class="fa fa-floppy-o"></i>
+        <div class="fab fab-icon-holder">
+            <i class="fa fa-bars"></i>
         </div>
+        <ul class="fab-options">
+            <li onclick="Guardar(0)" id="permiso-guardar">
+                <span class="fab-label">Guardar</span>
+                <div class="fab-icon-holder">
+                    <i class="ti-save"></i>
+                </div>
+            </li>
+            <li onclick="Guardar(1)" id="permiso-guardar-finalizar">
+                <span class="fab-label">Guardar y finalizar</span>
+                <div class="fab-icon-holder">
+                    <i class="ti-shopping-cart"></i>
+                </div>
+            </li>
+            <li onclick="Imprimir()" id="permiso-imprimir">
+                <span class="fab-label">Imprimir</span>
+                <div class="fab-icon-holder">
+                    <i class="ti-printer"></i>
+                </div>
+            </li>
+        </ul>
     </div>
 @endsection
 @section('content')
@@ -17,6 +37,9 @@
 	.d-flex{
 		align-items: center;
 	}
+    .hide{
+        display: none !important;
+    }
 	.lb-flex{
 		width: 100%;
 		margin-bottom: 0px;
@@ -51,6 +74,9 @@
     .btn-erase{
         background: transparent;
         margin-bottom: 7px;
+    }
+    .chosen-container{
+        width: 107% !important;
     }
 </style>
 <div class="row">
@@ -126,13 +152,23 @@
         <div class="row">
             <div class="col-sm-6">
                 <div class="form-group">
-                    <select id="select-producto" onchange="ValidarCanal(this.value)" data-placeholder="Selecciona un canal" class="form-control select2">
+                    <select id="select-canal" onchange="ValidarCanal(this.value)" data-placeholder="Selecciona un canal" class="form-control select2">
                         <option value="" label="default"></option>
                         @php
                             $items = \App\Dominio::all()->where('id_padre', 44);
                         @endphp
                         @foreach($items as $item)
                             <option value="{{ $item->id_dominio }}">{{ strtoupper($item->nombre) }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-6" id="div-mesas" style="display: none;">
+                <div class="form-group">
+                    <select id="select-mesa" onchange="AsignarMesa(this.value)" data-placeholder="Seleccione la mesa" class="form-control select2">
+                        <option value="" label="default"></option>
+                        @foreach($mesas as $item)
+                            <option value="{{ $item->id_mesa }}">{{ strtoupper($item->numero) }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -175,8 +211,22 @@
                 </div>
                 <br>
                 <div class="form-group d-flex">
+                    <label class="lb-flex">Formas de pago</label>
+                    <select id="factura-formas-pago" data-placeholder="Escoje una o mas..." multiple class="standardSelect form-control">
+                        <option value="" label="default"></option>
+                        @foreach($formas_pago as $item)
+                            <option @if(in_array($item->id_dominio, $formas_pago_selected)) selected @endif 
+                                value="{{ $item->id_dominio }}">{{ $item->nombre }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group d-flex">
                 	<label class="lb-flex">Subtotal</label>
                 	<input type="text" id="factura-subtotal" disabled placeholder="0" class="form-control">
+                </div>
+                <div class="form-group d-flex hide" id="div-domicilio">
+                    <label class="lb-flex"><span class="green"><b>+</b></span> Domicilio ($)</label>
+                    <input onkeyup="ValidarDescuentoServicio()" type="number" id="factura-domicilio" placeholder="0" class="form-control">
                 </div>
                 <div class="form-group d-flex">
                 	<label class="lb-flex"><span class="green"><b>+</b></span> Servicio Voluntario ($)</label>
@@ -186,10 +236,12 @@
                 	<label class="lb-flex"><span class="red"><b>-</b></span> Descuento ($)</label>
                 	<input onkeyup="ValidarDescuentoServicio()" type="number" id="factura-descuento" placeholder="0" class="form-control">
                 </div>
+                
                 <div class="form-group d-flex">
                 	<label class="lb-flex"><b>Total</b></label>
                 	<input type="text" id="factura-total" disabled placeholder="0" class="form-control">
                 </div>
+
                 <div class="form-group">
                 	<label>Observaciones</label>
                 	<textarea id="factura-observaciones" class="form-control" rows="3"></textarea>
@@ -237,26 +289,34 @@
         </div>
     </div>
 </div>
+@csrf
 <script>
 	$(document).ready(()=>{
 		 $('.nav-pills').scrollingTabs()
 		 $('body').addClass("open")
          LlenarProductos()
+         ValidarPermisosFactura()
          //$("#div-busqueda-productos").fadeIn()
 	})
 
     var productos = []
 	var factura = {
+        id_factura: null,
 		cliente: {
 			nombre: null,
 			telefono: null,
 			identificacion: null 
 		},
+        id_dominio_canal : null,
+        id_mesa : null,
+        domicilio : 0,
         observaciones : "",
         detalles : [],
+        formas_pago : null,
         servicio_voluntario: 0,
         descuentos: 0,
-        total: 0		
+        total: 0,
+        finalizada : 0		
 	}
 
     function LlenarProductos() {
@@ -312,10 +372,13 @@
     function ValidarDescuentoServicio() {
         let descuento = $("#factura-descuento").val()
         let servicio  = $("#factura-servicio-voluntario").val()
+        let domicilio  = $("#factura-domicilio").val()
         this.factura.descuentos = 0
         this.factura.servicio_voluntario = 0
+        this.factura.domicilio = 0
         if ($.isNumeric(descuento))this.factura.descuentos = parseFloat(descuento)
         if ($.isNumeric(servicio)) this.factura.servicio_voluntario = parseFloat(servicio)
+        if ($.isNumeric(domicilio)) this.factura.domicilio = parseFloat(domicilio)
             this.ActualizarVistaPedido()
     }
 
@@ -386,6 +449,9 @@
         if ($.isNumeric(servicio)) total += parseFloat(servicio)
         let descuentos = $("#factura-descuento").val()
         if ($.isNumeric(descuentos)) total -= parseFloat(descuentos)
+
+        let domicilio = $("#factura-domicilio").val()
+        if ($.isNumeric(domicilio) && this.factura.id_dominio_canal == {{ App\Dominio::get('Domicilio') }}) total += parseFloat(domicilio)
         $("#factura-total").val("$" + format(total))
         this.factura.total = parseFloat(total)
 	}
@@ -442,19 +508,107 @@
     }
 
     function ValidarCanal(id_dominio_canal) {
-        // body...
+        this.factura.id_dominio_canal = id_dominio_canal
+
+        $("#factura-domicilio").val("")
+        if (id_dominio_canal == {{ App\Dominio::get('Mesa') }}) {
+            $("#div-mesas").fadeIn()
+            $("#div-domicilio").addClass('hide')
+            this.factura.domicilio = 0
+        }
+
+        if (id_dominio_canal == {{ App\Dominio::get('Domicilio') }}) {
+            $("#div-mesas").fadeOut()
+            $("#div-domicilio").removeClass('hide')
+        }
+
+        if (id_dominio_canal == {{ App\Dominio::get('No definido') }}) {
+            $("#div-mesas").fadeOut()
+            $("#div-domicilio").addClass('hide')
+            this.factura.domicilio = 0
+        }
+        this.ActualizarVistaPedido()
     }
 
-    function Guardar() {
+    function AsignarMesa(id_mesa) {
+        this.factura.id_mesa = id_mesa;
+    }
+
+    function ValidarPermisosFactura() {
+        if (this.factura.finalizada == 1) {
+            $("#permiso-guardar").fadeOut()
+            $("#permiso-guardar-finalizar").fadeOut()
+            $("#permiso-imprimir").fadeIn()
+        }
+
+        if (this.factura.finalizada == 0) {
+            $("#permiso-guardar").fadeIn()
+            $("#permiso-guardar-finalizar").fadeIn()
+
+            if (this.factura.id_factura != null) {
+                $("#permiso-imprimir").fadeIn()
+            }else{
+                $("#permiso-imprimir").fadeOut()
+            }
+        }
+    }
+
+    function Guardar(finalizada) {
+        this.factura.finalizada = finalizada
         this.factura.observaciones = $("#factura-observaciones").val()
+        this.factura.formas_pago = $("#factura-formas-pago").val()
+
         if (this.factura.detalles.length == 0) {
             toastr.error("Es necesario escoger por lo menos un producto para el pedido", "Error")
             return;
         }
+
+        if (this.factura.formas_pago == null) {
+            toastr.error("Es necesario escoger por lo menos una forma de pago para el pedido", "Error")
+            return;
+        }
+
+        if (this.factura.id_dominio_canal == null) {
+            toastr.error("Es necesario escoger el canal de venta para el pedido", "Error")
+            return;
+        }
+
+        if (this.factura.id_dominio_canal == {{ App\Dominio::get('Mesa') }} && this.factura.id_mesa == null) {
+            toastr.error("Es necesario escoger el numero de mesa para el pedido", "Error")
+            return;
+        }
+
         Loading(true, "Guardando factura...")
+
+        let url = "{{ route('factura/finalizar_factura_facturador') }}"
+        var _token = ""
+        $("[name='_token']").each(function() { _token = this.value })
+        let request = {
+            '_token' : _token,
+            'factura' : this.factura
+        }
+        $.post(url, request, (response) => {
+            Loading(false)
+            if (!response.error) {
+                this.factura.id_factura = response.id_factura
+                toastr.success(response.mensaje, "Proceso exitoso")
+                this.ValidarPermisosFactura()
+            }else{
+                toastr.error(response.mensaje, "Error")
+            }
+            console.log(response)
+        })
+        .fail((error) => {
+            Loading(false)
+            console.log(error)
+            toastr.error("Ha ocurrido un error, por favor intentelo nuevamente", "Error")
+        })
         console.log("bien")
     }
 
+    function Imprimir() {
+        // body...
+    }
     
     
 </script>

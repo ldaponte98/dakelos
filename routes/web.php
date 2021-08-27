@@ -36,6 +36,7 @@ Route::any('factura/finalizar_factura', 'FacturaController@finalizar_factura')->
 Route::any('factura/imprimir/{id_factura}', 'FacturaController@imprimir')->name('factura/imprimir');
 
 Route::any('factura/facturador', 'FacturaController@facturador')->name('factura/facturador');
+Route::post('factura/finalizar_factura_facturador', 'FacturaController@finalizar_factura_facturador')->name('factura/finalizar_factura_facturador');
 
 Route::any('producto/buscar/{id_producto}', 'ProductoController@buscar')->name('producto/buscar');
 Route::any('producto/administrar', 'ProductoController@administrar')->name('producto/administrar');
