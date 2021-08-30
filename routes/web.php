@@ -38,6 +38,8 @@ Route::any('factura/imprimir/{id_factura}', 'FacturaController@imprimir')->name(
 Route::any('factura/facturador', 'FacturaController@facturador')->name('factura/facturador');
 Route::post('factura/finalizar_factura_facturador', 'FacturaController@finalizar_factura_facturador')->name('factura/finalizar_factura_facturador');
 
+Route::any('canales_servicio', 'FacturaController@canales_servicio')->name('canales_servicio');
+
 Route::any('producto/buscar/{id_producto}', 'ProductoController@buscar')->name('producto/buscar');
 Route::any('producto/administrar', 'ProductoController@administrar')->name('producto/administrar');
 Route::any('producto/crear', 'ProductoController@guardar')->name('producto/crear');

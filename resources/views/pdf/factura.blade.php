@@ -1,6 +1,6 @@
 ﻿<!DOCTYPE html>
 @php
-	$factura = \App\Factura::find(61);
+	//$factura = \App\Factura::find(61);
 @endphp
 <html>
 <head>
@@ -135,10 +135,10 @@
 	</tr>
 	<tr>
 		<td colspan="5"><b>CC o Nit: </b>{{ $factura->tercero->identificacion }}</td>
-		<td colspan="5"><b>Telefono: </b>{{ $factura->tercero->telefono }}</td>
+		<td colspan="5"><b>Telefono: </b>{{ $factura->tercero->telefono ? $factura->tercero->telefono : "No definido" }}</td>
 	</tr>
 	<tr>
-		<td colspan="10"><b>Direccion: </b>{{ $factura->tercero->direccion }}</td>
+		<td colspan="10"><b>Direccion: </b>{{ $factura->tercero->direccion ? $factura->tercero->direccion : "No definida" }}</td>
 	</tr>
 	<tr>
 		<td colspan="10" style="border-top: none;">&nbsp;</td>
@@ -166,16 +166,16 @@
 					$valor_producto = $detalle->precio_producto;
 				}
 			$total_iva += $valor_iva;
-			$subtotal += $valor_producto - $detalle->descuento_producto;
+			$subtotal += ($valor_producto * $detalle->cantidad) - $detalle->descuento_producto;
 	@endphp
 	<tr>
 		<td><center>{{ $cont }}</center></td>
-		<td colspan="2">{{ $detalle->descripcion_producto }}</td>
-		<td>1</td>
-		<td colspan="2">${{ number_format($valor_producto, 0, '.','.') }}</td>
-		<td>${{ number_format($valor_iva, 0, '.','.') }}</td>
-		<td>${{ number_format($detalle->descuento_producto, 0, '.','.') }}</td>
-		<td colspan="2">${{ number_format($valor_producto + $valor_iva - $detalle->descuento_producto, 0, '.','.') }}</td>
+		<td colspan="2">{{ $detalle->nombre_producto }}</td>
+		<td><center>{{ $detalle->cantidad }}</center></td>
+		<td colspan="2">${{ number_format($valor_producto , 0, '.','.') }}</td>
+		<td style="text-align: right; padding-right: 5px;">${{ number_format($valor_iva, 0, '.','.') }}</td>
+		<td style="text-align: right; padding-right: 5px;">${{ number_format($detalle->descuento_producto, 0, '.','.') }}</td>
+		<td style="text-align: right; padding-right: 5px;" colspan="2">${{ number_format(($valor_producto * $detalle->cantidad) + $valor_iva - $detalle->descuento_producto, 0, '.','.') }}</td>
 	</tr>
 	@php $cont++; @endphp
 	@endforeach
@@ -183,10 +183,30 @@
 		<td colspan="7" style="border-bottom: none;"><center></center></td>
 		<td colspan="3" style="background-color: #BFBFBF; "><b>SUBTOTAL: </b>${{ number_format($subtotal, 0, '.','.') }}</td>
 	</tr>
+	@if ($factura->servicio_voluntario > 0)
+		<tr>
+			<td colspan="7" style="border-bottom: none;  border-top: none;">&nbsp;</td>
+			<td colspan="3" style="border-bottom: none; background-color: #BFBFBF;"><b>S. VOLUNTARIO: </b>${{ number_format($factura->servicio_voluntario, 0, '.','.') }}</td>
+		</tr>
+	@endif
+	@if ($factura->domicilio > 0)
+		<tr>
+			<td colspan="7" style="border-bottom: none;  border-top: none;">&nbsp;</td>
+			<td colspan="3" style="border-bottom: none; background-color: #BFBFBF;"><b>DOMICILIO: </b>${{ number_format($factura->domicilio, 0, '.','.') }}</td>
+		</tr>
+	@endif
 	<tr>
 		<td colspan="7" style="border-bottom: none; border-top: none; border-bottom: none; font-size:8px;"><center>Formulario dian 18762013422870 de 2019/03/12 habilitada del 00001 al 1000.<br>Esta factura se asimila en todos sus efectos legales a una letra de Cambio según art.774 del Código de Comercio.</center></td>
 		<td colspan="3" style="border-bottom: none; background-color: #BFBFBF;"><b>IVA: </b>${{ number_format($total_iva, 0, '.','.') }}</td>
+
 	</tr>
+	@if ($factura->descuento > 0)
+		<tr>
+			<td colspan="7" style="border-bottom: none;  border-top: none;">&nbsp;</td>
+			<td colspan="3" style="border-bottom: none; background-color: #BFBFBF;"><b>DESCUENTO: </b>${{ number_format($factura->descuento, 0, '.','.') }}</td>
+		</tr>
+	@endif
+	
 	<tr>
 		<td colspan="7" style="border-bottom: none;  border-top: none;">&nbsp;</td>
 		<td colspan="3" style="border-bottom: none; background-color: #BFBFBF;"><b>TOTAL: </b>${{ number_format($factura->valor, 0, '.','.') }}</td>

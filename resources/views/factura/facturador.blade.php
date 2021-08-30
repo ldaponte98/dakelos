@@ -154,10 +154,7 @@
                 <div class="form-group">
                     <select id="select-canal" onchange="ValidarCanal(this.value)" data-placeholder="Selecciona un canal" class="form-control select2">
                         <option value="" label="default"></option>
-                        @php
-                            $items = \App\Dominio::all()->where('id_padre', 44);
-                        @endphp
-                        @foreach($items as $item)
+                        @foreach($canales as $item)
                             <option value="{{ $item->id_dominio }}">{{ strtoupper($item->nombre) }}</option>
                         @endforeach
                     </select>
@@ -292,10 +289,11 @@
 @csrf
 <script>
 	$(document).ready(()=>{
-		 $('.nav-pills').scrollingTabs()
+		 
 		 $('body').addClass("open")
          LlenarProductos()
          ValidarPermisosFactura()
+         LLenarDatosFactura()
          //$("#div-busqueda-productos").fadeIn()
 	})
 
@@ -314,7 +312,7 @@
         detalles : [],
         formas_pago : null,
         servicio_voluntario: 0,
-        descuentos: 0,
+        descuento: 0,
         total: 0,
         finalizada : 0		
 	}
@@ -373,10 +371,10 @@
         let descuento = $("#factura-descuento").val()
         let servicio  = $("#factura-servicio-voluntario").val()
         let domicilio  = $("#factura-domicilio").val()
-        this.factura.descuentos = 0
+        this.factura.descuento = 0
         this.factura.servicio_voluntario = 0
         this.factura.domicilio = 0
-        if ($.isNumeric(descuento))this.factura.descuentos = parseFloat(descuento)
+        if ($.isNumeric(descuento))this.factura.descuento = parseFloat(descuento)
         if ($.isNumeric(servicio)) this.factura.servicio_voluntario = parseFloat(servicio)
         if ($.isNumeric(domicilio)) this.factura.domicilio = parseFloat(domicilio)
             this.ActualizarVistaPedido()
@@ -394,11 +392,9 @@
 		if ($("#modal-cliente-nombre").val().trim() != "") 
 			this.factura.cliente.nombre = $("#modal-cliente-nombre").val()
 
-		if ($("#modal-cliente-telefono").val().trim() != "") 
-			this.factura.cliente.telefono = $("#modal-cliente-telefono").val()
+		this.factura.cliente.telefono = $("#modal-cliente-telefono").val()
 
-		if ($("#modal-cliente-identificacion").val().trim() != "") 
-			this.factura.cliente.identificacion = $("#modal-cliente-identificacion").val()
+		this.factura.cliente.identificacion = $("#modal-cliente-identificacion").val()
 
 		this.ActualizarVistaPedido()
 	}
@@ -447,8 +443,8 @@
         total += sub_total
         let servicio = $("#factura-servicio-voluntario").val()
         if ($.isNumeric(servicio)) total += parseFloat(servicio)
-        let descuentos = $("#factura-descuento").val()
-        if ($.isNumeric(descuentos)) total -= parseFloat(descuentos)
+        let descuento = $("#factura-descuento").val()
+        if ($.isNumeric(descuento)) total -= parseFloat(descuento)
 
         let domicilio = $("#factura-domicilio").val()
         if ($.isNumeric(domicilio) && this.factura.id_dominio_canal == {{ App\Dominio::get('Domicilio') }}) total += parseFloat(domicilio)
@@ -522,9 +518,9 @@
             $("#div-domicilio").removeClass('hide')
         }
 
-        if (id_dominio_canal == {{ App\Dominio::get('No definido') }}) {
+        if (id_dominio_canal != {{ App\Dominio::get('Mesa') }} && id_dominio_canal != {{ App\Dominio::get('Domicilio') }}) {
             $("#div-mesas").fadeOut()
-            $("#div-domicilio").addClass('hide')
+            $("#div-domicilio").removeClass('hide')
             this.factura.domicilio = 0
         }
         this.ActualizarVistaPedido()
@@ -608,6 +604,63 @@
 
     function Imprimir() {
         // body...
+    }
+
+    function LLenarDatosFactura() {
+        @if ($factura)
+            Loading(true, "Datos de la factura...")
+            this.factura.id_factura = {{ $factura->id_factura }}
+            this.factura.cliente.nombre = "{{ $factura->tercero->nombres }}"
+            this.factura.cliente.identificacion = "{{ $factura->tercero->identificacion }}"
+            this.factura.cliente.telefono = "{{ $factura->tercero->telefono }}"
+            this.factura.descuento = {{ $factura->descuento }}
+            this.factura.domicilio = {{ $factura->domicilio }}
+            this.factura.servicio_voluntario = {{ $factura->servicio_voluntario }}
+            
+            this.factura.finalizada = {{ $factura->finalizada }}
+            this.factura.observaciones = "{{ $factura->observaciones }}"
+            $("#factura-observaciones").val(this.factura.observaciones)
+            this.factura.id_dominio_canal = {{ $factura->id_dominio_canal }}
+            $('#select-canal').val(this.factura.id_dominio_canal).prop('selected', true);
+            this.ValidarCanal(this.factura.id_dominio_canal)
+            @if ($factura->id_mesa)
+                this.factura.id_mesa = {{ $factura->id_mesa }}
+                $('#select-mesa').val(this.factura.id_mesa).prop('selected', true);
+            @endif
+            $("#factura-servicio-voluntario").val(this.factura.servicio_voluntario)
+            $("#factura-domicilio").val(this.factura.domicilio)
+            $("#factura-descuento").val(this.factura.descuento)
+            //DETALLES DE LA FACTURA
+            @foreach ($factura->detalles as $detalle)
+                this.factura.detalles.push({
+                    'id_producto' : {{ $detalle->id_producto }},
+                    'nombre' : "{{ $detalle->nombre_producto }}",
+                    'precio_venta' : {{ $detalle->precio_producto }},
+                    'presentacion' : "{{ $detalle->presentacion_producto }}",
+                    'cantidad' : {{ $detalle->cantidad }}
+                })
+            @endforeach
+            this.ValidarPermisosFactura()
+            this.ActualizarVistaPedido()
+            Loading(false)
+        @endif
+
+        @if ($id_mesa)
+            this.factura.id_dominio_canal = {{ App\Dominio::get('Mesa') }}
+            $('#select-canal').val(this.factura.id_dominio_canal).prop('selected', true);
+            this.factura.id_mesa = {{ $id_mesa }}
+            $('#select-mesa').val(this.factura.id_mesa).prop('selected', true);
+            $('#select-mesa').prop('disabled', true)
+            $('#select-canal').prop('disabled', true)
+            this.ValidarCanal(this.factura.id_dominio_canal)
+        @endif
+
+        @if ($canal != null)
+            this.factura.id_dominio_canal = {{ $canal }}
+            $('#select-canal').val(this.factura.id_dominio_canal).prop('selected', true);
+            $('#select-canal').prop('disabled', true)
+            this.ValidarCanal(this.factura.id_dominio_canal)
+        @endif
     }
     
     

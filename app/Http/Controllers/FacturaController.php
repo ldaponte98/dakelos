@@ -152,6 +152,27 @@ class FacturaController extends Controller
         return $pdf->stream($factura->tipo->nombre . ' ' . $factura->licencia->nombre . '.pdf');
     }
 
+    public function canales_servicio()
+    {
+        $fecha   = date('Y-m-d');
+        $canales = Dominio::get_canales(session('id_licencia'));
+
+        $mesas = Mesa::where('estado', 1)
+            ->where('id_licencia', session('id_licencia'))
+            ->orderBy('numero', 'asc')
+            ->get();
+
+        $facturas = Factura::where('id_licencia', session('id_licencia'))
+            ->where('estado', 1)
+            ->where('id_dominio_tipo_factura', 16)
+            ->where('finalizada', 0)
+            ->get();
+
+        return view("factura.canales_servicio", compact([
+            'canales', 'mesas', 'facturas',
+        ]));
+    }
+
     public function facturador(Request $request)
     {
         $categorias = Categoria::where('estado', 1)
@@ -164,7 +185,7 @@ class FacturaController extends Controller
             ->orderBy('nombre', 'desc')
             ->get();
 
-        $mesas = Mesa::where('estado', 1)
+        $_mesas = Mesa::where('estado', 1)
             ->where('id_licencia', session('id_licencia'))
             ->orderBy('numero', 'asc')
             ->get();
@@ -172,10 +193,41 @@ class FacturaController extends Controller
         $formas_pago = Dominio::where('id_padre', 19)
             ->get();
 
+        $canales = Dominio::get_canales(session('id_licencia'));
+
+        $mesas = [];
+        foreach ($_mesas as $mesa) {
+            if (!$mesa->ocupada()) {
+                $mesas[] = $mesa;
+            }
+        }
+
         $formas_pago_selected = [20];
+        $post                 = $request->all();
+        $factura              = null;
+        $id_mesa              = null;
+        $canal                = null;
+        if ($post) {
+            $post = (object) $post;
+            if (isset($post->factura)) {
+                $factura = Factura::find($post->factura);
+                if ($factura->id_mesa) {
+                    $mesas[] = $factura->mesa;
+                }
+                $formas_pago_selected = $factura->get_formas_pago();
+            }
+
+            if (isset($post->mesa)) {
+                $id_mesa = $post->mesa;
+            }
+            if (isset($post->canal)) {
+                $canal = $post->canal;
+            }
+        }
+        sort($mesas);
         return view("factura.facturador", compact([
             'categorias', 'productos', 'mesas', 'formas_pago',
-            'formas_pago_selected',
+            'formas_pago_selected', 'factura', 'id_mesa', 'canal', 'canales',
         ]));
     }
 
@@ -200,6 +252,7 @@ class FacturaController extends Controller
                 $cliente                          = $this->guardar_cliente_factura($post);
                 $factura->id_tercero              = $cliente->id_tercero;
                 $factura->valor                   = $post->factura->total;
+                $factura->descuento               = $post->factura->descuento;
                 $factura->id_dominio_tipo_factura = 16;
                 $factura->servicio_voluntario     = $post->factura->servicio_voluntario;
                 $factura->observaciones           = $post->factura->observaciones;
@@ -225,13 +278,14 @@ class FacturaController extends Controller
                     //ahora registramos los detalles de la factura
                     DB::statement('delete from factura_detalle where id_factura = ' . $factura->id_factura);
                     foreach ($post->factura->detalles as $producto) {
-                        $producto                 = (object) $producto;
-                        $detalle                  = new FacturaDetalle;
-                        $detalle->id_factura      = $factura->id_factura;
-                        $detalle->id_producto     = $producto->id_producto;
-                        $detalle->cantidad        = $producto->cantidad;
-                        $detalle->nombre_producto = $producto->nombre;
-                        $detalle->precio_producto = $producto->precio_venta;
+                        $producto                       = (object) $producto;
+                        $detalle                        = new FacturaDetalle;
+                        $detalle->id_factura            = $factura->id_factura;
+                        $detalle->id_producto           = $producto->id_producto;
+                        $detalle->cantidad              = $producto->cantidad;
+                        $detalle->nombre_producto       = $producto->nombre;
+                        $detalle->precio_producto       = $producto->precio_venta;
+                        $detalle->presentacion_producto = $producto->presentacion;
                         $detalle->save();
                     }
 

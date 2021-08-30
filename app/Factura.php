@@ -6,10 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Factura extends Model
 {
-    protected $table = 'factura';
+    protected $table      = 'factura';
     protected $primaryKey = 'id_factura';
-
-    
 
     public function licencia()
     {
@@ -31,12 +29,22 @@ class Factura extends Model
         return $this->belongsTo(Dominio::class, 'id_dominio_tipo_factura');
     }
 
+    public function mesa()
+    {
+        return $this->belongsTo(Mesa::class, 'id_mesa');
+    }
+
     public function detalles()
     {
         return $this->hasMany(FacturaDetalle::class, 'id_factura');
     }
 
-     public function get_estado()
+    public function formas_pago()
+    {
+        return $this->hasMany(FormaPago::class, 'id_factura');
+    }
+
+    public function get_estado()
     {
         switch ($this->estado) {
             case 1:
@@ -44,10 +52,19 @@ class Factura extends Model
 
             case 0:
                 return "Anulada";
-            
+
             default:
                 return "Indefinido";
                 break;
         }
+    }
+
+    public function get_formas_pago()
+    {
+        $items = [];
+        foreach ($this->formas_pago as $item) {
+            $items[] = $item->id_dominio_forma_pago;
+        }
+        return $items;
     }
 }

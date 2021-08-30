@@ -176,6 +176,29 @@
     max-width: none !important;
 }
 
+.bold-primary{
+    color: #23558a;
+    font-weight: bold;
+}
+
+.card-alert-info{
+    animation: animate 3s linear infinite;
+}
+@keyframes animate{
+    0%{
+        box-shadow: 0 0 0 0 rgba(35, 85, 138, .5), 0 0 0 0 rgba(35, 85, 138, .5);
+    }
+    40%{
+        box-shadow: 0 0 0 10px rgba(35, 85, 138, 0), 0 0 0 0 rgba(35, 85, 138, .5);
+    }
+    80%{
+        box-shadow: 0 0 0 10px rgba(35, 85, 138, 0), 0 0 0 10px rgba(35, 85, 138, 0);
+    }
+    100%{
+        box-shadow: 0 0 0 0 rgba(35, 85, 138, 0), 0 0 0 10px rgba(35, 85, 138, 0);
+    }
+}
+
 @media (max-width: 600px) {
     .open-box-movil {
         display: visible;
@@ -196,5 +219,8 @@
     .fab-container {
         top: 80px !important;
         right: 20px !important;
+    }
+    .card .card-header strong {
+        display: inline;
     }
 }
