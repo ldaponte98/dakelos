@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Mail;
 
 class Producto extends Model
 {
@@ -44,6 +45,15 @@ class Producto extends Model
     public function ingredientes()
     {
         return $this->hasMany(ProductoIngrediente::class, 'id_producto');
+    }
+
+    public function get_ingredientes()
+    {
+        $items = [];
+        foreach ($this->ingredientes as $item) {
+            $items[] = $item->ingrediente;
+        }
+        return $items;
     }
 
     public function get_imagen()
@@ -93,4 +103,39 @@ class Producto extends Model
         return $ids;
     }
 
+    public function descontar($cantidad = 1)
+    {
+        $this->cantidad_actual = $this->cantidad_actual - $cantidad;
+        if ($this->alerta == 1) {
+            if ($this->cantidad_actual <= $this->cantidad_minimo_alerta) {
+                $this->notificar_alerta_inventario();
+            }
+        }
+    }
+
+    public function notificar_alerta_inventario()
+    {
+        $subject = "Zorax - Aviso de inventario";
+
+        $emails = explode(",", $this->licencia->emails_reportes);
+
+        foreach ($emails as $email) {
+            $for  = str_replace(" ", "", $email);
+            $data = array(
+                'producto' => $this,
+            );
+            try {
+                Mail::send('email.alerta_inventario', $data, function ($msj) use ($subject, $for) {
+                    $msj->from(config('global.email_zorax'), "Zorax - Sistema de ventas");
+                    $msj->subject($subject);
+                    $msj->to($for);
+                });
+                $mensaje = "Envio exitoso";
+            } catch (Exception $e) {
+                $mensaje = "Error al enviar notificacion de inventario: " . $e->getMessage();
+            }
+
+            Log::write("Envio email de aviso de inventario", "Se envia email a [$for] con respuesta [$mensaje]");
+        }
+    }
 }

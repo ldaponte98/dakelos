@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\AuditoriaInventario;
 use App\Categoria;
 use App\Dominio;
 use App\Factura;
@@ -302,7 +303,7 @@ class FacturaController extends Controller
                     }
 
                     if ($factura->finalizada == 1) {
-                        $this->descontar_inventario_detalles($post->factura->detalles);
+                        $this->descontar_inventario_detalles($post->factura->detalles, $factura->id_factura);
                     }
 
                     $id_factura = $factura->id_factura;
@@ -388,10 +389,33 @@ class FacturaController extends Controller
         return $cliente;
     }
 
-    public function descontar_inventario_detalles($detalles)
+    public function descontar_inventario_detalles($detalles, $id_factura)
     {
         foreach ($detalles as $detalle) {
-            $detalle = (object) $detalle;
+            $detalle  = (object) $detalle;
+            $producto = Producto::find($detalle->id_producto);
+            //VALIDAMOS SI EL PRODUCTO ESTA HABILITADO PARA DESCONTARSE
+            if ($producto->descontado == 1) {
+                $producto->descontar($detalle->cantidad);
+                $producto->save();
+                AuditoriaInventario::write_descuento($id_factura, $producto->id_producto, $detalle->cantidad);
+            }
+
+            //VALIDAMOS SI EL PRODUCTO SERA DESCONTADO POR SUS INGREDIENTES
+            if ($producto->descontado_ingredientes == 1) {
+                foreach ($producto->ingredientes as $item) {
+                    $cantidad    = $item->cantidad;
+                    $ingrediente = $item->ingrediente;
+                    $ingrediente->descontar($cantidad);
+                    $ingrediente->save();
+                    AuditoriaInventario::write_descuento($id_factura, $ingrediente->id_producto, $cantidad);
+                }
+            }
         }
+    }
+
+    public function anular_factura(Request $request)
+    {
+
     }
 }

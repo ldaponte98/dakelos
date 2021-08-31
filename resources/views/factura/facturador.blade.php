@@ -447,7 +447,7 @@
         if ($.isNumeric(descuento)) total -= parseFloat(descuento)
 
         let domicilio = $("#factura-domicilio").val()
-        if ($.isNumeric(domicilio) && this.factura.id_dominio_canal == {{ App\Dominio::get('Domicilio') }}) total += parseFloat(domicilio)
+        if ($.isNumeric(domicilio) && this.factura.id_dominio_canal != {{ App\Dominio::get('Mesa') }}) total += parseFloat(domicilio)
         $("#factura-total").val("$" + format(total))
         this.factura.total = parseFloat(total)
 	}

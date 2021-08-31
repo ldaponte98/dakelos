@@ -223,4 +223,8 @@
     .card .card-header strong {
         display: inline;
     }
+    .scrtabs-tabs-fixed-container {
+        overflow: scroll !important;
+        overflow-y: hidden !important;
+    }
 }
