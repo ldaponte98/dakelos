@@ -184,6 +184,10 @@
 .card-alert-info{
     animation: animate 3s linear infinite;
 }
+
+.modal-header {
+    display: flex !important;
+}
 @keyframes animate{
     0%{
         box-shadow: 0 0 0 0 rgba(35, 85, 138, .5), 0 0 0 0 rgba(35, 85, 138, .5);

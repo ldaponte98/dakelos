@@ -31,9 +31,12 @@ Route::any('tercero/view/{id_tercero}', 'TerceroController@view')->name('tercero
 Route::any('tercero/buscar/{caracteres}', 'TerceroController@buscar')->name('tercero/buscar');
 
 Route::any('factura/crear', 'FacturaController@crear')->name('factura/crear');
+Route::post('factura/anular', 'FacturaController@anular')->name('factura/anular');
 Route::any('cotizacion/crear', 'FacturaController@crear')->name('factura/crear');
 Route::any('factura/finalizar_factura', 'FacturaController@finalizar_factura')->name('factura/finalizar_factura');
 Route::any('factura/imprimir/{id_factura}', 'FacturaController@imprimir')->name('factura/imprimir');
+Route::any('ticket/imprimir/comanda/{id_factura}', 'FacturaController@imprimir_ticket_comanda')->name('ticket/imprimir/comanda');
+Route::any('ticket/imprimir/factura/{id_factura}', 'FacturaController@imprimir_ticket_factura')->name('ticket/imprimir/factura');
 
 Route::any('factura/facturador', 'FacturaController@facturador')->name('factura/facturador');
 Route::post('factura/finalizar_factura_facturador', 'FacturaController@finalizar_factura_facturador')->name('factura/finalizar_factura_facturador');

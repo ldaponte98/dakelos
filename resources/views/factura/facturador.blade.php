@@ -20,10 +20,22 @@
                     <i class="ti-shopping-cart"></i>
                 </div>
             </li>
-            <li onclick="Imprimir()" id="permiso-imprimir">
-                <span class="fab-label">Imprimir</span>
+            <li onclick="Imprimir('factura')" id="permiso-imprimir-factura">
+                <span class="fab-label">Imprimir factura</span>
                 <div class="fab-icon-holder">
                     <i class="ti-printer"></i>
+                </div>
+            </li>
+            <li onclick="Imprimir('comanda')" id="permiso-imprimir-comanda">
+                <span class="fab-label">Imprimir comanda</span>
+                <div class="fab-icon-holder">
+                    <i class="ti-printer"></i>
+                </div>
+            </li>
+            <li onclick="$('#modal-anulacion').modal('show')" id="permiso-anular">
+                <span class="fab-label">Cancelar o anular</span>
+                <div class="fab-icon-holder">
+                    <i class="ti-close"></i>
                 </div>
             </li>
         </ul>
@@ -170,6 +182,11 @@
                     </select>
                 </div>
             </div>
+            <div class="col-sm-6" id="div-direccion" style="display: none;">
+                <div class="form-group">
+                    <input placeholder="Dirección" type="text" id="factura-direccion-domicilio" placeholder="0" class="form-control">
+                </div>
+            </div>
         </div>
     	<div class="card">
             <div class="card-header">
@@ -285,6 +302,30 @@
             </div>
         </div>
     </div>
+
+    <!-- MODAL DE ANULACIÓN DE PEDIDO -->
+    <div class="modal fade" id="modal-anulacion" tabindex="-1" role="dialog" aria-labelledby="smallmodalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="smallmodalLabel">Cancelación de pedido</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>*Motivo</label>
+                        <textarea rows="3" id="modal-motivo-anulacion" class="form-control"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="CancelarPedido()">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 @csrf
 <script>
@@ -309,6 +350,7 @@
         id_mesa : null,
         domicilio : 0,
         observaciones : "",
+        direccion : "",
         detalles : [],
         formas_pago : null,
         servicio_voluntario: 0,
@@ -510,17 +552,21 @@
         if (id_dominio_canal == {{ App\Dominio::get('Mesa') }}) {
             $("#div-mesas").fadeIn()
             $("#div-domicilio").addClass('hide')
+            $("#factura-direccion-domicilio").val("")
+            $("#div-direccion").fadeOut()
             this.factura.domicilio = 0
         }
 
         if (id_dominio_canal == {{ App\Dominio::get('Domicilio') }}) {
             $("#div-mesas").fadeOut()
             $("#div-domicilio").removeClass('hide')
+            $("#div-direccion").fadeIn()
         }
 
         if (id_dominio_canal != {{ App\Dominio::get('Mesa') }} && id_dominio_canal != {{ App\Dominio::get('Domicilio') }}) {
             $("#div-mesas").fadeOut()
             $("#div-domicilio").removeClass('hide')
+            $("#div-direccion").fadeIn()
             this.factura.domicilio = 0
         }
         this.ActualizarVistaPedido()
@@ -534,7 +580,8 @@
         if (this.factura.finalizada == 1) {
             $("#permiso-guardar").fadeOut()
             $("#permiso-guardar-finalizar").fadeOut()
-            $("#permiso-imprimir").fadeIn()
+            $("#permiso-imprimir-factura").fadeIn()
+            $("#permiso-imprimir-comanda").fadeIn()
         }
 
         if (this.factura.finalizada == 0) {
@@ -542,9 +589,11 @@
             $("#permiso-guardar-finalizar").fadeIn()
 
             if (this.factura.id_factura != null) {
-                $("#permiso-imprimir").fadeIn()
+                $("#permiso-imprimir-factura").fadeIn()
+                $("#permiso-imprimir-comanda").fadeIn()
             }else{
-                $("#permiso-imprimir").fadeOut()
+                $("#permiso-imprimir-factura").fadeOut()
+                $("#permiso-imprimir-comanda").fadeOut()
             }
         }
     }
@@ -552,6 +601,7 @@
     function Guardar(finalizada) {
         this.factura.finalizada = finalizada
         this.factura.observaciones = $("#factura-observaciones").val()
+        this.factura.direccion = $("#factura-direccion-domicilio").val()
         this.factura.formas_pago = $("#factura-formas-pago").val()
 
         if (this.factura.detalles.length == 0) {
@@ -573,6 +623,8 @@
             toastr.error("Es necesario escoger el numero de mesa para el pedido", "Error")
             return;
         }
+
+        if (this.factura.id_dominio_canal == {{ App\Dominio::get('Mesa') }}) this.factura.direccion = "";
 
         Loading(true, "Guardando factura...")
 
@@ -602,8 +654,48 @@
         console.log("bien")
     }
 
-    function Imprimir() {
-        // body...
+    function Imprimir(tipo) {
+        let url = ""
+        if (tipo == 'factura') url = "{{ config('global.url_base') . '/ticket/imprimir/factura/'.$factura->id_factura }}"
+        if (tipo == 'comanda') url = "{{ config('global.url_base') . '/ticket/imprimir/comanda/'.$factura->id_factura }}"
+
+        if (url != "") {
+            var win = window.open(url, '_blank');
+            win.focus();
+        }
+    }
+
+    function CancelarPedido() {
+        let motivo = $("#modal-motivo-anulacion").val()
+        if (motivo.trim() == "") {
+            toastr.error("Es necesario que suministre el motivo de la cancelación del pedido", "Error")
+            return;
+        }
+        $("#modal-anulacion").modal("hide")
+
+        let url = "{{ route('factura/anular') }}"
+        Loading(true, "Cancelando pedido...")
+        var _token = ""
+        $("[name='_token']").each(function() { _token = this.value })
+        let request = {
+            '_token' : _token,
+            'id_factura' : this.factura.id_factura,
+            'motivo' : motivo
+        }
+        $.post(url, request, (response) => {
+            if (!response.error) {
+                toastr.success(response.mensaje, "Proceso exitoso")
+                location.href = "{{ route('canales_servicio') }}"
+            }else{
+                Loading(false)
+                toastr.error(response.mensaje, "Error")
+            }
+        })
+        .fail((error) => {
+            
+            console.log(error)
+            toastr.error("Ha ocurrido un error, por favor intentelo nuevamente", "Error")
+        })           
     }
 
     function LLenarDatosFactura() {
@@ -616,10 +708,12 @@
             this.factura.descuento = {{ $factura->descuento }}
             this.factura.domicilio = {{ $factura->domicilio }}
             this.factura.servicio_voluntario = {{ $factura->servicio_voluntario }}
+            this.factura.direccion = "{{ $factura->direccion }}"
             
             this.factura.finalizada = {{ $factura->finalizada }}
             this.factura.observaciones = "{{ $factura->observaciones }}"
             $("#factura-observaciones").val(this.factura.observaciones)
+            $("#factura-direccion-domicilio").val(this.factura.direccion)
             this.factura.id_dominio_canal = {{ $factura->id_dominio_canal }}
             $('#select-canal').val(this.factura.id_dominio_canal).prop('selected', true);
             this.ValidarCanal(this.factura.id_dominio_canal)

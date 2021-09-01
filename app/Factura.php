@@ -34,6 +34,11 @@ class Factura extends Model
         return $this->belongsTo(Mesa::class, 'id_mesa');
     }
 
+    public function canal()
+    {
+        return $this->belongsTo(Dominio::class, 'id_dominio_canal');
+    }
+
     public function detalles()
     {
         return $this->hasMany(FacturaDetalle::class, 'id_factura');

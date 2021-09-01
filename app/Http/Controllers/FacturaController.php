@@ -153,6 +153,27 @@ class FacturaController extends Controller
         return $pdf->stream($factura->tipo->nombre . ' ' . $factura->licencia->nombre . '.pdf');
     }
 
+    public function imprimir_ticket_comanda($id_factura)
+    {
+        $factura = Factura::find($id_factura);
+
+        $customPaper = array(0, 0, 279.80, 450.00);
+        $pdf         = \PDF::loadView('pdf.ticket_comanda', compact('factura'))
+            ->setPaper($customPaper);
+        return $pdf->stream("Comanda #" . $factura->numero . '.pdf');
+    }
+
+    public function imprimir_ticket_factura($id_factura)
+    {
+        $factura = Factura::find($id_factura);
+
+        $customPaper = array(0, 0, 279.80, 767.00);
+        //return view('pdf.ticket_factura', compact('factura'));
+        $pdf = \PDF::loadView('pdf.ticket_factura', compact('factura'))
+            ->setPaper($customPaper);
+        return $pdf->stream("Factura #" . $factura->numero . '.pdf');
+    }
+
     public function canales_servicio()
     {
         $fecha   = date('Y-m-d');
@@ -263,6 +284,7 @@ class FacturaController extends Controller
                 $factura->id_mesa                 = null;
                 $factura->finalizada              = $post->factura->finalizada;
                 $factura->id_dominio_canal        = $post->factura->id_dominio_canal;
+                $factura->direccion               = $post->factura->direccion;
 
                 if ($post->factura->id_dominio_canal == Dominio::get('Mesa')) {
                     $factura->id_mesa = $post->factura->id_mesa;
@@ -414,7 +436,7 @@ class FacturaController extends Controller
         }
     }
 
-    public function anular_factura(Request $request)
+    public function anular(Request $request)
     {
 
     }
