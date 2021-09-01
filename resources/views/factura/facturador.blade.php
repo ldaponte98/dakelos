@@ -582,6 +582,7 @@
             $("#permiso-guardar-finalizar").fadeOut()
             $("#permiso-imprimir-factura").fadeIn()
             $("#permiso-imprimir-comanda").fadeIn()
+            $("#permiso-anular").fadeIn()
         }
 
         if (this.factura.finalizada == 0) {
@@ -591,14 +592,22 @@
             if (this.factura.id_factura != null) {
                 $("#permiso-imprimir-factura").fadeIn()
                 $("#permiso-imprimir-comanda").fadeIn()
+                $("#permiso-anular").fadeIn()
             }else{
                 $("#permiso-imprimir-factura").fadeOut()
                 $("#permiso-imprimir-comanda").fadeOut()
+                $("#permiso-anular").fadeOut()
             }
         }
     }
 
     function Guardar(finalizada) {
+        let imprimir_comanda = false
+        let imprimir_factura = false
+
+        if (finalizada == 0 && this.factura.id_factura == null) imprimir_comanda = true
+        if (finalizada == 1 && this.factura.finalizada == 0) imprimir_factura = true
+
         this.factura.finalizada = finalizada
         this.factura.observaciones = $("#factura-observaciones").val()
         this.factura.direccion = $("#factura-direccion-domicilio").val()
@@ -635,12 +644,16 @@
             '_token' : _token,
             'factura' : this.factura
         }
+
+
         $.post(url, request, (response) => {
             Loading(false)
             if (!response.error) {
                 this.factura.id_factura = response.id_factura
                 toastr.success(response.mensaje, "Proceso exitoso")
                 this.ValidarPermisosFactura()
+                if (imprimir_comanda) this.Imprimir('comanda')
+                if (imprimir_factura) this.Imprimir('factura')
             }else{
                 toastr.error(response.mensaje, "Error")
             }
@@ -656,8 +669,8 @@
 
     function Imprimir(tipo) {
         let url = ""
-        if (tipo == 'factura') url = "{{ config('global.url_base') . '/ticket/imprimir/factura/'.$factura->id_factura }}"
-        if (tipo == 'comanda') url = "{{ config('global.url_base') . '/ticket/imprimir/comanda/'.$factura->id_factura }}"
+        if (tipo == 'factura') url = "{{ config('global.url_base') . '/ticket/imprimir/factura/' }}"+this.factura.id_factura
+        if (tipo == 'comanda') url = "{{ config('global.url_base') . '/ticket/imprimir/comanda/' }}"+this.factura.id_factura
 
         if (url != "") {
             var win = window.open(url, '_blank');

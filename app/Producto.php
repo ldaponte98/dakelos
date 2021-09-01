@@ -113,6 +113,16 @@ class Producto extends Model
         }
     }
 
+    public function ingresar($cantidad = 1)
+    {
+        $this->cantidad_actual = $this->cantidad_actual + $cantidad;
+        if ($this->alerta == 1) {
+            if ($this->cantidad_actual <= $this->cantidad_minimo_alerta) {
+                $this->notificar_alerta_inventario();
+            }
+        }
+    }
+
     public function notificar_alerta_inventario()
     {
         $subject = "Zorax - Aviso de inventario";

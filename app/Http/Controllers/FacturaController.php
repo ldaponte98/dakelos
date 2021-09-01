@@ -9,7 +9,9 @@ use App\Factura;
 use App\FacturaDetalle;
 use App\FormaPago;
 use App\Licencia;
+use App\Log;
 use App\Mesa;
+use App\Permiso;
 use App\Producto;
 use App\ResolucionFactura;
 use App\Tercero;
@@ -157,7 +159,7 @@ class FacturaController extends Controller
     {
         $factura = Factura::find($id_factura);
 
-        $customPaper = array(0, 0, 279.80, 450.00);
+        $customPaper = array(0, 0, 225.80, 450.00);
         $pdf         = \PDF::loadView('pdf.ticket_comanda', compact('factura'))
             ->setPaper($customPaper);
         return $pdf->stream("Comanda #" . $factura->numero . '.pdf');
@@ -167,7 +169,7 @@ class FacturaController extends Controller
     {
         $factura = Factura::find($id_factura);
 
-        $customPaper = array(0, 0, 279.80, 767.00);
+        $customPaper = array(0, 0, 225.80, 767.00);
         //return view('pdf.ticket_factura', compact('factura'));
         $pdf = \PDF::loadView('pdf.ticket_factura', compact('factura'))
             ->setPaper($customPaper);
@@ -436,8 +438,80 @@ class FacturaController extends Controller
         }
     }
 
+    public function ingresar_inventario_detalles($id_factura)
+    {
+        $factura = Factura::find($id_factura);
+        foreach ($factura->detalles as $detalle) {
+            $producto = $detalle->producto;
+            //VALIDAMOS SI EL PRODUCTO ESTA HABILITADO PARA DESCONTARSE
+            if ($producto->descontado == 1) {
+                $producto->ingresar($detalle->cantidad);
+                $producto->save();
+                AuditoriaInventario::write_ingreso($id_factura, $detalle->id_producto, $detalle->cantidad);
+            }
+
+            //VALIDAMOS SI EL PRODUCTO ES DESCONTADO POR SUS INGREDIENTES
+            if ($producto->descontado_ingredientes == 1) {
+                foreach ($producto->ingredientes as $item) {
+                    $cantidad    = $item->cantidad;
+                    $ingrediente = $item->ingrediente;
+                    $ingrediente->ingresar($cantidad);
+                    $ingrediente->save();
+                    AuditoriaInventario::write_ingreso($id_factura, $ingrediente->id_producto, $cantidad);
+                }
+            }
+        }
+    }
+
     public function anular(Request $request)
     {
+        $post    = $request->all();
+        $error   = true;
+        $mensaje = "";
+        if ($post) {
+            $post = (object) $post;
+            if ($post->motivo != "" and $post->motivo != null) {
+                $factura = Factura::find($post->id_factura);
+                if ($factura) {
+                    if ($factura->finalizada == 1) {
+                        $id_usuario = session('id_usuario');
+                        $id_perfil  = session('id_perfil');
+                        $id_permiso = 1;
+                        if (Permiso::validar($id_perfil, $id_permiso)) {
+                            //DEVOLVEMOS A UN PRODUCTO LA CANTIDAD VENDIDA
+                            $this->ingresar_inventario_detalles($factura->id_factura);
+                            $factura->estado           = 0;
+                            $factura->id_usuario_anula = $id_usuario;
+                            $factura->motivo_anulacion = $post->motivo;
+                            $factura->save();
+                            $mensaje = "Anulación exitosa";
+                            $error   = false;
+                            Log::write("Anulacion de factura", "El usuario [$id_usuario] anula factura [$factura->id_factura]");
+                        } else {
+                            $mensaje = "Usuario sin permisos para realizar esta operación";
+                        }
+                    } else {
+                        $factura->estado           = 0;
+                        $factura->id_usuario_anula = $id_usuario;
+                        $factura->motivo_anulacion = $post->motivo;
+                        $factura->save();
+                        $mensaje = "Anulación exitosa";
+                        $error   = false;
+                        Log::write("Anulacion de factura", "El usuario [$id_usuario] anula factura [$factura->id_factura]");
+                    }
+                } else {
+                    $mensaje = "Factura no valida";
+                }
+            } else {
+                $mensaje = "El motivo de cancelacion es obligatorio";
+            }
+        } else {
+            $mensaje = "No data valid";
+        }
 
+        return response()->json([
+            'error'   => $error,
+            'mensaje' => $mensaje,
+        ]);
     }
 }
