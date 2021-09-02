@@ -90,15 +90,28 @@
 		font-size: 10px;
 	}
 
+	#watermark {
+        position: fixed;
+        bottom:   0px;
+        left:     0px;
+        /** The width and height may change 
+            according to the dimensions of your letterhead
+        **/
+        opacity: 0.2;
+
+        /** Your watermark should be behind every content**/
+        z-index:  -1000;
+    }
+
 </style>
 
 </head>
 <body>
-
-<!--aca comienza la info del registro-->
-
-
-
+	@if ($factura->estado == 0)
+		<div id="watermark">
+		    <img src="{{ public_path() . "/plantilla/images/CANCELADA.png" }}" height="100%" width="100%" />
+		</div>
+	@endif
 <br>
 
 <table class="tabla_1" border="1" cellpadding="0" cellspacing="0">

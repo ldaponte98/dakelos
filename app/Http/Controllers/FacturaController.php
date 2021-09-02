@@ -422,7 +422,7 @@ class FacturaController extends Controller
             if ($producto->descontado == 1) {
                 $producto->descontar($detalle->cantidad);
                 $producto->save();
-                AuditoriaInventario::write_descuento($id_factura, $producto->id_producto, $detalle->cantidad);
+                AuditoriaInventario::write_descuento($id_factura, $producto->id_producto, $detalle->cantidad, session('id_licencia'));
             }
 
             //VALIDAMOS SI EL PRODUCTO SERA DESCONTADO POR SUS INGREDIENTES
@@ -432,7 +432,7 @@ class FacturaController extends Controller
                     $ingrediente = $item->ingrediente;
                     $ingrediente->descontar($cantidad);
                     $ingrediente->save();
-                    AuditoriaInventario::write_descuento($id_factura, $ingrediente->id_producto, $cantidad);
+                    AuditoriaInventario::write_descuento($id_factura, $ingrediente->id_producto, $cantidad, session('id_licencia'));
                 }
             }
         }
@@ -447,7 +447,7 @@ class FacturaController extends Controller
             if ($producto->descontado == 1) {
                 $producto->ingresar($detalle->cantidad);
                 $producto->save();
-                AuditoriaInventario::write_ingreso($id_factura, $detalle->id_producto, $detalle->cantidad);
+                AuditoriaInventario::write_ingreso($id_factura, $detalle->id_producto, $detalle->cantidad, session('id_licencia'));
             }
 
             //VALIDAMOS SI EL PRODUCTO ES DESCONTADO POR SUS INGREDIENTES
@@ -457,7 +457,7 @@ class FacturaController extends Controller
                     $ingrediente = $item->ingrediente;
                     $ingrediente->ingresar($cantidad);
                     $ingrediente->save();
-                    AuditoriaInventario::write_ingreso($id_factura, $ingrediente->id_producto, $cantidad);
+                    AuditoriaInventario::write_ingreso($id_factura, $ingrediente->id_producto, $cantidad, session('id_licencia'));
                 }
             }
         }

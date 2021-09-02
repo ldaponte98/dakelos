@@ -98,6 +98,11 @@
 		</tr>
 	</table>
 	<br><br><br>
+	@if ($factura->estado == 0)
+		<center>
+			<label ><b style="font-size: 32px; color: red;">Cancelada</b></label>
+		</center>
+	@endif
 </body>
 </html>
 

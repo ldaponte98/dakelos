@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Dominio;
 use App\Inventario;
 use App\InventarioDetalle;
 use App\Producto;
@@ -93,6 +94,12 @@ class InventarioController extends Controller
             return view('inventario.view', compact(['inventario']));
         }
         echo "Url invalida";
+    }
+
+    public function stock_actual()
+    {
+        $tipos = Dominio::all()->where('id_padre', 35)->where('id_dominio', '<>', 37);
+        return view('inventario.stock_actual', compact('tipos'));
     }
 
 }

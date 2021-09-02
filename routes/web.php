@@ -56,8 +56,10 @@ Route::any('categoria/editar/{id_producto}', 'CategoriaController@guardar')->nam
 Route::any('inventario/movimientos', 'InventarioController@administrar')->name('inventario/movimientos');
 Route::any('inventario/crear', 'InventarioController@guardar')->name('inventario/crear');
 Route::any('inventario/vista/{id_inventario}', 'InventarioController@vista')->name('inventario/vista');
+Route::any('inventario/stock_actual', 'InventarioController@stock_actual')->name('inventario/stock_actual');
 
 Route::any('reportes/facturas', 'ReporteController@facturas')->name('producto/buscar');
+Route::any('reportes/auditoria_interna', 'ReporteController@auditoria_interna')->name('producto/auditoria_interna');
 Route::get('factura_email', function () {
     return view('email.factura');
 })->name('factura_email');
