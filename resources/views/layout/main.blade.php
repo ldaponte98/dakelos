@@ -143,14 +143,25 @@
                                <!-- <span class="count bg-danger">3</span> -->
                             </a>
                         </div>
-
+                        @php
+                            $caja = \App\Caja::where('id_usuario', session('id_usuario'))
+                                             ->where('estado', 1)
+                                             ->where('fecha_cierre', null)
+                                             ->first();
+                            $url_caja = route('caja/apertura');
+                            $texto_caja = "Abrir caja";
+                            if($caja) {
+                                $url_caja = route('caja/view', $caja->id_caja);
+                                $texto_caja = "$".number_format($caja->get_total());
+                            }
+                        @endphp     
                         <div class="dropdown for-notification">
-                            <button class="btn btn-secondary dropdown-toggle open-box" type="button" id="caja" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa fa-money"></i> <b>Abrir caja</b>                               
-                            </button>
-                            <button class="btn btn-secondary dropdown-toggle open-box-movil" type="button" id="caja" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa fa-money"></i> <b style="font-size: 10px;">Abrir caja</b>                              
-                            </button>
+                            <a href="{{ $url_caja }}" class="btn btn-secondary dropdown-toggle open-box" type="button" id="caja" aria-expanded="false">
+                                <i class="fa fa-money"></i> <b>{{ $texto_caja }}</b>                               
+                            </a>
+                            <a href="{{ $url_caja }}" class="btn btn-secondary dropdown-toggle open-box-movil" type="button" id="caja" aria-expanded="false">
+                                <i class="fa fa-money"></i> <b style="font-size: 10px;">{{ $texto_caja }}</b>                              
+                            </a>
                         </div>
 
                     </div>
