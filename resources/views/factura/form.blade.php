@@ -9,7 +9,7 @@
 <style type="text/css">
     .btn{
         font-size: 14px !important;
-    }
+    }   
     .select2-container .select2-selection--single{
         height: 39px !important;
     }
@@ -18,7 +18,7 @@
     }
     .select2-selection__rendered{
         margin-top: 5px;
-    }
+    } 
     .totales{
       text-align: center;
       padding-top:30px;
@@ -132,12 +132,10 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content ">
       <div class="modal-header">
-        <div class="row">
-            <div class="col-sm-6"><h5 class="modal-title" id="exampleModalLabel">Agregar producto / servicio</h5></div>
-            <div class="col-sm-6"><button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button></div>
-        </div>      
+            <h5 class="modal-title" id="smallmodalLabel">Agregar producto / servicio</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
       </div>
       <div class="modal-body">
         <div class="row">
@@ -145,8 +143,9 @@
             <div class="col-sm-12">
               <div class="form-group">
                 <div id="select_producto">
-                   <select class="form-control hasDatepicker form-control-line" id="id_producto" onchange="buscar_producto(this.value)">
-                    <option value="0" disabled selected>producto / servicio</option>
+
+                   <select data-placeholder="Selecciona un producto / servicio" class="form-control select2" id="id_producto" onchange="buscar_producto(this.value)">
+                    <option value="0" disabled selected>Producto / servicio</option>
                     @php
                         $productos = \App\Producto::all()->where('id_licencia', session('id_licencia'));
                     @endphp
@@ -232,12 +231,10 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content ">
       <div class="modal-header">
-        <div class="row">
-            <div class="col-sm-6"><h5 class="modal-title" id="exampleModalLabel">Agregar forma de pago</h5></div>
-            <div class="col-sm-6"><button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button></div>
-        </div>      
+            <h5 class="modal-title" id="smallmodalLabel">Agregar forma de pago</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
       </div>
       <div class="modal-body">
         <div class="row">
@@ -471,18 +468,8 @@
         'carrito' : this.carrito,
         'formas_pago' : this.formas_pago
       }
-      $.blockUI({
-        message: '<h1>Facturando...</h1><i class="fa fa-spinner fa-spin fa-3x fa-fw">',
-        css: {
-            border: 'none',
-            padding: '15px',
-            backgroundColor: '#000',
-            '-webkit-border-radius': '10px',
-            '-moz-border-radius': '10px',
-            opacity: .8,
-            color: '#fff'
-        }});
-
+      Loading(true, "Guardando documento...")
+     
       $.post(url, data, (response) => {
         $.unblockUI();
         if(response.error == false){
@@ -492,12 +479,13 @@
           );
           location.href = "{{ route('tercero/view', $tercero->id_tercero) }}"
         }else{
-          alert(response.mensaje)
+          Loading(false)
+          toastr.error(response.mensaje, "Error")
         }
       })
       .fail((error) => {
-        $.unblockUI();
-        console.log(error)
+        Loading(false)
+        toastr.error("Ha ocurrido un error al realizar la factura ["+error.responseJSON.message+"]", "Error")
       })
     }
 

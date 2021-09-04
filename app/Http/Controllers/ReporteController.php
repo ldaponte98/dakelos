@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\AuditoriaInventario;
+use App\Caja;
+use App\Dominio;
 use App\Factura;
 use App\Permiso;
 use App\Producto;
@@ -67,6 +69,44 @@ class ReporteController extends Controller
             'fechas',
             'canales',
             'permiso_anular',
+        ]));
+    }
+
+    public function cajas(Request $request)
+    {
+        $post        = $request->all();
+        $fecha_desde = date('Y-m-d') . " 00:00";
+        $fecha_hasta = date('Y-m-d') . " 23:59";
+        $fechas      = date('Y/m/d') . " 00:00 - " . date('Y/m/d') . " 23:59";
+        $formas_pago = Dominio::where('id_padre', 19)->get();
+        $usuarios    = [];
+        if ($post) {
+            $post   = (object) $post;
+            $fechas = $post->fechas;
+            if ($fechas != "") {
+                $fecha_desde = date('Y-m-d H:i', strtotime(explode('-', $post->fechas)[0]));
+                $fecha_hasta = date('Y-m-d H:i', strtotime(explode('-', $post->fechas)[1]));
+            }
+            if (isset($post->usuarios)) {
+                $usuarios = $post->usuarios;
+            }
+        }
+
+        $cajas = Caja::where('id_licencia', session('id_licencia'))
+            ->whereBetween('created_at', [$fecha_desde, $fecha_hasta]);
+
+        if (count($usuarios) > 0) {
+            $cajas = $cajas->whereIn('id_usuario', $usuarios);
+        }
+
+        $cajas = $cajas->orderBy('created_at', 'asc');
+        $cajas = $cajas->get();
+
+        return view('reportes.caja', compact([
+            'cajas',
+            'fechas',
+            'usuarios',
+            'formas_pago',
         ]));
     }
 

@@ -60,9 +60,11 @@ Route::any('inventario/stock_actual', 'InventarioController@stock_actual')->name
 
 Route::any('caja/apertura', 'CajaController@apertura')->name('caja/apertura');
 Route::any('caja/view/{id_caja}', 'CajaController@view')->name('caja/view');
+Route::any('caja/cerrar/{id_caja}', 'CajaController@cerrar_caja')->name('caja/cerrar');
 
-Route::any('reportes/facturas', 'ReporteController@facturas')->name('producto/buscar');
-Route::any('reportes/auditoria_interna', 'ReporteController@auditoria_interna')->name('producto/auditoria_interna');
+Route::any('reportes/facturas', 'ReporteController@facturas')->name('reportes/buscar');
+Route::any('reportes/auditoria_interna', 'ReporteController@auditoria_interna')->name('reportes/auditoria_interna');
+Route::any('reportes/caja', 'ReporteController@cajas')->name('reportes/caja');
 Route::get('factura_email', function () {
     return view('email.factura');
 })->name('factura_email');

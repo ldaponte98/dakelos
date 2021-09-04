@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\AuditoriaInventario;
+use App\Caja;
 use App\Categoria;
 use App\Dominio;
 use App\Factura;
@@ -23,6 +24,14 @@ class FacturaController extends Controller
 {
     public function crear(Request $request)
     {
+        //VALIDAMOS SI EL USUARIO TIENE CAJA ABIERTA PARA PODER FACTURAR
+        $caja = Caja::where('id_usuario', session('id_usuario'))
+            ->where('estado', 1)
+            ->where('fecha_cierre', null)
+            ->first();
+        if ($caja == null) {
+            return redirect()->route('caja/apertura');
+        }
         $post    = (object) $request->all();
         $tercero = new Tercero;
         $accion  = "Facturación";
@@ -49,93 +58,112 @@ class FacturaController extends Controller
         $errors     = [];
         if ($post) {
             $post = (object) $post;
-            //primero buscamos el consecutivo de la resolucion para la factura
-            $resolucion = ResolucionFactura::where('id_licencia', session('id_licencia'))->first();
-
-            if ($resolucion) {
-                $factura = new Factura;
-                if ($post->tipo_factura == 16) {
-                    $factura->numero = $resolucion->prefijo_factura . "-" . ($resolucion->consecutivo_factura + 1);
-                }
-
-                if ($post->tipo_factura == 17) {
-                    $factura->numero = $resolucion->prefijo_cotizacion . "-" . ($resolucion->consecutivo_cotizacion + 1);
-                }
-
-                $factura->id_tercero              = $post->id_tercero;
-                $factura->valor                   = $post->total_carrito;
-                $factura->id_dominio_tipo_factura = $post->tipo_factura;
-                $factura->observaciones           = $post->observaciones;
-                $factura->id_usuario_registra     = session('id_usuario');
-                $factura->id_licencia             = session('id_licencia');
-
-                if ($factura->save()) {
-                    //ahora aumentamos el consecutivo de la resolucion
+            $caja = Caja::where('id_usuario', session('id_usuario'))
+                ->where('estado', 1)
+                ->where('fecha_cierre', null)
+                ->first();
+            if ($caja) {
+                //primero buscamos el consecutivo de la resolucion para la factura
+                $resolucion = ResolucionFactura::where('id_licencia', session('id_licencia'))->first();
+                DB::beginTransaction();
+                if ($resolucion) {
+                    $factura = new Factura;
                     if ($post->tipo_factura == 16) {
-                        $resolucion->consecutivo_factura += 1;
+                        $factura->numero = $resolucion->prefijo_factura . "-" . ($resolucion->consecutivo_factura + 1);
                     }
 
                     if ($post->tipo_factura == 17) {
-                        $resolucion->consecutivo_cotizacion += 1;
+                        $factura->numero = $resolucion->prefijo_cotizacion . "-" . ($resolucion->consecutivo_cotizacion + 1);
                     }
 
-                    $resolucion->save();
+                    $factura->id_tercero              = $post->id_tercero;
+                    $factura->id_caja                 = $caja->id_caja;
+                    $factura->valor                   = $post->total_carrito;
+                    $factura->id_dominio_tipo_factura = $post->tipo_factura;
+                    $factura->observaciones           = $post->observaciones;
+                    $factura->id_usuario_registra     = session('id_usuario');
+                    $factura->id_licencia             = session('id_licencia');
+                    $factura->id_dominio_canal        = 49;
 
-                    //ahora registramos los detalles de la factura
-                    foreach ($post->carrito as $producto) {
-                        $producto                      = (object) $producto;
-                        $detalle                       = new FacturaDetalle;
-                        $detalle->id_factura           = $factura->id_factura;
-                        $detalle->id_producto          = $producto->id_producto;
-                        $detalle->iva_producto         = $producto->iva;
-                        $detalle->nombre_producto      = $producto->nombre;
-                        $detalle->descripcion_producto = $producto->descripcion;
-                        $detalle->precio_producto      = $producto->precio;
-                        $detalle->descuento_producto   = $producto->descuento;
-                        $detalle->save();
-                    }
-
-                    //Ahora registramos las formas de pago
-                    if (isset($post->formas_pago)) {
-                        foreach ($post->formas_pago as $forma) {
-                            $forma                             = (object) $forma;
-                            $forma_pago                        = new FormaPago;
-                            $forma_pago->id_factura            = $factura->id_factura;
-                            $forma_pago->id_dominio_forma_pago = $forma->id_dominio_forma_pago;
-                            $forma_pago->valor                 = $forma->valor;
-                            $forma_pago->save();
+                    if ($factura->save()) {
+                        //ahora aumentamos el consecutivo de la resolucion
+                        if ($post->tipo_factura == 16) {
+                            $resolucion->consecutivo_factura += 1;
                         }
-                    }
 
-                    $tercero = Tercero::find($factura->id_tercero);
-                    //ahora enviamos email con la factura al cliente
-                    $subject = $factura->tipo->nombre . ' ' . $factura->licencia->nombre;
-                    $for     = $tercero->email;
+                        if ($post->tipo_factura == 17) {
+                            $resolucion->consecutivo_cotizacion += 1;
+                        }
 
-                    $data_email = array(
-                        'factura'         => $factura,
-                        'imagen_licencia' => $factura->licencia->get_imagen_email(),
-                        'tipo_factura'    => $factura->tipo->nombre,
-                        'id_factura'      => $factura->id_factura,
-                    );
+                        $resolucion->save();
+                        $total_descuentos = 0;
+                        //ahora registramos los detalles de la factura
+                        foreach ($post->carrito as $producto) {
 
-                    $id_factura = $factura->id_factura;
-                    $mensaje    = "Documento registrado exitosamente";
-                    $error      = false;
-                    try {
-                        Mail::send('email.factura', $data_email, function ($msj) use ($subject, $for) {
-                            $msj->from(config('global.email_zorax'), session('nombre_licencia'));
-                            $msj->subject($subject);
-                            $msj->to($for);
-                        });
-                    } catch (Exception $e) {
-                        $mensaje = "Documento registrado exitosamente, no se pudo enviar factura a cliente";
+                            $producto                       = (object) $producto;
+                            $p                              = Producto::find($producto->id_producto);
+                            $detalle                        = new FacturaDetalle;
+                            $detalle->id_factura            = $factura->id_factura;
+                            $detalle->id_producto           = $producto->id_producto;
+                            $detalle->iva_producto          = $producto->iva;
+                            $detalle->nombre_producto       = $producto->nombre;
+                            $detalle->descripcion_producto  = $producto->descripcion;
+                            $detalle->precio_producto       = $producto->precio;
+                            $detalle->descuento_producto    = $producto->descuento;
+                            $detalle->presentacion_producto = $p->presentacion->nombre;
+                            $detalle->save();
+                            $total_descuentos += $producto->descuento;
+                        }
+                        $factura->descuento = $total_descuentos;
+                        $factura->save();
+                        //Ahora registramos las formas de pago
+                        if (isset($post->formas_pago)) {
+                            foreach ($post->formas_pago as $forma) {
+                                $forma                             = (object) $forma;
+                                $forma_pago                        = new FormaPago;
+                                $forma_pago->id_factura            = $factura->id_factura;
+                                $forma_pago->id_dominio_forma_pago = $forma->id_dominio_forma_pago;
+                                $forma_pago->valor                 = $forma->valor;
+                                $forma_pago->save();
+                            }
+                        }
+
+                        $tercero = Tercero::find($factura->id_tercero);
+                        //ahora enviamos email con la factura al cliente
+                        $subject = $factura->tipo->nombre . ' ' . $factura->licencia->nombre;
+                        $for     = $tercero->email;
+
+                        $data_email = array(
+                            'factura'         => $factura,
+                            'imagen_licencia' => $factura->licencia->get_imagen_email(),
+                            'tipo_factura'    => $factura->tipo->nombre,
+                            'id_factura'      => $factura->id_factura,
+                        );
+
+                        $id_factura = $factura->id_factura;
+                        $mensaje    = "Documento registrado exitosamente";
+                        $error      = false;
+                        DB::commit();
+                        try {
+                            Mail::send('email.factura', $data_email, function ($msj) use ($subject, $for) {
+                                $msj->from(config('global.email_zorax'), session('nombre_licencia'));
+                                $msj->subject($subject);
+                                $msj->to($for);
+                            });
+                        } catch (Exception $e) {
+                            $mensaje = "Documento registrado exitosamente, no se pudo enviar factura a cliente";
+                        }
+                    } else {
+                        DB::rollBack();
+                        $mensaje = "Error al registrar la factura";
+                        $errors  = $factura->errors;
                     }
                 } else {
-                    $mensaje = "Error al registrar la factura";
-                    $errors  = $factura->errors;
+                    DB::rollBack();
+                    $mensaje = "No tiene resolucion activa";
                 }
             } else {
+                DB::rollBack();
                 $mensaje = "No tiene resolucion activa";
             }
 
@@ -199,6 +227,15 @@ class FacturaController extends Controller
 
     public function facturador(Request $request)
     {
+        //VALIDAMOS SI EL USUARIO TIENE CAJA ABIERTA PARA PODER FACTURAR
+        $caja = Caja::where('id_usuario', session('id_usuario'))
+            ->where('estado', 1)
+            ->where('fecha_cierre', null)
+            ->first();
+        if ($caja == null) {
+            return redirect()->route('caja/apertura');
+        }
+
         $categorias = Categoria::where('estado', 1)
             ->where('id_licencia', session('id_licencia'))
             ->orderBy('nombre', 'desc')
@@ -266,82 +303,93 @@ class FacturaController extends Controller
             $post                   = (object) $post;
             $post->factura          = (object) $post->factura;
             $post->factura->cliente = (object) $post->factura->cliente;
-            //primero buscamos el consecutivo de la resolucion para la factura
-            $resolucion = ResolucionFactura::where('id_licencia', session('id_licencia'))->first();
-            DB::beginTransaction();
-            if ($resolucion) {
-                $factura         = $post->factura->id_factura == null ? new Factura : Factura::find($post->factura->id_factura);
-                $factura->numero = $resolucion->prefijo_factura . "-" . ($resolucion->consecutivo_factura + 1);
+            //validamos si el usuario tiene caja abierta para facturar
+            $caja = Caja::where('id_usuario', session('id_usuario'))
+                ->where('estado', 1)
+                ->where('fecha_cierre', null)
+                ->first();
+            if ($caja) {
+                //primero buscamos el consecutivo de la resolucion para la factura
+                $resolucion = ResolucionFactura::where('id_licencia', session('id_licencia'))->first();
+                DB::beginTransaction();
+                if ($resolucion) {
+                    $factura         = $post->factura->id_factura == null ? new Factura : Factura::find($post->factura->id_factura);
+                    $factura->numero = $resolucion->prefijo_factura . "-" . ($resolucion->consecutivo_factura + 1);
 
-                $cliente                          = $this->guardar_cliente_factura($post);
-                $factura->id_tercero              = $cliente->id_tercero;
-                $factura->valor                   = $post->factura->total;
-                $factura->descuento               = $post->factura->descuento;
-                $factura->id_dominio_tipo_factura = 16;
-                $factura->servicio_voluntario     = $post->factura->servicio_voluntario;
-                $factura->observaciones           = $post->factura->observaciones;
-                $factura->id_usuario_registra     = session('id_usuario');
-                $factura->id_licencia             = session('id_licencia');
-                $factura->domicilio               = 0;
-                $factura->id_mesa                 = null;
-                $factura->finalizada              = $post->factura->finalizada;
-                $factura->id_dominio_canal        = $post->factura->id_dominio_canal;
-                $factura->direccion               = $post->factura->direccion;
+                    $cliente                          = $this->guardar_cliente_factura($post);
+                    $factura->id_tercero              = $cliente->id_tercero;
+                    $factura->id_caja                 = $caja->id_caja;
+                    $factura->valor                   = $post->factura->total;
+                    $factura->descuento               = $post->factura->descuento;
+                    $factura->id_dominio_tipo_factura = 16;
+                    $factura->servicio_voluntario     = $post->factura->servicio_voluntario;
+                    $factura->observaciones           = $post->factura->observaciones;
+                    $factura->id_usuario_registra     = session('id_usuario');
+                    $factura->id_licencia             = session('id_licencia');
+                    $factura->domicilio               = 0;
+                    $factura->id_mesa                 = null;
+                    $factura->finalizada              = $post->factura->finalizada;
+                    $factura->id_dominio_canal        = $post->factura->id_dominio_canal;
+                    $factura->direccion               = $post->factura->direccion;
 
-                if ($post->factura->id_dominio_canal == Dominio::get('Mesa')) {
-                    $factura->id_mesa = $post->factura->id_mesa;
-                }
-                if ($post->factura->id_dominio_canal == Dominio::get('Domicilio')) {
-                    $factura->domicilio = $post->factura->domicilio;
-                }
-
-                if ($factura->save()) {
-                    //ahora aumentamos el consecutivo de la resolucion
-                    $resolucion->consecutivo_factura += 1;
-                    $resolucion->save();
-
-                    //ahora registramos los detalles de la factura
-                    DB::statement('delete from factura_detalle where id_factura = ' . $factura->id_factura);
-                    foreach ($post->factura->detalles as $producto) {
-                        $producto                       = (object) $producto;
-                        $detalle                        = new FacturaDetalle;
-                        $detalle->id_factura            = $factura->id_factura;
-                        $detalle->id_producto           = $producto->id_producto;
-                        $detalle->cantidad              = $producto->cantidad;
-                        $detalle->nombre_producto       = $producto->nombre;
-                        $detalle->precio_producto       = $producto->precio_venta;
-                        $detalle->presentacion_producto = $producto->presentacion;
-                        $detalle->save();
+                    if ($post->factura->id_dominio_canal == Dominio::get('Mesa')) {
+                        $factura->id_mesa = $post->factura->id_mesa;
+                    }
+                    if ($post->factura->id_dominio_canal == Dominio::get('Domicilio')) {
+                        $factura->domicilio = $post->factura->domicilio;
                     }
 
-                    //Ahora registramos las formas de pago
-                    DB::statement('delete from forma_pago where id_factura = ' . $factura->id_factura);
-                    if (isset($post->factura->formas_pago)) {
-                        foreach ($post->factura->formas_pago as $id_dominio_forma_pago) {
-                            $forma_pago                        = new FormaPago;
-                            $forma_pago->id_factura            = $factura->id_factura;
-                            $forma_pago->id_dominio_forma_pago = $id_dominio_forma_pago;
-                            $forma_pago->valor                 = ($factura->valor / count($post->factura->formas_pago));
-                            $forma_pago->save();
+                    if ($factura->save()) {
+                        //ahora aumentamos el consecutivo de la resolucion
+                        $resolucion->consecutivo_factura += 1;
+                        $resolucion->save();
+
+                        //ahora registramos los detalles de la factura
+                        DB::statement('delete from factura_detalle where id_factura = ' . $factura->id_factura);
+                        foreach ($post->factura->detalles as $producto) {
+                            $producto                       = (object) $producto;
+                            $detalle                        = new FacturaDetalle;
+                            $detalle->id_factura            = $factura->id_factura;
+                            $detalle->id_producto           = $producto->id_producto;
+                            $detalle->cantidad              = $producto->cantidad;
+                            $detalle->nombre_producto       = $producto->nombre;
+                            $detalle->precio_producto       = $producto->precio_venta;
+                            $detalle->presentacion_producto = $producto->presentacion;
+                            $detalle->save();
                         }
-                    }
 
-                    if ($factura->finalizada == 1) {
-                        $this->descontar_inventario_detalles($post->factura->detalles, $factura->id_factura);
-                    }
+                        //Ahora registramos las formas de pago
+                        DB::statement('delete from forma_pago where id_factura = ' . $factura->id_factura);
+                        if (isset($post->factura->formas_pago)) {
+                            foreach ($post->factura->formas_pago as $id_dominio_forma_pago) {
+                                $forma_pago                        = new FormaPago;
+                                $forma_pago->id_factura            = $factura->id_factura;
+                                $forma_pago->id_dominio_forma_pago = $id_dominio_forma_pago;
+                                $forma_pago->valor                 = ($factura->valor / count($post->factura->formas_pago));
+                                $forma_pago->save();
+                            }
+                        }
 
-                    $id_factura = $factura->id_factura;
-                    $mensaje    = "Factura registrada exitosamente";
-                    $error      = false;
-                    DB::commit();
+                        if ($factura->finalizada == 1) {
+                            $this->descontar_inventario_detalles($post->factura->detalles, $factura->id_factura);
+                        }
+
+                        $id_factura = $factura->id_factura;
+                        $mensaje    = "Factura registrada exitosamente";
+                        $error      = false;
+                        DB::commit();
+                    } else {
+                        DB::rollBack();
+                        $mensaje = "Error al registrar la factura";
+                        $errors  = $factura->errors;
+                    }
                 } else {
                     DB::rollBack();
-                    $mensaje = "Error al registrar la factura";
-                    $errors  = $factura->errors;
+                    $mensaje = "No tiene resolucion activa";
                 }
             } else {
                 DB::rollBack();
-                $mensaje = "No tiene resolucion activa";
+                $mensaje = "No cuenta con caja abierta para facturar";
             }
 
             return response()->json([

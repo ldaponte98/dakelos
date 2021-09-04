@@ -221,7 +221,20 @@
 	@endif
 	
 	<tr>
-		<td colspan="7" style="border-bottom: none;  border-top: none;">&nbsp;</td>
+		<td colspan="7" style="border-bottom: none; border-top: none;">
+			<small style="font-size:11px;"><b>Formas de pago</b></small><br>
+			<small style="font-size:11px;">
+				@php
+					$cont = 0;
+				@endphp
+				@foreach ($factura->formas_pago as $item)
+					{{ $cont > 0 ? ", " . $item->tipo->nombre : $item->tipo->nombre }}
+					@php
+						$cont++;
+					@endphp
+				@endforeach
+			</small>
+		</td>
 		<td colspan="3" style="border-bottom: none; background-color: #BFBFBF;"><b>TOTAL: </b>${{ number_format($factura->valor, 0, '.','.') }}</td>
 	</tr>
 	<tr>		

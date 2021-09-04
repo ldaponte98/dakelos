@@ -54,4 +54,17 @@ class Licencia extends Model
             return null;
         }
     }
+
+    public static function get_usuarios($id_licencia)
+    {
+        $terceros = Tercero::where('id_licencia', $id_licencia)->get();
+        $usuarios = [];
+        foreach ($terceros as $tercero) {
+            $usuario = Usuario::where('id_tercero', $tercero->id_tercero)->first();
+            if ($usuario) {
+                $usuarios[] = $usuario;
+            }
+        }
+        return $usuarios;
+    }
 }

@@ -272,7 +272,7 @@
     </div>
 
     <!-- MODAL DE EDICION DE INFO DE CLIENTE -->
-    <div class="modal fade" id="modal-cliente" tabindex="-1" role="dialog" aria-labelledby="smallmodalLabel" aria-hidden="true">
+    <div class="modal fade" id="modal-cliente" role="dialog" aria-labelledby="smallmodalLabel" aria-hidden="true">
         <div class="modal-dialog modal-sm" role="document">
             <div class="modal-content">
                 <div class="modal-header">
