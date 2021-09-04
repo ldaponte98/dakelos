@@ -91,7 +91,7 @@
 
 <script type="text/javascript">
         function exportar_excel() {
-            tableToExcel('tabla_excel', 'Reporte_de_facturas')
+            tableToExcel('tabla_excel', 'Reporte de terceros')
        }
      $(document).ready(function() {
               $('#fechas').daterangepicker({

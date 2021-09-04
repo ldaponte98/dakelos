@@ -211,7 +211,7 @@ class FacturaController extends Controller
 
         $mesas = Mesa::where('estado', 1)
             ->where('id_licencia', session('id_licencia'))
-            ->orderBy('numero', 'asc')
+            ->orderBy('id_mesa', 'asc')
             ->get();
 
         $facturas = Factura::where('id_licencia', session('id_licencia'))

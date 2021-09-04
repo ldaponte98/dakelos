@@ -23,6 +23,9 @@ Route::get('index', 'UsuarioController@index')->name('index');
 
 Route::post('usuario/auth', 'UsuarioController@auth')->name('usuario/auth');
 Route::get('usuario/logout', 'UsuarioController@logout')->name('logout');
+Route::any('usuario/administrar', 'UsuarioController@administrar')->name('usuario/administrar');
+Route::any('usuario/crear', 'UsuarioController@guardar')->name('usuario/crear');
+Route::any('usuario/editar/{id_usuario}', 'UsuarioController@guardar')->name('usuario/editar');
 
 Route::any('tercero/administrar', 'TerceroController@administrar')->name('tercero/administrar');
 Route::any('tercero/crear', 'TerceroController@crear')->name('tercero/crear');
@@ -52,6 +55,10 @@ Route::any('producto/view/{id_producto}', 'ProductoController@view')->name('prod
 Route::any('categoria/administrar', 'CategoriaController@administrar')->name('categoria/administrar');
 Route::any('categoria/crear', 'CategoriaController@guardar')->name('categoria/crear');
 Route::any('categoria/editar/{id_producto}', 'CategoriaController@guardar')->name('categoria/editar');
+
+Route::any('mesa/administrar', 'MesaController@administrar')->name('mesa/administrar');
+Route::any('mesa/crear', 'MesaController@guardar')->name('mesa/crear');
+Route::any('mesa/editar/{id_mesa}', 'MesaController@guardar')->name('mesa/editar');
 
 Route::any('inventario/movimientos', 'InventarioController@administrar')->name('inventario/movimientos');
 Route::any('inventario/crear', 'InventarioController@guardar')->name('inventario/crear');

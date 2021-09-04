@@ -55,4 +55,52 @@ class UsuarioController extends Controller
     {
         return view('sitio.index');
     }
+
+    public function administrar($value = '')
+    {
+        $usuarios = Usuario::join('tercero as t', 't.id_tercero', '=', 'usuario.id_tercero')
+            ->where('t.id_licencia', session('id_licencia'))
+            ->get();
+
+        return view('usuario.administrar', compact(['usuarios']));
+    }
+
+    public function guardar(Request $request, $id_usuario = null)
+    {
+        $post    = $request->all();
+        $usuario = new Usuario;
+
+        $usuario->estado = null;
+        if ($id_usuario != null) {
+            $usuario = Usuario::find($id_usuario);
+        }
+        $empleados = Tercero::all()->where('id_licencia', session('id_licencia'))
+            ->where('id_dominio_tipo_tercero', 2); //empleado
+        $errors = [];
+        if ($post) {
+            $post = (object) $post;
+            $usuario->fill($request->except(['_token']));
+            $usuario_nombre = Usuario::join('tercero as t', 't.id_tercero', '=', 'usuario.id_tercero')
+                ->where('usuario.usuario', $post->usuario)
+                ->where('t.id_licencia', session('id_licencia'))
+                ->where('usuario.id_usuario', '<>', $id_usuario)
+                ->first();
+            if (!$usuario_nombre) {
+                if ($post->clave == $post->clave_confirmacion) {
+                    $usuario->clave       = md5($post->clave);
+                    $usuario->id_licencia = session('id_licencia');
+                    if ($usuario->save()) {
+                        return redirect()->route('usuario/administrar');
+                    } else {
+                        $errors = $usuario->errors;
+                    }
+                } else {
+                    $errors[] = "Las contraseñas no coinciden.";
+                }
+            } else {
+                $errors[] = "El nombre de usuario ya esta registrado.";
+            }
+        }
+        return view('usuario.form', compact(['usuario', 'empleados', 'errors']));
+    }
 }

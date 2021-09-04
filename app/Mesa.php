@@ -9,6 +9,12 @@ class Mesa extends Model
     protected $table      = 'mesa';
     protected $primaryKey = 'id_mesa';
 
+    protected $fillable = [
+        'id_mesa',
+        'numero',
+        'estado',
+    ];
+
     public function ocupada()
     {
         //RECORREMOS LAS FACTURAS QUE ESTEN ABIERTAS CON MESA
