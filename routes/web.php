@@ -20,6 +20,7 @@ Route::get('login', function () {
 })->name('login');
 
 Route::get('index', 'UsuarioController@index')->name('index');
+Route::get('menu/{token}', 'LicenciaController@menu')->name('menu');
 
 Route::post('usuario/auth', 'UsuarioController@auth')->name('usuario/auth');
 Route::get('usuario/logout', 'UsuarioController@logout')->name('logout');
@@ -79,3 +80,5 @@ Route::get('factura_email', function () {
 Route::get('factura_pdf', function () {
     return view('pdf.factura');
 })->name('factura_pdf');
+
+Route::any('licencia/menu_clientes', 'LicenciaController@menu_clientes')->name('licencia/menu_clientes');

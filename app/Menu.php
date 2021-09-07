@@ -54,8 +54,6 @@ class Menu extends Model
                 }
             }
         }
-        //agregamos el cerrar session siempre
-        $menu .= '<li><a href="' . route('logout') . '"> <i class="menu-icon ti-power-off"></i>Salir</a></li>';
         $menu .= '</ul>';
 
         echo $menu;

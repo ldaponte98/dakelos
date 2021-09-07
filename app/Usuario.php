@@ -9,6 +9,8 @@ class Usuario extends Model
     protected $table      = 'usuario';
     protected $primaryKey = 'id_usuario';
 
+    public $clave_confirmacion = null;
+
     protected $fillable = [
         'id_usuario',
         'id_tercero',

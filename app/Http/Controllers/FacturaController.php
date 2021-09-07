@@ -30,7 +30,19 @@ class FacturaController extends Controller
             ->where('fecha_cierre', null)
             ->first();
         if ($caja == null) {
-            return redirect()->route('caja/apertura');
+            //VALIDAMOS SI TIENE PERMISO DE FACTURAR CON LA ULTIMA CAJA Q ESTE ABIERTA
+            if (Permiso::validar(3)) {
+                $caja = Caja::where('id_licencia', session('id_licencia'))
+                    ->where('estado', 1)
+                    ->where('fecha_cierre', null)
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+                if ($caja == null) {
+                    return redirect()->route('caja/apertura');
+                }
+            } else {
+                return redirect()->route('caja/apertura');
+            }
         }
         $post    = (object) $request->all();
         $tercero = new Tercero;
@@ -62,6 +74,15 @@ class FacturaController extends Controller
                 ->where('estado', 1)
                 ->where('fecha_cierre', null)
                 ->first();
+            if ($caja == null) {
+                if (Permiso::validar(3)) {
+                    $caja = Caja::where('id_licencia', session('id_licencia'))
+                        ->where('estado', 1)
+                        ->where('fecha_cierre', null)
+                        ->orderBy('created_at', 'desc')
+                        ->first();
+                }
+            }
             if ($caja) {
                 //primero buscamos el consecutivo de la resolucion para la factura
                 $resolucion = ResolucionFactura::where('id_licencia', session('id_licencia'))->first();
@@ -84,6 +105,7 @@ class FacturaController extends Controller
                     $factura->id_usuario_registra     = session('id_usuario');
                     $factura->id_licencia             = session('id_licencia');
                     $factura->id_dominio_canal        = 49;
+                    $factura->finalizada              = 1;
 
                     if ($factura->save()) {
                         //ahora aumentamos el consecutivo de la resolucion
@@ -139,6 +161,8 @@ class FacturaController extends Controller
                             'tipo_factura'    => $factura->tipo->nombre,
                             'id_factura'      => $factura->id_factura,
                         );
+
+                        $this->descontar_inventario_detalles($factura->detalles, $factura->id_factura);
 
                         $id_factura = $factura->id_factura;
                         $mensaje    = "Documento registrado exitosamente";
@@ -233,7 +257,19 @@ class FacturaController extends Controller
             ->where('fecha_cierre', null)
             ->first();
         if ($caja == null) {
-            return redirect()->route('caja/apertura');
+            //VALIDAMOS SI TIENE PERMISO DE FACTURAR CON LA ULTIMA CAJA Q ESTE ABIERTA
+            if (Permiso::validar(3)) {
+                $caja = Caja::where('id_licencia', session('id_licencia'))
+                    ->where('estado', 1)
+                    ->where('fecha_cierre', null)
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+                if ($caja == null) {
+                    return redirect()->route('caja/apertura');
+                }
+            } else {
+                return redirect()->route('caja/apertura');
+            }
         }
 
         $categorias = Categoria::where('estado', 1)
@@ -308,6 +344,17 @@ class FacturaController extends Controller
                 ->where('estado', 1)
                 ->where('fecha_cierre', null)
                 ->first();
+
+            if ($caja == null) {
+                if (Permiso::validar(3)) {
+                    $caja = Caja::where('id_licencia', session('id_licencia'))
+                        ->where('estado', 1)
+                        ->where('fecha_cierre', null)
+                        ->orderBy('created_at', 'desc')
+                        ->first();
+                }
+            }
+
             if ($caja) {
                 //primero buscamos el consecutivo de la resolucion para la factura
                 $resolucion = ResolucionFactura::where('id_licencia', session('id_licencia'))->first();

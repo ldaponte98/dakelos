@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Perfil;
 use App\Tercero;
 use App\Usuario;
 use Illuminate\Http\Request;
@@ -10,7 +11,6 @@ class UsuarioController extends Controller
 {
     public function auth(Request $request)
     {
-
         $post = $request->all();
         if ($post) {
             $post    = (object) $post;
@@ -53,7 +53,7 @@ class UsuarioController extends Controller
 
     public function index()
     {
-        return view('sitio.index');
+        return redirect()->route('canales_servicio');
     }
 
     public function administrar($value = '')
@@ -67,16 +67,20 @@ class UsuarioController extends Controller
 
     public function guardar(Request $request, $id_usuario = null)
     {
-        $post    = $request->all();
-        $usuario = new Usuario;
-
+        $post            = $request->all();
+        $usuario         = new Usuario;
+        $clave_antigua   = null;
         $usuario->estado = null;
         if ($id_usuario != null) {
-            $usuario = Usuario::find($id_usuario);
+            $usuario                     = Usuario::find($id_usuario);
+            $usuario->clave_confirmacion = $usuario->clave;
+            $clave_antigua               = $usuario->clave;
         }
+
         $empleados = Tercero::all()->where('id_licencia', session('id_licencia'))
             ->where('id_dominio_tipo_tercero', 2); //empleado
-        $errors = [];
+        $perfiles = Perfil::all()->where('id_perfil', '<>', 1);
+        $errors   = [];
         if ($post) {
             $post = (object) $post;
             $usuario->fill($request->except(['_token']));
@@ -87,12 +91,22 @@ class UsuarioController extends Controller
                 ->first();
             if (!$usuario_nombre) {
                 if ($post->clave == $post->clave_confirmacion) {
-                    $usuario->clave       = md5($post->clave);
-                    $usuario->id_licencia = session('id_licencia');
-                    if ($usuario->save()) {
-                        return redirect()->route('usuario/administrar');
+                    if ($this->validar_clave($post->clave)) {
+                        if ($id_usuario != null) {
+                            if ($post->clave != $clave_antigua) {
+                                $usuario->clave = md5($post->clave);
+                            }
+                        } else {
+                            $usuario->clave = md5($post->clave);
+                        }
+
+                        if ($usuario->save()) {
+                            return redirect()->route('usuario/administrar');
+                        } else {
+                            $errors = $usuario->errors;
+                        }
                     } else {
-                        $errors = $usuario->errors;
+                        $errors[] = "La contraseña debe contener por lo menos 1 letra, 1 numero y minimo 8 caracteres.";
                     }
                 } else {
                     $errors[] = "Las contraseñas no coinciden.";
@@ -101,6 +115,23 @@ class UsuarioController extends Controller
                 $errors[] = "El nombre de usuario ya esta registrado.";
             }
         }
-        return view('usuario.form', compact(['usuario', 'empleados', 'errors']));
+        return view('usuario.form', compact(['usuario', 'empleados', 'perfiles', 'errors']));
+    }
+
+    public function validar_clave($clave)
+    {
+        if (strlen($clave) < 8) {
+            $error_clave = "La clave debe tener al menos 8 caracteres";
+            return false;
+        }
+        if (!preg_match('`[a-z]`', strtolower($clave))) {
+            $error_clave = "La clave debe tener al menos una letra";
+            return false;
+        }
+        if (!preg_match('`[0-9]`', $clave)) {
+            $error_clave = "La clave debe tener al menos un caracter numérico";
+            return false;
+        }
+        return true;
     }
 }

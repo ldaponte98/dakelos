@@ -138,4 +138,5 @@ class ProductoController extends Controller
         }
         echo "Acceso denegado";
     }
+
 }

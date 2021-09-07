@@ -84,7 +84,7 @@
         <nav class="navbar navbar-expand-sm navbar-default">
             <div id="main-menu" class="main-menu collapse navbar-collapse">
                 @php
-                \App\Menu::loadMenu();
+                    \App\Menu::loadMenu();
                 @endphp
             </div>
         </nav>
@@ -114,29 +114,39 @@
                             </form>
                             
                         </div>
-
-                        <div class="dropdown for-notification">
-                            <button class="btn dropdown-toggle" type="button" id="notification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa fa-bell"></i>
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="notification">
-                                <p class="red">No tienes notificaciones</p>
-                                <!--
-                                <a class="dropdown-item media" href="#">
-                                    <i class="fa fa-check"></i>
-                                    <p></p>
-                                </a>
-                                <a class="dropdown-item media" href="#">
-                                    <i class="fa fa-info"></i>
-                                    <p></p>
-                                </a>
-                                <a class="dropdown-item media" href="#">
-                                    <i class="fa fa-warning"></i>
-                                    <p></p>
-                                </a>
-                                -->
+                        @if (\App\Permiso::validar(4))
+                            @php
+                                $productos = \App\Producto::where('id_licencia', session('id_licencia'))
+                                                          ->where('descontado', 1)
+                                                          ->orWhere('alerta', 1)
+                                                          ->where('cantidad_actual', '<=', 'cantidad_minimo_alerta')
+                                                          ->orderBy('updated_at', 'desc')
+                                                          ->get();
+                                
+                            @endphp
+                            <div class="dropdown for-notification">
+                                <button class="btn dropdown-toggle" type="button" id="notification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-bell"></i>
+                                    @if (count($productos) > 0)
+                                        <span class="count bg-danger">{{ count($productos) }}</span>
+                                    @endif
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="notification">
+                                    @if (count($productos) > 0)
+                                        @foreach ($productos as $item)
+                                            <a class="dropdown-item media" href="{{ route('inventario/stock_actual') }}">
+                                                <i class="red fa fa-warning"></i>
+                                                <p>El producto <b>{{ $item->nombre }}</b> esta por agotarse con <b>{{ $item->cantidad_actual }} {{ $item->presentacion->nombre }}</b> disponibles</p>
+                                            </a>
+                                        @endforeach
+                                        
+                                    @else
+                                        <p>No tienes notificaciones</p>
+                                    @endif
+                                </div>
                             </div>
-                        </div>
+                        @endif
+                        
                         <div class="dropdown for-notification">
                             <a class="btn btn-secondary dropdown-toggle" href="{{ route('factura/facturador') }}" alt="Facturar">
                                 <i class="fa fa-plus-square"></i>
@@ -154,16 +164,17 @@
                                 $url_caja = route('caja/view', $caja->id_caja);
                                 $texto_caja = "$".number_format($caja->get_total());
                             }
-                        @endphp     
-                        <div class="dropdown for-notification">
-                            <a href="{{ $url_caja }}" class="btn btn-secondary dropdown-toggle open-box" type="button" id="caja" aria-expanded="false">
-                                <i class="fa fa-money"></i> <b>{{ $texto_caja }}</b>                               
-                            </a>
-                            <a href="{{ $url_caja }}" class="btn btn-secondary dropdown-toggle open-box-movil" type="button" id="caja" aria-expanded="false">
-                                <i class="fa fa-money"></i> <b style="font-size: 10px;">{{ $texto_caja }}</b>                              
-                            </a>
-                        </div>
-
+                        @endphp   
+                        @if (\App\Permiso::validar(2))
+                            <div class="dropdown for-notification">
+                                <a href="{{ $url_caja }}" class="btn btn-secondary dropdown-toggle open-box" type="button" id="caja" aria-expanded="false">
+                                    <i class="fa fa-money"></i> <b>{{ $texto_caja }}</b>                               
+                                </a>
+                                <a href="{{ $url_caja }}" class="btn btn-secondary dropdown-toggle open-box-movil" type="button" id="caja" aria-expanded="false">
+                                    <i class="fa fa-money"></i> <b style="font-size: 10px;">{{ $texto_caja }}</b>                              
+                                </a>
+                            </div>
+                        @endif
                     </div>
 
                     <div class="user-area dropdown float-right">
@@ -172,7 +183,7 @@
                         </a>
 
                         <div class="user-menu dropdown-menu">
-                            <a class="nav-link" href="#"><i class="fa fa-user"></i>Configuracion de cuenta</a>
+                            <a class="nav-link" href="{{ route('tercero/editar', $usuario->id_tercero) }}"><i class="fa fa-user"></i>Configuracion de cuenta</a>
 
                             <a class="nav-link" href="{{ route('logout') }}"><i class="fa fa-power-off"></i>Cerrar sesion</a>
                         </div>
