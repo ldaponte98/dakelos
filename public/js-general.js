@@ -65,3 +65,7 @@ function Loading(show = true, message = "Por favor espere...") {
         $.unblockUI();
     }
 }
+
+function Format(number) {
+    return new Intl.NumberFormat("de-DE").format(number);
+}

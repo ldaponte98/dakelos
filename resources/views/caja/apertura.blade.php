@@ -38,7 +38,7 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
-                                    <button type="submit" class="btn btn-info"><i class="fa fa-search"></i> Consultar</button>
+                                    <button type="submit" class="btn btn-info"> Abrir caja </button>
                                 </div>                            
                             </div>
                             {{ Form::close() }}

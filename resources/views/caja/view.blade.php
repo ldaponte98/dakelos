@@ -5,6 +5,7 @@
         <center>
             @if ($caja->fecha_cierre == null and $caja->id_usuario == session('id_usuario'))
                 <button class="btn btn-primary" onclick="CerrarCaja()">Cerrar caja</button>
+                <a href="{{ route('caja/documento/nuevo') }}" class="btn btn-primary">Crear documento</a>
             @endif
             <button class="btn btn-primary" onclick="VerDetalles()">Ver detalles</button>
         </center>
@@ -147,6 +148,15 @@
                     </div>
                     <div class="col-sm-6 text-right" >
                         <h4>${{ number_format($caja->get_descuentos(), 0, '.', '.') }}</h4>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h4><span class="red"><b>-</b></span> <b>Egresos</b></h4>
+                    </div>
+                    <div class="col-sm-6 text-right" >
+                        <h4>${{ number_format($caja->get_egresos(), 0, '.', '.') }}</h4>
                     </div>
                 </div>
                 <hr>

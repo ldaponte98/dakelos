@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Caja;
 use App\Dominio;
+use App\Factura;
+use App\ResolucionFactura;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CajaController extends Controller
 {
@@ -70,5 +73,61 @@ class CajaController extends Controller
             'error'   => $error,
             'mensaje' => $mensaje,
         ]);
+    }
+
+    public function nuevo_documento(Request $request)
+    {
+        $post    = $request->all();
+        $factura = new Factura;
+        $errors  = [];
+
+        if ($post) {
+            $post = (object) $post;
+            //$factura->fill($request->except(['_token']));
+            $resolucion = ResolucionFactura::where('id_licencia', session('id_licencia'))->first();
+            if ($resolucion) {
+                DB::beginTransaction();
+                //RESOLUCION DEL DOCUMENTO
+                if ($post->id_dominio_tipo_factura == 53) {
+                    //COMPROBANTE DE EGRESO
+                    $factura->numero = $resolucion->prefijo_comprobante_egreso . "-" . ($resolucion->consecutivo_comprobante_egreso + 1);
+                }
+
+                $caja = Caja::where('id_usuario', session('id_usuario'))
+                    ->where('estado', 1)
+                    ->where('fecha_cierre', null)
+                    ->first();
+
+                if ($caja) {
+                    $factura->id_tercero              = $post->id_tercero;
+                    $factura->id_caja                 = $caja->id_caja;
+                    $factura->valor                   = $post->valor;
+                    $factura->id_dominio_tipo_factura = $post->id_dominio_tipo_factura;
+                    $factura->observaciones           = $post->observaciones;
+                    $factura->id_usuario_registra     = session('id_usuario');
+                    $factura->id_licencia             = session('id_licencia');
+                    $factura->id_dominio_canal        = 49;
+                    $factura->finalizada              = 1;
+                    if ($factura->save()) {
+                        if ($post->id_dominio_tipo_factura == 53) {
+                            $resolucion->consecutivo_comprobante_egreso += 1;
+                        }
+                        $resolucion->save();
+                        DB::commit();
+                        return redirect()->route('caja/view', $caja->id_caja);
+                    } else {
+                        DB::rollBack();
+                        $errors = $factura->errors;
+                    }
+                } else {
+                    DB::rollBack();
+                    $errors[] = "No existe caja abierta para este usuario activa";
+                }
+            } else {
+                DB::rollBack();
+                $errors[] = "No tiene resolución de factura activa";
+            }
+        }
+        return view('caja.nuevo_documento', compact(['factura', 'errors']));
     }
 }

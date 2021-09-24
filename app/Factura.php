@@ -9,6 +9,14 @@ class Factura extends Model
     protected $table      = 'factura';
     protected $primaryKey = 'id_factura';
 
+    protected $fillable = [
+        'id_tercero',
+        'id_dominio_tipo_factura',
+        'numero',
+        'valor',
+        'id_caja',
+    ];
+
     public function licencia()
     {
         return $this->belongsTo(Licencia::class, 'id_licencia');

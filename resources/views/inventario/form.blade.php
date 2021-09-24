@@ -29,7 +29,11 @@
                                 @endforeach
                             </div>
                             @endif
+                            
                             <div class="col-sm-12">
+                                <div class="alert alert-info" id="alert-info" style="display: none;">
+                                    Los movimientos de salida generaran un comprobante de egreso para tener el registro contable del movimiento <strong>(Caja abierta necesaria)</strong>
+                                </div>
                                 <div class="row">
                                     <div class="col-sm-4">
                                          <div class="form-group">
@@ -196,8 +200,10 @@
     function validar_tipo(tipo) {
         if (tipo == 40) { //ENTRADA
             $("#id_tercero_proveedor").prop("disabled", false)
+            $("#alert-info").fadeOut()
         }else{
             $("#id_tercero_proveedor").prop("disabled", true)
+            $("#alert-info").fadeIn()
         }
     }
 

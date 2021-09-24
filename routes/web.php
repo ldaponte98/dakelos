@@ -69,6 +69,7 @@ Route::any('inventario/stock_actual', 'InventarioController@stock_actual')->name
 Route::any('caja/apertura', 'CajaController@apertura')->name('caja/apertura');
 Route::any('caja/view/{id_caja}', 'CajaController@view')->name('caja/view');
 Route::any('caja/cerrar/{id_caja}', 'CajaController@cerrar_caja')->name('caja/cerrar');
+Route::any('caja/documento/nuevo', 'CajaController@nuevo_documento')->name('caja/documento/nuevo');
 
 Route::any('reportes/facturas', 'ReporteController@facturas')->name('reportes/buscar');
 Route::any('reportes/auditoria_interna', 'ReporteController@auditoria_interna')->name('reportes/auditoria_interna');

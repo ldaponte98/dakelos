@@ -31,6 +31,14 @@ class Caja extends Model
             ->sum('descuento');
     }
 
+    public function get_egresos()
+    {
+        return Factura::where('estado', 1)
+            ->where('id_caja', $this->id_caja)
+            ->where('id_dominio_tipo_factura', 53)
+            ->sum('valor');
+    }
+
     public function total_por_canal($id_dominio_canal)
     {
         return Factura::where('estado', 1)

@@ -226,6 +226,7 @@
                                                 <th class="serial"><center><i class="fa fa-laptop"></i></center></th>
                                                 <th><center><b>Ingrediente</b></center></th>
                                                 <th><center><b>Cantidad</b></center></th>
+                                                <th><center><b>Precio</b></center></th>
                                                 <th><center><b>Acciones</b></center></th>
                                             </tr>
                                         </thead>
@@ -236,6 +237,11 @@
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="alert alert-warning pull-right">Precio costo estimado: <strong id="precio-estimado">$0</strong></div>
                             </div>
                         </div>
                     </div>
@@ -298,6 +304,7 @@
             ingredientes_para_elegir.push({
                 'id' : {{ $item->id_producto }},
                 'nombre': '{{ $item->nombre }}',
+                'precio_compra': {{ $item->precio_compra }},
                 'presentacion' : '{{ ucfirst(strtolower($item->presentacion->nombre)) }}',
                 'imagen' : '{{ $item->get_imagen() }}'
             })
@@ -327,6 +334,7 @@
             'id' : producto.id,
             'cantidad' : $("#modal-cantidad").val(),
             'nombre' : producto.nombre,
+            'precio_compra' : producto.precio_compra,
             'presentacion' : producto.presentacion,
             'imagen' : producto.imagen
         }
@@ -344,7 +352,7 @@
 
     function actualizar_ingredientes(){
         let tabla = ""
-
+        let precio_estimado = 0
         if (this.ingredientes.length <= 0) {
             tabla = `<tr>
                         <td colspan="4"><center><i>No hay ingredientes registrados</i></center></td>
@@ -355,6 +363,7 @@
                                 <td><center><img class="rounded-circle" src="${item.imagen}" width="45" height="45"></center></td>
                                 <td><center>${item.nombre.toUpperCase()}</center></td>
                                 <td><center>${item.cantidad} ${item.presentacion}</center></td>
+                                <td><center>$${Format(item.precio_compra)}</center></td>
                                 <td>
                                 <center>
                                     <button type="button" onclick="modal_ingrediente(${item.id})" class="btn btn-primary">
@@ -366,21 +375,20 @@
                                 </center>
                                 </td>
                             </tr>`
+                precio_estimado += item.precio_compra * item.cantidad
             })
         }
+        $("#precio-estimado").html(`$${Format(precio_estimado)}`)
         $("#table-ingredientes tbody").html(tabla)
     }
 
     function eliminar_ingrediente(id_ingrediente){
-        resp = confirm("¿Seguro que desea eliminar este ingrediente?")
-        if (resp) {
-            let cont = 0
-            this.ingredientes.forEach((item) => {
-                if (item.id == id_ingrediente) this.ingredientes.splice(cont, 1)
-                cont++
-            })
-            actualizar_ingredientes()
-        }
+        let cont = 0
+        this.ingredientes.forEach((item) => {
+            if (item.id == id_ingrediente) this.ingredientes.splice(cont, 1)
+            cont++
+        })
+        actualizar_ingredientes()
     }
 
     function validar_ingredientes() {
@@ -483,6 +491,7 @@
                 'id' : {{ $ingrediente->id_producto }},
                 'cantidad' : {{ $intersecto->cantidad }},
                 'nombre' : '{{ $ingrediente->nombre }}',
+                'precio_compra' : '{{ $ingrediente->precio_compra }}',
                 'presentacion' : '{{ $ingrediente->presentacion->nombre }}',
                 'imagen' : '{{ $ingrediente->get_imagen() }}'
             })
