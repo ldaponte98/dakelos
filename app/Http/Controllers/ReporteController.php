@@ -30,6 +30,7 @@ class ReporteController extends Controller
                 $fecha_desde = date('Y-m-d H:i', strtotime(explode('-', $post->fechas)[0]));
                 $fecha_hasta = date('Y-m-d H:i', strtotime(explode('-', $post->fechas)[1]));
             }
+
             if (isset($post->canales)) {
                 $canales = $post->canales;
             }
@@ -47,17 +48,17 @@ class ReporteController extends Controller
 
         $total_ventas_fecha    = 0;
         $total_facturas_ventas = 0;
-        $total_cotizaciones    = 0;
+        $total_egresos         = 0;
 
         foreach ($facturas as $factura) {
-            if ($factura->estado == 1) {
+            if ($factura->estado == 1 and $factura->id_dominio_tipo_factura == 16) {
                 $total_ventas_fecha += $factura->valor;
             }
             if ($factura->id_dominio_tipo_factura == 16) {
                 $total_facturas_ventas += 1;
             }
-            if ($factura->id_dominio_tipo_factura == 17) {
-                $total_facturas_ventas += 1;
+            if ($factura->estado == 1 and $factura->id_dominio_tipo_factura == 53) {
+                $total_egresos += $factura->valor;
             }
         }
 
@@ -65,7 +66,7 @@ class ReporteController extends Controller
             'facturas',
             'total_ventas_fecha',
             'total_facturas_ventas',
-            'total_cotizaciones',
+            'total_egresos',
             'fechas',
             'canales',
             'permiso_anular',

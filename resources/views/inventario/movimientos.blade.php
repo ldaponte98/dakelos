@@ -19,18 +19,30 @@
     <div class="col-sm-12">
         <div class="card">
             <div class="card-header">
-                <strong class="card-title">Administrar movimientos de inventario</strong>
+                <div class="row">
+                    <div class="col-sm-9" style="padding-top: 7px;">
+                        <strong class="card-title">Administrar movimientos de inventario</strong>
+                    </div>
+                    <div class="col-sm-3" style="text-align: right !important;">
+                        <input id="filtro" type="text" class="form-control" placeholder="Consulte aqui..." autocomplete="on">
+                    </div>
+                </div>
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-lg-12">
                         {{ Form::open(array('method' => 'post')) }}
                         <div class="row">
-                            
-                            <div class="col-sm-9">
+                            <div class="col-sm-4">
+                                <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text" for="fechas">Fechas</label>
+                                </div>
+                                    <input required name="fechas" id="fechas" type="text" class="form-control" placeholder="Escoja un rango de tiempo de consulta" autocomplete="off" value="{{ $fechas }}">
+                                </div>
                             </div>
-                            <div class="col-sm-3" style="text-align: right !important;">
-                                <input id="filtro" type="text" class="form-control" placeholder="Consulte aqui..." autocomplete="on">
+                            <div class="col-sm-4">
+                                <button type="submit" class="btn btn-info"><i class="fa fa-search"></i> Consultar</button>
                             </div>
                         </div>
                         {{ Form::close() }}
@@ -45,6 +57,7 @@
                                             <th><center><b>Movimiento</b></center></th>
                                             <th><center><b>Fecha</b></center></th>
                                             <th><center><b>Hora</b></center></th>
+                                            <th><center><b>Factura</b></center></th>
                                             <th><center><b>Usuario</b></center></th>
                                             <th><center><b>Estado</b></center></th>
                                             <th></th>
@@ -58,6 +71,13 @@
                                             <td><center>{{ $item->tipo_movimiento->nombre }}</center></td>
                                             <td><center>{{ date('d/m/Y', strtotime($item->created_at)) }}</center></td>
                                             <td><center>{{ date('H:i', strtotime($item->created_at)) }}</center></td>
+                                            <td><center>
+                                                @if ($item->id_factura)
+                                                    <a target="_blank" href="{{ route('factura/imprimir', $item->id_factura) }}">{{ $item->factura->numero }}</a>
+                                                @else
+                                                    No registra
+                                                @endif
+                                            </center></td>
                                             <td><center>{{ $item->usuario_registra->tercero->nombre_completo() }}</center></td>
                                             <td><center>{{ $item->estado == 1 ? "Activa" : "Anulada" }}</center></td>
                                             <td>

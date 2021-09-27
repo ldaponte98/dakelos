@@ -36,6 +36,11 @@ class Inventario extends Model
         return $this->belongsTo(Usuario::class, 'id_usuario_modifica', 'id_usuario');
     }
 
+    public function factura()
+    {
+        return $this->belongsTo(Factura::class, 'id_factura');
+    }
+
     public function proveedor()
     {
         return $this->belongsTo(Tercero::class, 'id_tercero_proveedor', 'id_tercero');

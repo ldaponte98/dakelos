@@ -89,6 +89,7 @@
                                         	<th><center><b>{{ $item->nombre }}</b></center></th>
                                         @endforeach
                                         <th><center><b>Descuentos</b></center></th>
+                                        <th><center><b>Egresos</b></center></th>
                                         <th><center><b>Total</b></center></th>
                                         <th><center><b>Acciones</b></center></th>
                                     </tr>
@@ -102,7 +103,8 @@
                                     	}
                                     	$total_cajas = 0;
                                     	$total_valores_iniciales = 0;
-                                    	$total_descuentos = 0;
+                                        $total_descuentos = 0;
+                                        $total_egresos = 0;
                                     @endphp
                                     @foreach($cajas as $caja)
                                     <tr>
@@ -130,6 +132,9 @@
                                         	${{ number_format($caja->get_descuentos(), 0, '.', '.') }}
                                         </td>
                                         <td style="text-align: right;">
+                                            ${{ number_format($caja->get_egresos(), 0, '.', '.') }}
+                                        </td>
+                                        <td style="text-align: right;">
                                         	${{ number_format($caja->get_total(), 0, '.', '.') }}
                                         </td>
                                         <td>
@@ -141,7 +146,8 @@
                                         @php
                                     		$total_cajas += $caja->get_total();
                                     		$total_valores_iniciales += $caja->valor_inicial;
-                                    		$total_descuentos += $caja->get_descuentos();
+                                            $total_descuentos += $caja->get_descuentos();
+                                            $total_egresos += $caja->get_egresos();
                                     	@endphp
                                     </tr>
                                     @php $cont++; @endphp
@@ -168,6 +174,9 @@
 	                                        <td style="text-align: right;">
                                         		<b>${{ number_format($total_descuentos, 0, '.', '.') }}</b>
                                         	</td>
+                                             <td style="text-align: right;">
+                                                <b>${{ number_format($total_egresos, 0, '.', '.') }}</b>
+                                            </td>
                                         	<td style="text-align: right;">
                                         		<b>${{ number_format($total_cajas, 0, '.', '.') }}</b>
                                         	</td>

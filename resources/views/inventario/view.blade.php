@@ -58,6 +58,16 @@
                                 <td>{{ $inventario->observaciones != "" ? $inventario->observaciones : "Ninguna" }}</td>
                             </tr>
                             <tr>
+                                <td><b>Factura</b></td>
+                                <td>
+                                    @if ($inventario->id_factura)
+                                        <a target="_blank" href="{{ route('factura/imprimir', $inventario->id_factura) }}">{{ $inventario->factura->numero }}</a>
+                                    @else
+                                        No registra
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr>
                                 <td><b>Estado</b></td>
                                 <td>{{ $inventario->estado == 1 ? "Activo" : "Anulado" }}</td>
                             </tr>

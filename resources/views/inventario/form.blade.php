@@ -9,7 +9,8 @@
 @section('content')
 @php
     $productos = \App\Producto::all()->where('id_licencia', session('id_licencia'))
-                                 ->where('id_dominio_tipo_producto' ,'<>', 37);
+                                 ->where('id_dominio_tipo_producto' ,'<>', 37)
+                                 ->where('descontado_ingredientes' ,'<>', 1);
 @endphp
 <div class="row">
     <div class="col-sm-12">
@@ -22,17 +23,16 @@
                     <div class="card-body">
                         {{ Form::open(array('method' => 'post' ,'files' => true, 'id' => 'form-inventario')) }}
                         <div class="row">
-                            @if (count($errors) > 0)
-                                <div class="alert alert-danger">
-                                @foreach($errors as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </div>
-                            @endif
-                            
                             <div class="col-sm-12">
-                                <div class="alert alert-info" id="alert-info" style="display: none;">
-                                    Los movimientos de salida generaran un comprobante de egreso para tener el registro contable del movimiento <strong>(Caja abierta necesaria)</strong>
+                                @if (count($errors) > 0)
+                                    <div class="alert alert-danger">
+                                    @foreach($errors as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </div>
+                                @endif
+                                <div class="alert alert-info" id="alert-info">
+                                    Los movimientos de entrada generaran un comprobante de egreso para tener el registro contable del movimiento <strong>(Caja abierta necesaria)</strong>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-4">
@@ -200,10 +200,10 @@
     function validar_tipo(tipo) {
         if (tipo == 40) { //ENTRADA
             $("#id_tercero_proveedor").prop("disabled", false)
-            $("#alert-info").fadeOut()
+            $("#alert-info").fadeIn()
         }else{
             $("#id_tercero_proveedor").prop("disabled", true)
-            $("#alert-info").fadeIn()
+            $("#alert-info").fadeOut()
         }
     }
 
@@ -309,12 +309,14 @@
            let json_detalles = JSON.stringify(this.detalles)
             $("#detalles").val(json_detalles)
             if ($('#form-inventario').validate()) {
+                Loading(true, "Registrando movimiento...")
                 $('#form-inventario').submit()
             } 
         }else{
             toastr.error("Debe agregar por lo menos un producto al movimiento de inventario", "Error")
         }        
     }
+    
     $(document).ready(() => {
         llenar_productos()
         llenar_detalles()

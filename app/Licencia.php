@@ -17,6 +17,11 @@ class Licencia extends Model
         'imagen_small',
     ];
 
+    public function responsable()
+    {
+        return $this->belongsTo(Tercero::class, 'id_tercero_responsable', 'id_tercero');
+    }
+
     public function get_imagen()
     {
         if ($this->imagen != null and $this->imagen != '') {

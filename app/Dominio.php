@@ -29,6 +29,9 @@ class Dominio extends Model
             $permitido = (object) $permitido;
             $canales[] = Dominio::find($permitido->id_dominio_canal);
         }
+
+        //AGREGAMOS EL CANAL GENERAL QUE ES NO DEFINIDO
+        $canales[] = Dominio::find(49);
         return $canales;
     }
 

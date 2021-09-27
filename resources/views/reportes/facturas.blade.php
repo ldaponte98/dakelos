@@ -72,8 +72,8 @@
                     </div>
                     <div class="stat-content">
                         <div class="text-left dib">
-                            <div class="stat-text"><span class="count">{{ $total_cotizaciones }}</span></div>
-                            <div class="stat-heading">Cotizaciones</div>
+                            <div class="stat-text">${{ number_format($total_egresos, 0, '.', '.') }}</div>
+                            <div class="stat-heading">Egresos</div>
                         </div>
                     </div>
                 </div>
