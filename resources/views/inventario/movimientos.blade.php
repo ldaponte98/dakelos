@@ -95,7 +95,7 @@
                     </div>
                 </div>
             </div>
-        </div> <!-- .card -->
+        </div>
     </div>
 </div>
 
@@ -104,28 +104,28 @@
     function exportar_excel() {
         tableToExcel('tabla_excel', 'Reporte_de_facturas')
     }
-     $(document).ready(function() {
-              $('#fechas').daterangepicker({
-                  timePicker: true,
-                  timePicker24Hour : true,
-                  autoApply: true,
-                  autoUpdateInput: true,
-                  locale: {
-                    format: 'YYYY/MM/DD HH:mm',
-                    cancelLabel: 'Limpiar',
-                    applyLabel: 'Establecer'
-                  }
-              });
-              
+    $(document).ready(function() {
+        $('#fechas').daterangepicker({
+            timePicker: true,
+            timePicker24Hour : true,
+            autoApply: true,
+            autoUpdateInput: true,
+            locale: {
+                format: 'YYYY/MM/DD HH:mm',
+                cancelLabel: 'Limpiar',
+                applyLabel: 'Establecer'
+            }
+        });
+          
 
-              $('#fechas').on('apply.daterangepicker', function(ev, picker) {
-                  $(this).val(picker.startDate.format('YYYY/MM/DD HH:mm') + ' - ' + picker.endDate.format('YYYY/MM/DD HH:mm'));
-              });
+        $('#fechas').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.startDate.format('YYYY/MM/DD HH:mm') + ' - ' + picker.endDate.format('YYYY/MM/DD HH:mm'));
+        });
 
-              $('#fechas').on('cancel.daterangepicker', function(ev, picker) {
-                  $(this).val('');
-              });
-            
-        })
+        $('#fechas').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
+        });
+        
+    })
 </script>
 @endsection

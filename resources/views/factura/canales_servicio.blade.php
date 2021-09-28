@@ -108,6 +108,12 @@
                              id="nav-canal-{{ $item->id_dominio }}" 
                              role="tabpanel" 
                              aria-labelledby="nav-canal-{{ $item->id_dominio }}-tab">
+
+                             <div class="row">
+                                 <div class="col-sm-12">
+                                    <b><i>Ultima actualización: {{ date('Y-m-d H:i') }}</i></b> <span class="badge badge-primary ml-1"> <a href="" title="Refrescar tiempos" class="ti-reload text-white"></a> </span>
+                                 </div>
+                             </div><br>
                             <div class="row">
                                 @if ($item->id_dominio == App\Dominio::get('Mesa'))
                                     <!-- PANEL TABLES -->
@@ -116,9 +122,19 @@
                                         @php
                                             $ruta = route('factura/facturador'). "?mesa=" . $mesa->id_mesa;
                                             $ocupada = $mesa->ocupada();
+                                            $minutos = 0;
                                             if ($ocupada) {
                                                 $factura = $mesa->get_factura_ocupada();
                                                 $ruta = route('factura/facturador'). "?factura=" . $factura->id_factura;
+                                                $fecha_creacion = date('Y-m-d H:i', strtotime($factura->created_at));
+                                                $fecha_actual = date('Y-m-d H:i');
+                                                $fecha_oportuna = date('Y-m-d H:i', strtotime($fecha_creacion . "+" .$factura->minutos_duracion." minutes" ));
+                                                $signo = $fecha_actual > $fecha_oportuna ? -1 : 1;
+                                                $date1 = new DateTime($fecha_actual);
+                                                $date2 = new DateTime($fecha_oportuna);
+                                                $diff = $date1->diff($date2);
+                                                $minutos = ($diff->days * 24 ) + ( $diff->h * 60 ) + ( $diff->i );
+                                                $minutos = $minutos * $signo;
                                             }
                                         @endphp
                                         <div class="col-sm-2">
@@ -128,7 +144,17 @@
                                                     <div class="mx-auto d-block">
                                                         <img width="64" height="64"  class="mx-auto d-block" src="{{  $item->get_imagen() }}" alt="Mesa">
                                                         <h5 class="text-center mt-2 mb-1">Mesa #{{ $mesa->numero }}</h5>
-
+                                                        @if ($ocupada)
+                                                                @if ($minutos > 0)
+                                                                <h4 class="text-center green">
+                                                                    <b>{{ $minutos }} </b> <small>minutos para entrega oportuna</small>
+                                                                </h4> 
+                                                                @else
+                                                                <h4 class="text-center red">
+                                                                   <small>Retrasado </small><b>{{ $minutos * -1 }} </b> <small>minutos </small> 
+                                                                </h4> 
+                                                                @endif
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>

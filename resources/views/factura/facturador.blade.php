@@ -260,6 +260,10 @@
                 	<label>Observaciones</label>
                 	<textarea id="factura-observaciones" class="form-control" rows="3"></textarea>
                 </div>
+                <div class="form-group d-flex">
+                    <label class="lb-flex"><b>Duración estimada (minutos)</b></label>
+                    <input type="number" id="factura-duracion" style="width: 30%;" placeholder="0" class="form-control">
+                </div>
                 <hr>
                 <div class="card-text text-sm-center">
                     <a href="#"><i class="fa fa-facebook pr-1"></i></a>
@@ -356,7 +360,8 @@
         servicio_voluntario: 0,
         descuento: 0,
         total: 0,
-        finalizada : 0		
+        finalizada : 0,
+        minutos_duracion : {{ $licencia->minutos_duracion_promedio ? $licencia->minutos_duracion_promedio : 0 }}		
 	}
 
     function LlenarProductos() {
@@ -491,6 +496,7 @@
         let domicilio = $("#factura-domicilio").val()
         if ($.isNumeric(domicilio) && this.factura.id_dominio_canal != {{ App\Dominio::get('Mesa') }}) total += parseFloat(domicilio)
         $("#factura-total").val("$" + format(total))
+        $("#factura-duracion").val(this.factura.minutos_duracion)
         this.factura.total = parseFloat(total)
 	}
 
@@ -722,7 +728,7 @@
             this.factura.domicilio = {{ $factura->domicilio }}
             this.factura.servicio_voluntario = {{ $factura->servicio_voluntario }}
             this.factura.direccion = "{{ $factura->direccion }}"
-            
+            this.factura.minutos_duracion = "{{ $factura->minutos_duracion }}"
             this.factura.finalizada = {{ $factura->finalizada }}
             this.factura.observaciones = "{{ $factura->observaciones }}"
             $("#factura-observaciones").val(this.factura.observaciones)
