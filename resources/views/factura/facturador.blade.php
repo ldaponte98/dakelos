@@ -361,6 +361,7 @@
         descuento: 0,
         total: 0,
         finalizada : 0,
+        id_licencia : {{ $licencia->id_licencia }},
         minutos_duracion : {{ $licencia->minutos_duracion_promedio ? $licencia->minutos_duracion_promedio : 0 }}		
 	}
 

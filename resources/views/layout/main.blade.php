@@ -69,7 +69,7 @@
 
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <script src="http://malsup.github.io/jquery.blockUI.js"></script>
+    <script src="https://malsup.github.io/jquery.blockUI.js"></script>
     <script src="{{ asset('TableToExcel.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
     <script src="{{ asset('blockUI.js') }}"></script>
@@ -218,6 +218,7 @@
 
     <script>
         jQuery(document).ready(function() {
+            ValidarPedidosNuevos()
             jQuery(".standardSelect").chosen({
                 disable_search_threshold: 10,
                 no_results_text: "Oops, nothing found!",
@@ -225,7 +226,22 @@
             });
             $(".select2").select2({ width: "100%" })
             $('.nav-pills').scrollingTabs()
+            
         });
+
+        function ValidarPedidosNuevos() {
+            setInterval(function() {
+                let url = "{{ url('licencia/validar_pedidos_nuevos') }}"
+                $.get(url, (response) => {
+                    if (response.error == false) {
+                        toastr.info("Tienes pedidos pendientes realizados por el menu digital", "Nuevo Pedido")
+                    }
+                })
+                .fail((error) => {
+
+                })
+            }, 30000);
+        }
     </script>
     
 </body>

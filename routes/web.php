@@ -20,7 +20,7 @@ Route::get('login', function () {
 })->name('login');
 
 Route::get('index', 'UsuarioController@index')->name('index');
-Route::get('menu/{token}', 'LicenciaController@menu')->name('menu');
+Route::get('menu/{token}', 'AppController@menu')->name('menu');
 
 Route::post('usuario/auth', 'UsuarioController@auth')->name('usuario/auth');
 Route::get('usuario/logout', 'UsuarioController@logout')->name('logout');
@@ -46,6 +46,7 @@ Route::any('factura/facturador', 'FacturaController@facturador')->name('factura/
 Route::post('factura/finalizar_factura_facturador', 'FacturaController@finalizar_factura_facturador')->name('factura/finalizar_factura_facturador');
 
 Route::any('canales_servicio', 'FacturaController@canales_servicio')->name('canales_servicio');
+Route::any('pedidos_pendientes', 'FacturaController@pedidos_pendientes')->name('pedidos_pendientes');
 
 Route::any('producto/buscar/{id_producto}', 'ProductoController@buscar')->name('producto/buscar');
 Route::any('producto/administrar', 'ProductoController@administrar')->name('producto/administrar');
@@ -83,3 +84,4 @@ Route::get('factura_pdf', function () {
 })->name('factura_pdf');
 
 Route::any('licencia/menu_clientes', 'LicenciaController@menu_clientes')->name('licencia/menu_clientes');
+Route::any('licencia/validar_pedidos_nuevos', 'LicenciaController@validar_pedidos_nuevos')->name('licencia/validar_pedidos_nuevos');

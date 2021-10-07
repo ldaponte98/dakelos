@@ -339,25 +339,35 @@ class FacturaController extends Controller
             $post                   = (object) $post;
             $post->factura          = (object) $post->factura;
             $post->factura->cliente = (object) $post->factura->cliente;
-            //validamos si el usuario tiene caja abierta para facturar
-            $caja = Caja::where('id_usuario', session('id_usuario'))
-                ->where('estado', 1)
-                ->where('fecha_cierre', null)
-                ->first();
+            $menu_digital           = false;
+            $caja                   = new Caja;
+            $id_licencia            = session('id_licencia');
+            $id_usuario             = session('id_usuario');
+            if ($post->factura->id_dominio_canal == 54 and $id_licencia == null) {
+                $menu_digital = true;
+                $id_licencia  = $post->factura->id_licencia;
+                $id_usuario   = 1;
+            } else {
+                //validamos si el usuario tiene caja abierta para facturar
+                $caja = Caja::where('id_usuario', $id_usuario)
+                    ->where('estado', 1)
+                    ->where('fecha_cierre', null)
+                    ->first();
 
-            if ($caja == null) {
-                if (Permiso::validar(3)) {
-                    $caja = Caja::where('id_licencia', session('id_licencia'))
-                        ->where('estado', 1)
-                        ->where('fecha_cierre', null)
-                        ->orderBy('created_at', 'desc')
-                        ->first();
+                if ($caja == null) {
+                    if (Permiso::validar(3)) {
+                        $caja = Caja::where('id_licencia', $id_licencia)
+                            ->where('estado', 1)
+                            ->where('fecha_cierre', null)
+                            ->orderBy('created_at', 'desc')
+                            ->first();
+                    }
                 }
             }
 
-            if ($caja) {
+            if ($caja or $menu_digital) {
                 //primero buscamos el consecutivo de la resolucion para la factura
-                $resolucion = ResolucionFactura::where('id_licencia', session('id_licencia'))->first();
+                $resolucion = ResolucionFactura::where('id_licencia', $id_licencia)->first();
                 DB::beginTransaction();
                 if ($resolucion) {
                     $factura         = $post->factura->id_factura == null ? new Factura : Factura::find($post->factura->id_factura);
@@ -365,14 +375,14 @@ class FacturaController extends Controller
 
                     $cliente                          = $this->guardar_cliente_factura($post);
                     $factura->id_tercero              = $cliente->id_tercero;
-                    $factura->id_caja                 = $caja->id_caja;
+                    $factura->id_caja                 = $menu_digital ? null : $caja->id_caja;
                     $factura->valor                   = $post->factura->total;
                     $factura->descuento               = $post->factura->descuento;
                     $factura->id_dominio_tipo_factura = 16;
                     $factura->servicio_voluntario     = $post->factura->servicio_voluntario;
                     $factura->observaciones           = $post->factura->observaciones;
-                    $factura->id_usuario_registra     = session('id_usuario');
-                    $factura->id_licencia             = session('id_licencia');
+                    $factura->id_usuario_registra     = $id_usuario;
+                    $factura->id_licencia             = $id_licencia;
                     $factura->domicilio               = 0;
                     $factura->id_mesa                 = null;
                     $factura->finalizada              = $post->factura->finalizada;
@@ -450,10 +460,14 @@ class FacturaController extends Controller
 
     public function guardar_cliente_factura($post)
     {
-        $cliente = new Tercero;
+        $cliente     = new Tercero;
+        $id_licencia = session('id_licencia');
+        if ($post->factura->id_dominio_canal == 54) {
+            $id_licencia = $post->factura->id_licencia;
+        }
         //BUSCAMOS SI EL CLIENTE EXISTE CON LA IDENTIFICACION
         $cliente_busqueda = Tercero::where('identificacion', $post->factura->cliente->identificacion)
-            ->where('id_licencia', session('id_licencia'))
+            ->where('id_licencia', $id_licencia)
             ->first();
         if ($cliente_busqueda) {
             $cliente = $cliente_busqueda;
@@ -462,7 +476,7 @@ class FacturaController extends Controller
         //BUSCAMOS SI EL CLIENTE EXISTE CON EL NUMERO DE TELEFONO
         if ($cliente->id_tercero == null) {
             $cliente_busqueda = Tercero::where('telefono', $post->factura->cliente->telefono)
-                ->where('id_licencia', session('id_licencia'))
+                ->where('id_licencia', $id_licencia)
                 ->where('telefono', '<>', null)
                 ->first();
             if ($cliente_busqueda) {
@@ -483,18 +497,18 @@ class FacturaController extends Controller
             $cliente->email                          = "desconocido@gmail.com";
             $cliente->id_dominio_sexo                = 13;
             $cliente->telefono                       = $telefono;
-            $cliente->id_licencia                    = session('id_licencia');
+            $cliente->id_licencia                    = $id_licencia;
 
             //AHORA VERIFICAMOS SI EL USUARIO DESCONOCIDO YA ESTA CREADO PARA LA LICENCIA
             $cliente_busqueda = Tercero::where('identificacion', $iden)
-                ->where('id_licencia', session('id_licencia'))
+                ->where('id_licencia', $id_licencia)
                 ->first();
             if ($cliente_busqueda) {
                 $cliente = $cliente_busqueda;
             } else {
                 //BUSCAMOS SI EL CLIENTE EXISTE CON EL NUMERO DE TELEFONO
                 $cliente_busqueda = Tercero::where('telefono', $telefono)
-                    ->where('id_licencia', session('id_licencia'))
+                    ->where('id_licencia', $id_licencia)
                     ->where('telefono', '<>', null)
                     ->first();
                 if ($cliente_busqueda) {
@@ -608,5 +622,16 @@ class FacturaController extends Controller
             'error'   => $error,
             'mensaje' => $mensaje,
         ]);
+    }
+
+    public function pedidos_pendientes()
+    {
+        $pedidos = Factura::where('id_licencia', session('id_licencia'))
+            ->where('estado', 1)
+            ->where('finalizada', 0)
+            ->where('id_dominio_canal', 54)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        return view('factura.pedidos_pendientes', compact(['pedidos']));
     }
 }
