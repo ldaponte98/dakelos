@@ -60,6 +60,7 @@ class UsuarioController extends Controller
     {
         $usuarios = Usuario::join('tercero as t', 't.id_tercero', '=', 'usuario.id_tercero')
             ->where('t.id_licencia', session('id_licencia'))
+            ->where('usuario.id_perfil', '<>', 1)
             ->get();
 
         return view('usuario.administrar', compact(['usuarios']));
