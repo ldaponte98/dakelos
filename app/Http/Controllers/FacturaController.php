@@ -582,9 +582,9 @@ class FacturaController extends Controller
             if ($post->motivo != "" and $post->motivo != null) {
                 $factura = Factura::find($post->id_factura);
                 if ($factura) {
+                    $id_usuario = session('id_usuario');
+                    $id_perfil  = session('id_perfil');
                     if ($factura->finalizada == 1) {
-                        $id_usuario = session('id_usuario');
-                        $id_perfil  = session('id_perfil');
                         $id_permiso = 1;
                         if (Permiso::validar($id_perfil, $id_permiso)) {
                             //DEVOLVEMOS A UN PRODUCTO LA CANTIDAD VENDIDA

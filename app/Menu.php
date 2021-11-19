@@ -40,7 +40,7 @@ class Menu extends Model
                             ->where('estado', 1)
                             ->first();
                         if ($menu_perfil_hijo) {
-                            $menu .= '<li><i class="fa fa-' . $menu_hijo->icono . '"></i> <a href="/' . $menu_hijo->ruta . '">' . $menu_hijo->nombre . '</a></li>';
+                            $menu .= '<li><i class="fa fa-' . $menu_hijo->icono . '"></i> <a href="' . config('global.url_base') . '/' . $menu_hijo->ruta . '">' . $menu_hijo->nombre . '</a></li>';
                         }
 
                     }
@@ -49,7 +49,7 @@ class Menu extends Model
                 } else {
                     //aca es porque no tiene hijos el menu padre
                     $menu .= '<li>
-                                <a href="/' . $menu_padre->ruta . '"> <i class="menu-icon fa fa-' . $menu_padre->icono . '"></i>' . $menu_padre->nombre . '</a>
+                                <a href="' . config('global.url_base') . '/' . $menu_padre->ruta . '"> <i class="menu-icon fa fa-' . $menu_padre->icono . '"></i>' . $menu_padre->nombre . '</a>
                               </li>';
                 }
             }
