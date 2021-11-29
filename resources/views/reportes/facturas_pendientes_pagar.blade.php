@@ -158,7 +158,7 @@
 
                                     @if (count($facturas) == 0)
                                         <tr>
-                                            <td colspan="8">
+                                            <td colspan="10">
                                                 <center>
                                                     <br>
                                                     <i>No hay registros para esta consulta</i>
