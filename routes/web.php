@@ -44,6 +44,7 @@ Route::any('ticket/imprimir/factura/{id_factura}', 'FacturaController@imprimir_t
 
 Route::any('factura/facturador', 'FacturaController@facturador')->name('factura/facturador');
 Route::post('factura/finalizar_factura_facturador', 'FacturaController@finalizar_factura_facturador')->name('factura/finalizar_factura_facturador');
+Route::post('factura/pagar_credito', 'FacturaController@pagar_credito')->name('factura/pagar_credito');
 
 Route::any('canales_servicio', 'FacturaController@canales_servicio')->name('canales_servicio');
 Route::any('pedidos_pendientes', 'FacturaController@pedidos_pendientes')->name('pedidos_pendientes');
@@ -75,6 +76,7 @@ Route::any('caja/documento/nuevo', 'CajaController@nuevo_documento')->name('caja
 Route::any('reportes/facturas', 'ReporteController@facturas')->name('reportes/buscar');
 Route::any('reportes/auditoria_interna', 'ReporteController@auditoria_interna')->name('reportes/auditoria_interna');
 Route::any('reportes/caja', 'ReporteController@cajas')->name('reportes/caja');
+Route::any('reportes/facturas_pendientes_pagar', 'ReporteController@facturas_pendientes_pagar')->name('reportes/facturas_pendientes_pagar');
 Route::get('factura_email', function () {
     return view('email.factura');
 })->name('factura_email');

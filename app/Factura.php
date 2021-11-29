@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Mail;
 
 class Factura extends Model
 {
@@ -79,5 +80,43 @@ class Factura extends Model
             $items[] = $item->id_dominio_forma_pago;
         }
         return $items;
+    }
+
+    public function get_cruce()
+    {
+        return Factura::where('id_factura_cruce', $this->id_factura)->first();
+    }
+
+    public function enviar_email()
+    {
+        $mensaje = "";
+        $error   = true;
+        $factura = $this;
+        $tercero = Tercero::find($factura->id_tercero);
+        //ahora enviamos email con la factura al cliente
+        $subject = $factura->tipo->nombre . ' ' . $factura->licencia->nombre;
+        $for     = $tercero->email;
+
+        $data_email = array(
+            'factura'         => $factura,
+            'imagen_licencia' => $factura->licencia->get_imagen_email(),
+            'tipo_factura'    => $factura->tipo->nombre,
+            'id_factura'      => $factura->id_factura,
+        );
+        if ($for) {
+            try {
+                Mail::send('email.factura', $data_email, function ($msj) use ($subject, $for) {
+                    $msj->from(config('global.email_zorax'), session('nombre_licencia'));
+                    $msj->subject($subject);
+                    $msj->to($for);
+                });
+                $error   = false;
+                $mensaje = "OK";
+            } catch (Exception $e) {
+                $mensaje = "Error en envio email: " . $e->getMessage();
+            }
+            Log::write("Envio email de factura", "Envio de email para factura [$factura->id_factura] con respuesta [$mensaje]");
+        }
+        return $error;
     }
 }

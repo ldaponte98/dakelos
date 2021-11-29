@@ -106,7 +106,7 @@ class FacturaController extends Controller
                     $factura->id_licencia             = session('id_licencia');
                     $factura->id_dominio_canal        = 49;
                     $factura->finalizada              = 1;
-
+                    $factura->pagada                  = 1;
                     if ($factura->save()) {
                         //ahora aumentamos el consecutivo de la resolucion
                         if ($post->tipo_factura == 16) {
@@ -117,7 +117,6 @@ class FacturaController extends Controller
                             $resolucion->consecutivo_cotizacion += 1;
                         }
 
-                        $resolucion->save();
                         $total_descuentos = 0;
                         //ahora registramos los detalles de la factura
                         foreach ($post->carrito as $producto) {
@@ -136,6 +135,7 @@ class FacturaController extends Controller
                             $detalle->save();
                             $total_descuentos += $producto->descuento;
                         }
+
                         $factura->descuento = $total_descuentos;
                         $factura->save();
                         //Ahora registramos las formas de pago
@@ -147,7 +147,27 @@ class FacturaController extends Controller
                                 $forma_pago->id_dominio_forma_pago = $forma->id_dominio_forma_pago;
                                 $forma_pago->valor                 = $forma->valor;
                                 $forma_pago->save();
+
+                                if ($forma_pago->id_dominio_forma_pago == Dominio::get('Credito (Saldo pendiente)')) {
+                                    $texto_resolucion                 = $resolucion->prefijo_credito . "-" . ($resolucion->consecutivo_credito + 1);
+                                    $factura->numero                  = $texto_resolucion;
+                                    $factura->id_dominio_tipo_factura = Dominio::get('Factura a credito (Saldo pendiente)');
+                                    $factura->save();
+                                }
                             }
+                        }
+
+                        if ($post->factura->id_factura == null) {
+                            //ahora aumentamos el consecutivo de la resolucion
+                            if ($factura->id_dominio_tipo_factura == Dominio::get('Factura a credito (Saldo pendiente)')) {
+                                $resolucion->consecutivo_credito += 1;
+                            }
+                            if ($factura->id_dominio_tipo_factura == 16) {
+                                //FACTURA DE VENTA
+                                $resolucion->consecutivo_factura += 1;
+                            }
+
+                            $resolucion->save();
                         }
 
                         $tercero = Tercero::find($factura->id_tercero);
@@ -202,6 +222,7 @@ class FacturaController extends Controller
 
     public function imprimir($id_factura)
     {
+        set_time_limit(72000);
         $factura = Factura::find($id_factura);
         $pdf     = \PDF::loadView('pdf.factura', compact('factura'));
         return $pdf->stream($factura->tipo->nombre . ' ' . $factura->licencia->nombre . '.pdf');
@@ -240,7 +261,7 @@ class FacturaController extends Controller
 
         $facturas = Factura::where('id_licencia', session('id_licencia'))
             ->where('estado', 1)
-            ->where('id_dominio_tipo_factura', 16)
+            ->whereIn('id_dominio_tipo_factura', [16, 56])
             ->where('finalizada', 0)
             ->get();
 
@@ -370,8 +391,9 @@ class FacturaController extends Controller
                 $resolucion = ResolucionFactura::where('id_licencia', $id_licencia)->first();
                 DB::beginTransaction();
                 if ($resolucion) {
-                    $factura         = $post->factura->id_factura == null ? new Factura : Factura::find($post->factura->id_factura);
-                    $factura->numero = $resolucion->prefijo_factura . "-" . ($resolucion->consecutivo_factura + 1);
+                    $factura          = $post->factura->id_factura == null ? new Factura : Factura::find($post->factura->id_factura);
+                    $texto_resolucion = $resolucion->prefijo_factura . "-" . ($resolucion->consecutivo_factura + 1);
+                    $factura->numero  = $post->factura->id_factura == null ? $texto_resolucion : $factura->numero;
 
                     $cliente                          = $this->guardar_cliente_factura($post);
                     $factura->id_tercero              = $cliente->id_tercero;
@@ -388,6 +410,7 @@ class FacturaController extends Controller
                     $factura->finalizada              = $post->factura->finalizada;
                     $factura->id_dominio_canal        = $post->factura->id_dominio_canal;
                     $factura->direccion               = $post->factura->direccion;
+                    $factura->pagada                  = 1;
 
                     if ($post->factura->id_dominio_canal == Dominio::get('Mesa')) {
                         $factura->id_mesa = $post->factura->id_mesa;
@@ -397,9 +420,6 @@ class FacturaController extends Controller
                     }
 
                     if ($factura->save()) {
-                        //ahora aumentamos el consecutivo de la resolucion
-                        $resolucion->consecutivo_factura += 1;
-                        $resolucion->save();
 
                         //ahora registramos los detalles de la factura
                         DB::statement('delete from factura_detalle where id_factura = ' . $factura->id_factura);
@@ -424,7 +444,27 @@ class FacturaController extends Controller
                                 $forma_pago->id_dominio_forma_pago = $id_dominio_forma_pago;
                                 $forma_pago->valor                 = ($factura->valor / count($post->factura->formas_pago));
                                 $forma_pago->save();
+
+                                if ($forma_pago->id_dominio_forma_pago == Dominio::get('Credito (Saldo pendiente)')) {
+                                    $texto_resolucion                 = $resolucion->prefijo_credito . "-" . ($resolucion->consecutivo_credito + 1);
+                                    $factura->numero                  = $post->factura->id_factura == null ? $texto_resolucion : $factura->numero;
+                                    $factura->id_dominio_tipo_factura = Dominio::get('Factura a credito (Saldo pendiente)');
+                                    $factura->save();
+                                }
                             }
+                        }
+
+                        if ($post->factura->id_factura == null) {
+                            //ahora aumentamos el consecutivo de la resolucion
+                            if ($factura->id_dominio_tipo_factura == Dominio::get('Factura a credito (Saldo pendiente)')) {
+                                $resolucion->consecutivo_credito += 1;
+                            }
+                            if ($factura->id_dominio_tipo_factura == 16) {
+                                //FACTURA DE VENTA
+                                $resolucion->consecutivo_factura += 1;
+                            }
+
+                            $resolucion->save();
                         }
 
                         if ($factura->finalizada == 1) {
@@ -633,5 +673,95 @@ class FacturaController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
         return view('factura.pedidos_pendientes', compact(['pedidos']));
+    }
+
+    public function pagar_credito(Request $request)
+    {
+        $post    = $request->all();
+        $error   = true;
+        $mensaje = "";
+        if ($post) {
+            $post    = (object) $post;
+            $factura = Factura::find($post->id_factura);
+            if ($factura) {
+                $id_usuario = session('id_usuario');
+                $id_perfil  = session('id_perfil');
+
+                //validamos si el usuario tiene caja abierta para facturar
+                $caja = Caja::where('id_usuario', $id_usuario)
+                    ->where('estado', 1)
+                    ->where('fecha_cierre', null)
+                    ->first();
+
+                if ($caja) {
+                    $facturacion = $this->facturar_pago_credito($factura, $caja->id_caja, $post->forma_pago, $post->observaciones);
+                    $mensaje     = $facturacion->mensaje;
+                    $error       = $facturacion->error;
+                } else {
+                    $mensaje = "Para realizar el pago debe tener caja abierta";
+                }
+            } else {
+                $mensaje = "Factura no valida";
+            }
+        } else {
+            $mensaje = "No data valid";
+        }
+
+        return response()->json([
+            'error'   => $error,
+            'mensaje' => $mensaje,
+        ]);
+    }
+
+    public function facturar_pago_credito($factura_credito, $id_caja, $id_dominio_forma_pago, $observaciones)
+    {
+        //primero buscamos el consecutivo de la resolucion para la factura
+        $id_usuario = session('id_usuario');
+        $resolucion = ResolucionFactura::where('id_licencia', session('id_licencia'))->first();
+        DB::beginTransaction();
+        if ($resolucion) {
+            $factura                          = new Factura;
+            $factura->numero                  = $resolucion->prefijo_factura . "-" . ($resolucion->consecutivo_factura + 1);
+            $factura->id_tercero              = $factura_credito->id_tercero;
+            $factura->id_caja                 = $id_caja;
+            $factura->valor                   = $factura_credito->valor;
+            $factura->id_dominio_tipo_factura = Dominio::get('Factura de venta');
+            $factura->observaciones           = $observaciones;
+            $factura->id_usuario_registra     = session('id_usuario');
+            $factura->id_licencia             = session('id_licencia');
+            $factura->id_dominio_canal        = 49;
+            $factura->finalizada              = 1;
+            $factura->pagada                  = 1;
+            $factura->id_factura_cruce        = $factura_credito->id_factura;
+            if ($factura->save()) {
+                //ahora aumentamos el consecutivo de la resolucion
+                $resolucion->consecutivo_factura += 1;
+                $resolucion->save();
+                //Ahora registramos las formas de pago
+                $forma_pago                        = new FormaPago;
+                $forma_pago->id_factura            = $factura->id_factura;
+                $forma_pago->id_dominio_forma_pago = $id_dominio_forma_pago;
+                $forma_pago->valor                 = $factura->valor;
+                $forma_pago->save();
+
+                $factura->enviar_email();
+                $mensaje = "Pago de credito registrado exitosamente";
+                $error   = false;
+                Log::write("Pago de credito", "El usuario [$id_usuario] pago credito de factura [$factura_credito->id_factura] generando factura [$factura->id_factura]");
+                DB::commit();
+            } else {
+                DB::rollBack();
+                $mensaje = "Error al registrar la factura";
+                $errors  = $factura->errors;
+            }
+        } else {
+            DB::rollBack();
+            $mensaje = "No tiene resolucion activa";
+        }
+
+        return (object) [
+            'error'   => $error,
+            'mensaje' => $mensaje,
+        ];
     }
 }

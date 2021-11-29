@@ -21,6 +21,8 @@ class Caja extends Model
             ->where('id_caja', $this->id_caja)
             ->where('id_dominio_tipo_factura', '<>', 17)
             ->where('id_dominio_tipo_factura', '<>', 53)
+            ->where('id_dominio_tipo_factura', '<>', 56)
+            ->where('pagada', 1)
             ->sum('valor') - Factura::where('estado', 1)
             ->where('id_caja', $this->id_caja)
             ->where('id_dominio_tipo_factura', 53)

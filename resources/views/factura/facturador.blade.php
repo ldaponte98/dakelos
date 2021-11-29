@@ -620,25 +620,7 @@
         this.factura.direccion = $("#factura-direccion-domicilio").val()
         this.factura.formas_pago = $("#factura-formas-pago").val()
 
-        if (this.factura.detalles.length == 0) {
-            toastr.error("Es necesario escoger por lo menos un producto para el pedido", "Error")
-            return;
-        }
-
-        if (this.factura.formas_pago == null) {
-            toastr.error("Es necesario escoger por lo menos una forma de pago para el pedido", "Error")
-            return;
-        }
-
-        if (this.factura.id_dominio_canal == null) {
-            toastr.error("Es necesario escoger el canal de venta para el pedido", "Error")
-            return;
-        }
-
-        if (this.factura.id_dominio_canal == {{ App\Dominio::get('Mesa') }} && this.factura.id_mesa == null) {
-            toastr.error("Es necesario escoger el numero de mesa para el pedido", "Error")
-            return;
-        }
+        if (!ValidarCampos()) return false;
 
         if (this.factura.id_dominio_canal == {{ App\Dominio::get('Mesa') }}) this.factura.direccion = "";
 
@@ -672,6 +654,43 @@
             toastr.error("Ha ocurrido un error, por favor intentelo nuevamente", "Error")
         })
         console.log("bien")
+    }
+
+    function ValidarCampos() {
+        if (this.factura.detalles.length == 0) {
+            toastr.error("Es necesario escoger por lo menos un producto para el pedido", "Error")
+            return false;
+        }
+
+        if (this.factura.formas_pago == null) {
+            toastr.error("Es necesario escoger por lo menos una forma de pago para el pedido", "Error")
+            return false;
+        }
+
+        if (this.factura.id_dominio_canal == null) {
+            toastr.error("Es necesario escoger el canal de venta para el pedido", "Error")
+            return false;
+        }
+
+        if (this.factura.id_dominio_canal == {{ App\Dominio::get('Mesa') }} && this.factura.id_mesa == null) {
+            toastr.error("Es necesario escoger el numero de mesa para el pedido", "Error")
+            return false;
+        }
+
+        //Validamos forma de pago credito
+        let search = this.factura.formas_pago.find(item => item == '{{ App\Dominio::get('Credito (Saldo pendiente)') }}')
+        if (search != null && this.factura.formas_pago.length > 1) {
+            toastr.error("Para establecer una forma de pago a credito no deben haber mas formas de pago asociadas a la factura", "Error")
+            return false;
+        }
+
+        @if ($factura and $factura->id_dominio_tipo_factura == App\Dominio::get('Factura a credito (Saldo pendiente)'))
+            if (search == null) {
+                toastr.error("Esta factura fue guardada como documento a credito y solo puede tener formas de pago a credito", "Error")
+                return false;
+            }
+        @endif
+        return true;
     }
 
     function Imprimir(tipo) {
