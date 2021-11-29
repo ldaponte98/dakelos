@@ -18,7 +18,6 @@ use App\ResolucionFactura;
 use App\Tercero;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Mail;
 
 class FacturaController extends Controller
 {
@@ -170,33 +169,13 @@ class FacturaController extends Controller
                             $resolucion->save();
                         }
 
-                        $tercero = Tercero::find($factura->id_tercero);
-                        //ahora enviamos email con la factura al cliente
-                        $subject = $factura->tipo->nombre . ' ' . $factura->licencia->nombre;
-                        $for     = $tercero->email;
-
-                        $data_email = array(
-                            'factura'         => $factura,
-                            'imagen_licencia' => $factura->licencia->get_imagen_email(),
-                            'tipo_factura'    => $factura->tipo->nombre,
-                            'id_factura'      => $factura->id_factura,
-                        );
-
                         $this->descontar_inventario_detalles($factura->detalles, $factura->id_factura);
 
                         $id_factura = $factura->id_factura;
                         $mensaje    = "Documento registrado exitosamente";
                         $error      = false;
                         DB::commit();
-                        try {
-                            Mail::send('email.factura', $data_email, function ($msj) use ($subject, $for) {
-                                $msj->from(config('global.email_zorax'), session('nombre_licencia'));
-                                $msj->subject($subject);
-                                $msj->to($for);
-                            });
-                        } catch (Exception $e) {
-                            $mensaje = "Documento registrado exitosamente, no se pudo enviar factura a cliente";
-                        }
+                        $factura->enviar_email();
                     } else {
                         DB::rollBack();
                         $mensaje = "Error al registrar la factura";
@@ -475,6 +454,10 @@ class FacturaController extends Controller
                         $mensaje    = "Factura registrada exitosamente";
                         $error      = false;
                         DB::commit();
+
+                        if ($factura->finalizada == 1) {
+                            $factura->enviar_email();
+                        }
                     } else {
                         DB::rollBack();
                         $mensaje = "Error al registrar la factura";
