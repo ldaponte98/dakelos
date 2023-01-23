@@ -157,11 +157,11 @@
 		<td colspan="10" style="border-top: none;">&nbsp;</td>
 	</tr>
 	<tr>
-		<td colspan="10" style="border-top: none; background-color: #BFBFBF"><center><b>PRODUCTOS</b></center></td>
+		<td colspan="10" style="border-top: none; background-color: #BFBFBF"><center><b>MATERIALES</b></center></td>
 	</tr>
 	<tr>
 		<td style="background-color: #BFBFBF"><center><b>ITEM</b></center></td>
-		<td style="background-color: #BFBFBF" colspan="2"><center><b>DESCRIPCIÓN</b></center></td>
+		<td style="background-color: #BFBFBF" colspan="2"><center><b>DESCRIPCION</b></center></td>
 		<td style="background-color: #BFBFBF"><center><b>CANT</b></center></td>
 		<td style="background-color: #BFBFBF" colspan="2"><center><b>Vr. UNIT</b></center></td>
 		<td style="background-color: #BFBFBF"><center><b>IVA</b></center></td>
@@ -209,7 +209,7 @@
 		</tr>
 	@endif
 	<tr>
-		<td colspan="7" style="border-bottom: none; border-top: none; border-bottom: none; font-size:8px;"><center>Formulario dian 18762013422870 de 2019/03/12 habilitada del 00001 al 1000.<br>Esta factura se asimila en todos sus efectos legales a una letra de Cambio según art.774 del Código de Comercio.</center></td>
+		<td colspan="7" style="border-bottom: none; border-top: none; border-bottom: none; font-size:8px;"><center>Formulario dian 18762013422870 de 2019/03/12 habilitada del 00001 al 1000.<br>Esta factura se asimila en todos sus efectos legales a una letra de Cambio segun art.774 del Codigo de Comercio.</center></td>
 		<td colspan="3" style="border-bottom: none; background-color: #BFBFBF;"><b>IVA: </b>${{ number_format($total_iva, 0, '.','.') }}</td>
 
 	</tr>

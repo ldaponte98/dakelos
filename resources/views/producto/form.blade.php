@@ -16,7 +16,7 @@
     <div class="col-sm-12">
         <div class="card">
             <div class="card-header">
-                <strong class="card-title">@if($producto->id_producto == null) Crear producto / servicio / ingrediente @else Modificar producto / servicio / ingrediente @endif</strong>
+                <strong class="card-title">@if($producto->id_producto == null) Crear material @else Modificar producto @endif</strong>
             </div>
             <div class="card-body">
                 <div id="pay-invoice">
@@ -144,7 +144,7 @@
                                     <div class="row">
                                          <div class="col-sm-6">
                                             <div class="form-group">
-                                                <label for="cc-payment" class="control-label mb-1"><b>*Contenido por producto</b></label> <i class="fa fa-info-circle" title="Este campo es el contenido total del producto, si es por unidad el valor por defecto es 1."></i>
+                                                <label for="cc-payment" class="control-label mb-1"><b>*Contenido por producto</b></label> <i class="fa fa-info-circle" title="Este campo es el contenido total del material, si es por unidad el valor por defecto es 1."></i>
                                                 <div class="input-group mb-3">
                                                     <input name="contenido" type="number" class="form-control" aria-required="true" aria-invalid="false" value="{{ $producto->contenido }}" >
                                                     <div class="input-group-prepend">
@@ -171,7 +171,7 @@
                                     <div class="col-sm-12">
                                         <div class="form-group" style="margin-left: 18px;">
                                             <label for="descontado_ingredientes" class="form-check-label ">
-                                                <input onclick="validar_ingredientes()" type="checkbox" id="descontado_ingredientes" name="descontado_ingredientes" @if($producto->descontado_ingredientes == 1) checked @endif class="form-check-input"><i>Deseo que este producto sea descontado segun sus ingredientes.</i>
+                                                <input onclick="validar_ingredientes()" type="checkbox" id="descontado_ingredientes" name="descontado_ingredientes" @if($producto->descontado_ingredientes == 1) checked @endif class="form-check-input"><i>Deseo que este material sea descontado segun sus ingredientes.</i>
                                             </label>
                                         </div>
                                     </div>
@@ -181,7 +181,7 @@
                                     <div class="col-sm-12">
                                         <div class="form-group" style="margin-left: 18px;">
                                             <label for="alerta" class="form-check-label ">
-                                                <input onclick="validar_aviso()" type="checkbox" id="alerta" name="alerta" @if($producto->alerta == 1) checked @endif class="form-check-input"><i>Deseo que el sistema me notifique cuando este por acabarse este producto.</i>
+                                                <input onclick="validar_aviso()" type="checkbox" id="alerta" name="alerta" @if($producto->alerta == 1) checked @endif class="form-check-input"><i>Deseo que el sistema me notifique cuando este por acabarse este material.</i>
                                             </label>
                                         </div>
                                     </div>
@@ -189,7 +189,7 @@
                                 <div class="row" id="div-alerta" @if($producto->alerta == 0) style="display: none;" @endif>
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label for="cc-payment" class="control-label mb-1"><b>*Cantidad minima de aviso </b></label> <i class="fa fa-info-circle" title="Este campo indica la cantidad minima para que el sistema informe faltantes en el inventario de este producto."></i>
+                                            <label for="cc-payment" class="control-label mb-1"><b>*Cantidad minima de aviso </b></label> <i class="fa fa-info-circle" title="Este campo indica la cantidad minima para que el sistema informe faltantes en el inventario de este material."></i>
                                             <div class="input-group mb-3">
                                                 <input name="cantidad_minimo_alerta" type="number" class="form-control" aria-required="true" aria-invalid="false" value="{{ $producto->cantidad_minimo_alerta }}">
                                                 <div class="input-group-prepend">
@@ -207,7 +207,7 @@
         </div>
     </div>
 </div>
-<div class="row" id="div-ingredientes" @if ($producto->descontado_ingredientes == 0) style="display: none;" @endif>
+{{-- <div class="row" id="div-ingredientes" @if ($producto->descontado_ingredientes == 0) style="display: none;" @endif>
     <div class="col-sm-12">
         <div class="card">
             <div class="card-header">
@@ -249,7 +249,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 <input type="hidden" id="ingredientes" name="ingredientes">
 {{ Form::close() }}
 

@@ -67,6 +67,7 @@ class InventarioController extends Controller
                     //AHORA REGISTRAMOS LOS DETALLES
                     DB::delete("DELETE FROM inventario_detalle WHERE id_inventario = " . $inventario->id_inventario);
                     $total = 0;
+                    $peso = 0;
                     foreach ($detalles as $detalle) {
                         $detalle                     = (object) $detalle;
                         $producto                    = Producto::find($detalle->id);
@@ -79,6 +80,7 @@ class InventarioController extends Controller
                         $item->cantidad              = $detalle->cantidad;
                         if ($item->save()) {
                             $total += $item->cantidad * $item->precio_producto;
+                            $peso += $item->cantidad;
                             //AHORA DESCONTAMOS O SUMAMOS A LA CANTIDAD ACTUAL DEL PRODUCTO
                             if ($inventario->id_dominio_tipo_movimiento == 40) {
                                 //ENTRADA
@@ -96,7 +98,18 @@ class InventarioController extends Controller
                     //SI ES UNA ENTRADA DE INVENTARIO SE REGISTRA UN COMPROBANTE DE EGRESO A NOMBRE DE LA EMPRESA
                     if ($post->id_dominio_tipo_movimiento == 40) {
                         //CREAMOS FACTURA DE COMPROBANTE DE EGRESO
-                        $facturacion = $this->facturar_entrada_inventario($total, $detalles);
+                        $facturacion = $this->facturar_movimiento_inventario("ENTRADA",$total, $peso);
+                        if (!$facturacion->error) {
+                            $inventario->id_factura = $facturacion->id_factura;
+                            $inventario->save();
+                        } else {
+                            DB::rollBack();
+                            $errors[] = $facturacion->message;
+                            return view('inventario.form', compact(['inventario', 'detalles', 'errors']));
+                        }
+                    }
+                    if(isset($post->check_permitir_factura)){
+                        $facturacion = $this->facturar_movimiento_inventario("SALIDA", $total, $peso);
                         if (!$facturacion->error) {
                             $inventario->id_factura = $facturacion->id_factura;
                             $inventario->save();
@@ -136,8 +149,9 @@ class InventarioController extends Controller
         return view('inventario.stock_actual', compact('tipos'));
     }
 
-    public function facturar_entrada_inventario($valor = 0, $detalles = [])
+    public function facturar_movimiento_inventario($tipo_movimiento, $valor = 0, $peso = 0)
     {
+        // los tipos de movimientos permitidos son ENTRADA, SALIDA
         $error      = true;
         $message    = "";
         $id_factura = null;
@@ -164,20 +178,30 @@ class InventarioController extends Controller
             DB::beginTransaction();
             //RESOLUCION DEL DOCUMENTO
             $factura         = new Factura;
-            $factura->numero = $resolucion->prefijo_comprobante_egreso . "-" . ($resolucion->consecutivo_comprobante_egreso + 1);
+            if($tipo_movimiento=="ENTRADA"){
+                $factura->numero = $resolucion->prefijo_comprobante_egreso . "-" . ($resolucion->consecutivo_comprobante_egreso + 1);
+            }else{
+                $factura->numero = $resolucion->prefijo_factura . "-" . ($resolucion->consecutivo_factura + 1);
+            }
 
             if ($caja) {
                 $factura->id_tercero              = $licencia->responsable->id_tercero;
                 $factura->id_caja                 = $caja->id_caja;
+                $factura->peso                    = $peso;
                 $factura->valor                   = $valor;
-                $factura->id_dominio_tipo_factura = 53;
-                $factura->observaciones           = "Entrada de inventario";
+                
+                $factura->id_dominio_tipo_factura = $tipo_movimiento == "ENTRADA" ? 53 : 16;
+                $factura->observaciones           = $tipo_movimiento == "ENTRADA" ? "Entrada de inventario" : "Salida de inventario";
                 $factura->id_usuario_registra     = session('id_usuario');
                 $factura->id_licencia             = session('id_licencia');
                 $factura->id_dominio_canal        = 49;
                 $factura->finalizada              = 1;
                 if ($factura->save()) {
-                    $resolucion->consecutivo_comprobante_egreso += 1;
+                    if($tipo_movimiento == "ENTRADA"){
+                        $resolucion->consecutivo_comprobante_egreso += 1;
+                    }else{
+                        $resolucion->consecutivo_factura += 1;
+                    }
                     $resolucion->save();
                     DB::commit();
                     $id_factura = $factura->id_factura;

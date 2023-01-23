@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Comanda #{{ $factura->numero }}</title>
+	<title>Ticket #{{ $factura->numero }}</title>
 	<style>
 		*{
 			font-family: Arial, Helvetica, sans-serif;
@@ -17,7 +17,7 @@
 		</center>
 	@endif
 	<center>
-		<label><b style="font-size: 16px;">Comanda #{{ $factura->numero }}</b></label><br>
+		<label><b style="font-size: 16px;">Ticket #{{ $factura->numero }}</b></label><br>
 		@if ($factura->canal->id_dominio == App\Dominio::get('Mesa'))
 			<label>Mesa {{ $factura->mesa->numero }}</label>
 		@else
@@ -27,22 +27,26 @@
 	<table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
 		<thead>
 			<tr>
-				<th style="text-align: center; width: 10%;">Cant</th>
-				<th style="text-align: left; padding-left: 10px;">Producto</th>
+				<th style="text-align: left; width: 10%;">Cant</th>
+				<th style="text-align: center; width: 40%;">Material</th>
+				<th style="text-align: left; width: 20%;">C. Unit</th>
+				<th style="text-align: left; width: 30%;">Total</th>
 			</tr>
 		</thead>
 		<tbody>
 			@foreach ($factura->detalles as $item)
 				<tr>
-					<td style="text-align: center;">{{ $item->cantidad }}</td>
-					<td style="text-align: left; padding: 3px 3px 3px 10px; margin-bottom: 5px;">{{ ucfirst(strtolower(deleteTilds($item->nombre_producto))) }}</td>
+					<td style="text-align: left;">{{ $item->cantidad }} Kg</td>
+					<td style="text-align: center; padding: 3px 3px 3px 10px; margin-bottom: 5px;">{{ ucfirst(strtolower(deleteTilds($item->nombre_producto))) }}</td>
+					<td style="text-align: left;">{{ $item->precio_producto }}</td>
+					<td style="text-align: left;">{{ $item->Total }}</td>
 				</tr>
 			@endforeach
 		</tbody>
 	</table>
 	<br>
-	<label><b>Observaciones</b></label><br>
-	<label>{{ $factura->observaciones != "" ? $factura->observaciones : "Ninguna" }}</label>
+	<label><b>Observaciones: </b></label><br>
+	<label style="text-align: justify;">{{ $factura->observaciones != "" ? $factura->observaciones : "Ninguna" }}</label>
 </body>
 </html>
 

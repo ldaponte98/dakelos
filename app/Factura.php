@@ -14,6 +14,7 @@ class Factura extends Model
         'id_tercero',
         'id_dominio_tipo_factura',
         'numero',
+        'peso',
         'valor',
         'id_caja',
     ];

@@ -6,7 +6,7 @@
         </div>
         <ul class="fab-options">
             <li onclick="location.href = '{{ config('global.url_base') }}/producto/crear'">
-                <span class="fab-label"><b>Nuevo</b> producto / servicio / ingrediente</span>
+                <span class="fab-label"><b>Nuevo</b> Material</span>
                 <div class="fab-icon-holder">
                     <i class="fa fa-laptop"></i>
                 </div>
@@ -19,7 +19,7 @@
     <div class="col-sm-12">
         <div class="card">
             <div class="card-header">
-                <strong class="card-title">Administrar productos / servicios / ingredientes</strong>
+                <strong class="card-title">Administrar materiales</strong>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -68,7 +68,7 @@
                                                         <thead>
                                                             <tr>
                                                                 <th class="serial"><center><i class="fa fa-laptop"></i></center></th>
-                                                                <th><center><b>Producto</b></center></th>
+                                                                <th><center><b>Material</b></center></th>
                                                                 <th><center><b>Descripción</b></center></th>
                                                                 <th><center><b>Precio venta</b></center></th>
                                                                 <th><center><b>Precio compra</b></center></th>

@@ -14,6 +14,7 @@ class Inventario extends Model
         'id_dominio_tipo_movimiento',
         'fecha',
         'id_tercero_proveedor',
+        'id_tercero_cliente',
         'estado',
         'observaciones',
         'id_usuario_registra',
@@ -44,6 +45,11 @@ class Inventario extends Model
     public function proveedor()
     {
         return $this->belongsTo(Tercero::class, 'id_tercero_proveedor', 'id_tercero');
+    }
+
+    public function cliente()
+    {
+        return $this->belongsTo(Tercero::class, 'id_tercero_cliente', 'id_tercero');
     }
 
     public function tipo_movimiento()

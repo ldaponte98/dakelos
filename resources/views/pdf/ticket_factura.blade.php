@@ -49,8 +49,9 @@
 	<table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
 		<thead>
 			<tr>
-				<th style="text-align: left; width: 50%;">Descripcion</th>
-				<th style="text-align: right;">Cant</th>
+				<th style="text-align: left; width: 40%;">Descripcion</th>
+				<th style="text-align: left;">Cant</th>
+				<th style="text-align: left;">V. unidad</th>
 				<th style="text-align: right;">Total</th>
 			</tr>
 		</thead>
@@ -61,7 +62,8 @@
 			@foreach ($factura->detalles as $item)
 				<tr>
 					<td>{{ ucfirst(strtolower(deleteTilds($item->nombre_producto))) }}</td>
-					<td style="text-align: right;">{{ $item->cantidad }} {{ $item->presentacion_producto }}</td>
+					<td style="text-align: left;">{{ $item->cantidad }} {{ $item->presentacion_producto }}</td>
+					<td style="text-align: left;">{{ $item->precio_producto }} {{ $item->presentacion_producto }}</td>
 					<td style="text-align: right;">${{ number_format(($item->cantidad * $item->precio_producto), 0, '.', '.') }}</td>
 				</tr>
 				@php

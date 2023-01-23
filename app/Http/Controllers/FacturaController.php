@@ -54,7 +54,7 @@ class FacturaController extends Controller
         if ($post->id_tercero) {
             $tercero = Tercero::find($post->id_tercero);
         }
-
+        dd($post);
         return view('factura.form', compact([
             'tercero', 'accion', 'tipo',
         ]));
@@ -95,10 +95,11 @@ class FacturaController extends Controller
                     if ($post->tipo_factura == 17) {
                         $factura->numero = $resolucion->prefijo_cotizacion . "-" . ($resolucion->consecutivo_cotizacion + 1);
                     }
-
+                    dd($post);
                     $factura->id_tercero              = $post->id_tercero;
                     $factura->id_caja                 = $caja->id_caja;
                     $factura->valor                   = $post->total_carrito;
+                    $factura->peso                    = $post->peso;
                     $factura->id_dominio_tipo_factura = $post->tipo_factura;
                     $factura->observaciones           = $post->observaciones;
                     $factura->id_usuario_registra     = session('id_usuario');
@@ -204,6 +205,8 @@ class FacturaController extends Controller
         set_time_limit(72000);
         $factura = Factura::find($id_factura);
         $pdf     = \PDF::loadView('pdf.factura', compact('factura'));
+        //dd($factura);
+        // return view('pdf.factura', compact('factura'));
         return $pdf->stream($factura->tipo->nombre . ' ' . $factura->licencia->nombre . '.pdf');
     }
 
@@ -214,7 +217,7 @@ class FacturaController extends Controller
         $customPaper = array(0, 0, 225.80, 450.00);
         $pdf         = \PDF::loadView('pdf.ticket_comanda', compact('factura'))
             ->setPaper($customPaper);
-        return $pdf->stream("Comanda #" . $factura->numero . '.pdf');
+        return $pdf->stream("Ticket #" . $factura->numero . '.pdf');
     }
 
     public function imprimir_ticket_factura($id_factura)
@@ -378,6 +381,7 @@ class FacturaController extends Controller
                     $factura->id_tercero              = $cliente->id_tercero;
                     $factura->id_caja                 = $menu_digital ? null : $caja->id_caja;
                     $factura->valor                   = $post->factura->total;
+                    $factura->peso                    = $post->factura->peso;
                     $factura->descuento               = $post->factura->descuento;
                     $factura->id_dominio_tipo_factura = 16;
                     $factura->servicio_voluntario     = $post->factura->servicio_voluntario;

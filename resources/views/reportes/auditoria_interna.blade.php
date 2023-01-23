@@ -41,7 +41,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <i>Este informe permite ver los movimientos internos que el sistema realiza con los productos asociados al inventario, tanto descuentos como ingresos nuevamente en caso de anulaciones. </i>
+                <i>Este informe permite ver los movimientos internos que el sistema realiza con los materiales asociados al inventario, tanto descuentos como ingresos nuevamente en caso de anulaciones. </i>
                 <br><br>
                 <div class="row">
                     <div class="col-lg-12">
@@ -58,9 +58,9 @@
                             <div class="col-sm-4">
                                 <div class="input-group mb-3 " style="display: -webkit-inline-box;">
                                 <div class="input-group-prepend">
-                                    <label class="input-group-text" for="canales">Productos</label>
+                                    <label class="input-group-text" for="canales">Materiales</label>
                                 </div>
-                                <select id="productos" name="productos[]" data-placeholder="Todos los productos" multiple class="standardSelect form-control">
+                                <select id="productos" name="productos[]" data-placeholder="Todos los materiales" multiple class="standardSelect form-control">
                                     <option value="" label="default"></option>
                                     @foreach($_productos as $item)
                                         <option @if(in_array($item->id_producto, $productos)) selected @endif 
@@ -82,7 +82,7 @@
                                     <tr>
                                         <th class="serial"><center><b>#</b></center></th>
                                         <th><center><b>Imagen</b></center></th>
-                                        <th><center><b>Producto</b></center></th>
+                                        <th><center><b>Material</b></center></th>
                                         <th><center><b>Cantidad</b></center></th>
                                         <th><center><b>Presentación</b></center></th>
                                         <th><center><b>Factura Asociada</b></center></th>
@@ -168,7 +168,7 @@
     @endif
     
     <tr>
-        <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Producto</b></td>
+        <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Material</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Cantidad</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Presentacion</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Factura Asociada</b></td>

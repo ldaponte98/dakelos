@@ -95,7 +95,7 @@
             <div class="top-left">
                 <div class="navbar-header">
                     
-                    <a class="navbar-brand" style="text-align: center; margin-right: 0px;" href=""><img height="40" width="auto" src="{{ $licencia->get_imagen() }}" alt="{{ $licencia->nombre }}"></a>
+                    <a class="navbar-brand" style="text-align: center; margin-right: 0px;" href=""><img height="40" width="100" src="{{ $licencia->get_imagen() }}" alt="{{ $licencia->nombre }}"></a>
                     <a class="navbar-brand hidden" href="" ><img src="{{ $licencia->get_imagen_small() }}" alt="{{ $licencia->nombre }}"></a>
                     <a id="menuToggle" class="menutoggle" style="width: 0px;"><i class="fa fa-bars"></i></a>
                     
@@ -136,7 +136,7 @@
                                         @foreach ($productos as $item)
                                             <a class="dropdown-item media" href="{{ route('inventario/stock_actual') }}">
                                                 <i class="red fa fa-warning"></i>
-                                                <p>El producto <b>{{ $item->nombre }}</b> esta por agotarse con <b>{{ $item->cantidad_actual }} {{ $item->presentacion->nombre }}</b> disponibles</p>
+                                                <p>El material <b>{{ $item->nombre }}</b> esta por agotarse con <b>{{ $item->cantidad_actual }} {{ $item->presentacion->nombre }}</b> disponibles</p>
                                             </a>
                                         @endforeach
                                         
@@ -205,7 +205,7 @@
                         Zorax - Sistema de facturación 
                     </div>
                     <div class="col-sm-6 text-right">
-                        Designed by <a href="ldaponte98@gmail.com">Luis Daniel Aponte Daza</a>
+                        Designed by <a href="evernavitlazocastillo@gmail.com">Ever Navit Lazo Castillo</a>
                     </div>
                 </div>
             </div>

@@ -46,8 +46,8 @@
                                 <div class="row">
                                   <div class="col-sm-12">
                                     <center>
-                                      <button class="btn btn-primary" data-toggle="modal" data-target="#modal1" onclick="deshabilitar_producto_nuevo()">Agregar producto registrado</button>&nbsp;&nbsp;
-                                      <button class="btn btn-primary" data-toggle="modal" data-target="#modal1" onclick="habilitar_producto_nuevo()">Agregar producto no registrado</button>
+                                      <button class="btn btn-primary" data-toggle="modal" data-target="#modal1" onclick="deshabilitar_producto_nuevo()">Agregar material registrado</button>&nbsp;&nbsp;
+                                      <button class="btn btn-primary" data-toggle="modal" data-target="#modal1" onclick="habilitar_producto_nuevo()">Agregar material no registrado</button>
                                     </center>
                                   </div>
                                   <div class="col-sm-12">
@@ -56,7 +56,7 @@
                                             <thead>
                                                 <tr>
                                                     <th><center>#</center></th>
-                                                    <th><center>Producto</center></th>
+                                                    <th><center>Material</center></th>
                                                     <th><center>Descripción</center></th>
                                                     <th><center>Valor</center></th>
                                                     <th><center>Iva</center></th>
@@ -132,7 +132,7 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content ">
       <div class="modal-header">
-            <h5 class="modal-title" id="smallmodalLabel">Agregar producto / servicio</h5>
+            <h5 class="modal-title" id="smallmodalLabel">Agregar material</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -144,8 +144,8 @@
               <div class="form-group">
                 <div id="select_producto">
 
-                   <select data-placeholder="Selecciona un producto / servicio" class="form-control select2" id="id_producto" onchange="buscar_producto(this.value)">
-                    <option value="0" disabled selected>Producto / servicio</option>
+                   <select data-placeholder="Selecciona un material" class="form-control select2" id="id_producto" onchange="buscar_producto(this.value)">
+                    <option value="0" disabled selected>Material</option>
                     @php
                         $productos = \App\Producto::all()->where('id_licencia', session('id_licencia'));
                     @endphp
@@ -155,7 +155,7 @@
                     </select>
                     </div>
                   </div>
-                  <input style="margin-bottom: 10px" id="nombre_producto" placeholder="producto / servicio" type="text" class="form-control" style="display: none;">
+                  <input style="margin-bottom: 10px" id="nombre_producto" placeholder="material" type="text" class="form-control" style="display: none;">
 
             </div>
             <div class="col-sm-12">
@@ -277,6 +277,7 @@
     var carrito = []
     var formas_pago = []
     var total_carrito = 0
+    var peso = 0
     var total_formas_pago = 0
 
     function agregar_producto() {
@@ -345,6 +346,7 @@
       let tabla_carrito = ""
       let tabla_formas_pago = ""
       this.total_carrito = 0
+      this.peso = 0
       this.total_formas_pago = 0
       carrito.forEach((producto)=>{
         tabla_carrito += "<tr><td class='serial'>"+(carrito.indexOf(producto) + 1) +"</td>"+
@@ -359,6 +361,7 @@
                       "<span onclick='eliminar_producto("+carrito.indexOf(producto)+")'><i class='fa fa-times-circle red-icon'></i></span>"+
                   "</td></tr>"
         this.total_carrito += parseFloat(producto.precio_iva) - parseFloat(producto.descuento);    
+        this.peso += parseFloat(producto.cantidad);  
       })
 
       formas_pago.forEach((forma)=>{
@@ -435,7 +438,7 @@
       var id_tercero = {{ $tercero->id_tercero }};
       var tipo_factura = {{ $tipo }};
       if(this.carrito.length <= 0){
-        alert("Debe agregar productos para realizar la factura")
+        alert("Debe agregar materiales para realizar la factura")
         return false
       }
 
@@ -464,6 +467,7 @@
         'tipo_factura' : tipo_factura,
         'observaciones' : observaciones,
         'total_carrito' : this.total_carrito,
+        'peso' : this.peso,
         'total_formas_pago' : this.total_formas_pago,
         'carrito' : this.carrito,
         'formas_pago' : this.formas_pago

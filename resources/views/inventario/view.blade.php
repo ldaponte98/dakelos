@@ -86,7 +86,7 @@
                                 <thead>
                                     <tr>
                                         <th class="serial"><center><i class="fa fa-laptop"></i></center></th>
-                                        <th><center><b>Producto</b></center></th>
+                                        <th><center><b>Material</b></center></th>
                                         <th><center><b>Presentación</b></center></th>
                                         <th><center><b>Cantidad</b></center></th>
                                         <th><center><b>Precio</b></center></th>

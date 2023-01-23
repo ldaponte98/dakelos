@@ -19,6 +19,6 @@
 </head>
 <body>
 	<h1><b>Alerta inventario</b></h1>
-	<p>El sistema <b>ZORAX</b> informa una alerta de inventario en el producto <b>{{ strtoupper($producto->nombre) }}</b>, debido a que la cantidad actual(<b>{{ $producto->cantidad_actual }}</b>) es igual o inferior a la cantidad minima de aviso configurada para el producto (<b>{{ $producto->cantidad_minimo_alerta }}</b>)</p>
+	<p>El sistema <b>ZORAX</b> informa una alerta de inventario en el material <b>{{ strtoupper($producto->nombre) }}</b>, debido a que la cantidad actual(<b>{{ $producto->cantidad_actual }}</b>) es igual o inferior a la cantidad minima de aviso configurada para el material (<b>{{ $producto->cantidad_minimo_alerta }}</b>)</p>
 </body>
 </html>

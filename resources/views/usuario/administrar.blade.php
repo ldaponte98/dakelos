@@ -44,7 +44,7 @@
                                         <tr>
                                             <th><center><b>#</b></center></th>
                                             <th><center><b>Tercero</b></center></th>
-                                            <th><center><b>Peril</b></center></th>
+                                            <th><center><b>Perfil</b></center></th>
                                             <th><center><b>Nombre de usuario</b></center></th>
                                             <th><center><b>Estado</b></center></th>
                                             <th></th>

@@ -12,6 +12,7 @@
                                  ->where('id_dominio_tipo_producto' ,'<>', 37)
                                  ->where('descontado_ingredientes' ,'<>', 1);
 @endphp
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
 <div class="row">
     <div class="col-sm-12">
         <div class="card">
@@ -35,35 +36,49 @@
                                     Los movimientos de entrada generaran un comprobante de egreso para tener el registro contable del movimiento <strong>(Caja abierta necesaria)</strong>
                                 </div>
                                 <div class="row">
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
                                          <div class="form-group">
                                             <label for="cc-payment" class="control-label mb-1"><b>*Tipo de movimiento</b></label>
                                             @php
                                                 $tipos_movimiento = \App\Dominio::all()->where('id_padre', 39);
                                             @endphp
-                                            <select name="id_dominio_tipo_movimiento" class="form-control" onchange="validar_tipo(this.value)">
+                                            <select name="id_dominio_tipo_movimiento" class="form-control" onchange="validar_tipo(this.value)" required>
+                                                <option value="" label="Seleccione una opción"></option>
                                                 @foreach($tipos_movimiento as $tipo)
                                                     <option @if($inventario->id_dominio_tipo_movimiento == $tipo->id_dominio) selected @endif value="{{ $tipo->id_dominio }}">{{ $tipo->nombre }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
                                          <div class="form-group">
                                             <label for="cc-payment" class="control-label mb-1"><b>*Fecha</b></label>
                                             <input id="fecha" name="fecha" type="date" class="form-control" aria-required="true" required aria-invalid="false" value="{{ $inventario->fecha }}">
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
                                          <div class="form-group">
                                             @php
                                                 $items = \App\Tercero::all()->where('id_dominio_tipo_tercero', 42)
                                                                             ->where('id_licencia', session('id_licencia'));
+                                                $itemsC = \App\Tercero::all()->where('id_dominio_tipo_tercero', 3)
+                                                                            ->where('id_licencia', session('id_licencia'));                           
                                             @endphp
                                             <label for="cc-payment" class="control-label mb-1"><b>Proveedor</b></label>
                                             <select name="id_tercero_proveedor" id="id_tercero_proveedor" data-placeholder="Consulta aqui por nombre o identificacion..." class="form-control select2">
                                                 <option value="" label="default"></option>
                                                 @foreach($items as $item)
+                                                <option value="{{ $item->id_tercero }}">{{ $item->nombre_completo() }}</option>
+                                                @endforeach
+                                            </select> 
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label for="cc-payment" class="control-label mb-1"><b>Cliente</b></label>
+                                            <select name="id_tercero_cliente" id="id_tercero_cliente" data-placeholder="Consulta aqui por nombre o identificacion..." class="form-control select2">
+                                                <option value="" label="default"></option>
+                                                @foreach($itemsC as $item)
                                                 <option value="{{ $item->id_tercero }}">{{ $item->nombre_completo() }}</option>
                                                 @endforeach
                                             </select>
@@ -78,6 +93,10 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div id="permitir_factura" style="display: none;">
+                                    <input id = "check_permitir_factura" name="check_permitir_factura" type="checkbox" onchange="validar_permiso_factura(this.value)">
+                                    <label for="check_permitir_factura"> Generar factura de venta</label>
+                                </div>
                             </div>
                         </div>
 
@@ -86,13 +105,13 @@
 
                         <div class="row">
                             <div class="col-sm-12">
-                                <div class="alert alert-info"><b>Productos</b></div>
+                                <div class="alert alert-info"><b>Materiales</b></div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-sm-4">
                                 <div class="form-group">
-                                    <label for="cc-payment" class="control-label mb-1"><b>Producto</b></label>
+                                    <label for="cc-payment" class="control-label mb-1"><b>material</b></label>
                                     <select id="select-producto" onchange="validar_presentacion(this.value)" data-placeholder="Consulta aqui por nombre..." class="form-control select2">
                                         <option value="" label="default"></option>
                                         
@@ -133,7 +152,7 @@
                                         <thead>
                                             <tr>
                                                 <th class="serial"><center><i class="fa fa-laptop"></i></center></th>
-                                                <th><center><b>Producto</b></center></th>
+                                                <th><center><b>Material</b></center></th>
                                                 <th><center><b>Presentación</b></center></th>
                                                 <th><center><b>Existencia</b></center></th>
                                                 <th><center><b>Cantidad</b></center></th>
@@ -144,7 +163,7 @@
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td colspan="8"><center><i>No hay productos registrados</i></center></td>
+                                                <td colspan="8"><center><i>No hay materiales registrados</i></center></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -199,14 +218,38 @@
 
     function validar_tipo(tipo) {
         if (tipo == 40) { //ENTRADA
+            $("#id_tercero_proveedor").prop("required", true)
+            $("#id_tercero_cliente").prop("required", false)
             $("#id_tercero_proveedor").prop("disabled", false)
+            $("#id_tercero_cliente").prop("disabled", true)
             $("#alert-info").fadeIn()
-        }else{
+            $("#permitir_factura").fadeOut()
+            $("#check_permitir_factura").prop("checked", false)
+        }else{ //SALIDA
+            $("#check_permitir_factura").prop("checked", true)
+            $("#id_tercero_proveedor").prop("required", false)
+            let permitir_factura = $("#check_permitir_factura").prop("checked")
+            if (permitir_factura == true) {
+                $("#id_tercero_cliente").prop("required", true)
+            }else{
+                $("#id_tercero_cliente").prop("required", false)
+            }
             $("#id_tercero_proveedor").prop("disabled", true)
+            $("#id_tercero_cliente").prop("disabled", false)
             $("#alert-info").fadeOut()
+            $("#permitir_factura").fadeIn()
         }
     }
 
+    function validar_permiso_factura(value){
+        let seleccionado =  $("#check_permitir_factura").prop("checked")
+        if (seleccionado == true) {
+            $("#id_tercero_cliente").prop("required", true)
+        }else{
+            $("#id_tercero_cliente").prop("required", false)
+        }
+        console.log(seleccionado)
+    }
     function agregar_detalle() {
         let id_producto = $("#select-producto").val()
         let cantidad = $("#cantidad").val()
@@ -214,11 +257,11 @@
 
         if (precio.trim() == "") precio = 0
         if (id_producto == "") {
-            toastr.error("Debe escoger un producto valido", "Error")
+            toastr.error("Debe escoger un material valido", "Error")
             return;
         }
         if (id_producto == "") {
-            toastr.error("Debe escoger un producto valido", "Error")
+            toastr.error("Debe escoger un material valido", "Error")
             return;
         }
         if (cantidad.trim() == "" || cantidad < 0) {
@@ -260,7 +303,7 @@
     }
 
     function eliminar_detalle(id_producto) {
-        resp = confirm("¿Seguro que desea eliminar este producto del movimiento de inventario?")
+        resp = confirm("¿Seguro que desea eliminar este material del movimiento de inventario?")
         if (resp) {
             let cont = 0
             this.detalles.forEach((item) => {
@@ -276,7 +319,7 @@
         let total = 0
         if (this.detalles.length <= 0) {
             tabla = `<tr>
-                        <td colspan="8"><center><i>No hay productos registrados</i></center></td>
+                        <td colspan="8"><center><i>No hay materiales registrados</i></center></td>
                     </tr>`
         }else{
             this.detalles.forEach((item) => {
@@ -309,11 +352,11 @@
            let json_detalles = JSON.stringify(this.detalles)
             $("#detalles").val(json_detalles)
             if ($('#form-inventario').validate()) {
-                Loading(true, "Registrando movimiento...")
+                // Loading(true, "Registrando movimiento...")
                 $('#form-inventario').submit()
             } 
         }else{
-            toastr.error("Debe agregar por lo menos un producto al movimiento de inventario", "Error")
+            toastr.error("Debe agregar por lo menos un material al movimiento de inventario", "Error")
         }        
     }
     

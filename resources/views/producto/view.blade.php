@@ -12,7 +12,7 @@
                 </div>
             </li>
             <li onclick="location.href = '/producto/crear'">
-                <span class="fab-label"><b>Nuevo</b> producto / servicio / ingrediente</span>
+                <span class="fab-label"><b>Nuevo</b> material</span>
                 <div class="fab-icon-holder">
                     <i class="fa fa-laptop"></i>
                 </div>
@@ -21,7 +21,7 @@
     </div>
 @endsection
 @section('content')
-<h4><b>Datos del producto / servicio</b></h4><br>
+<h4><b>Datos del producto</b></h4><br>
 <div class="row">
 	<div class="col-md-2"></div>
 	<div class="col-md-8">
@@ -62,7 +62,7 @@
 	        <div class="row">
 	        	<div class="col-sm-6">
 	        		<center>
-	        			<h5><b>Contenido por producto / servicio</b></h5><p>{{ number_format($producto->contenido,0,'\'','.') }} {{ $producto->presentacion->descripcion }}</p>
+	        			<h5><b>Contenido por material </b></h5><p>{{ number_format($producto->contenido,0,'\'','.') }} {{ $producto->presentacion->descripcion }}</p>
 	        		</center>
 	        	</div>
 	        	<div class="col-sm-6">
@@ -86,7 +86,7 @@
 	<div class="col-md-3"></div>
 </div>
 
-<div class="row" id="div-ingredientes" @if ($producto->descontado_ingredientes == 0) style="display: none;" @endif>
+{{-- <div class="row" id="div-ingredientes" @if ($producto->descontado_ingredientes == 0) style="display: none;" @endif>
     <div class="col-sm-12">
         <div class="card">
             <div class="card-header">
@@ -134,5 +134,5 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 @endsection

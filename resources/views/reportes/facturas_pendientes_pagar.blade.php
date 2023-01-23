@@ -226,7 +226,7 @@
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Fecha</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Tipo</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Canal</b></td>
-        <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Cantidad de productos</b></td>
+        <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Cantidad de materiales</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Usu registro</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Estado</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Valor</b></td>

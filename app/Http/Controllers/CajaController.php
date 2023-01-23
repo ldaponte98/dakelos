@@ -92,7 +92,10 @@ class CajaController extends Controller
                     //COMPROBANTE DE EGRESO
                     $factura->numero = $resolucion->prefijo_comprobante_egreso . "-" . ($resolucion->consecutivo_comprobante_egreso + 1);
                 }
-
+                if ($post->id_dominio_tipo_factura == 57) {
+                    //RECIBO DE CAJA
+                    $factura->numero = $resolucion->prefijo_recibo_caja . "-" . ($resolucion->consecutivo_recibo_caja + 1);
+                }
                 $caja = Caja::where('id_usuario', session('id_usuario'))
                     ->where('estado', 1)
                     ->where('fecha_cierre', null)

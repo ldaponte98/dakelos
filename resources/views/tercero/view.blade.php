@@ -136,7 +136,7 @@
 									                                    <h3 class="mb-0 fw-r">
 									                                        <span class="count">{{ $tercero->get_total_productos_adquiridos() }}</span>
 									                                    </h3>
-									                                    <p class="text-light mt-1 m-0">Productos adquiridos</p>
+									                                    <p class="text-light mt-1 m-0">Materiales adquiridos</p>
 									                                </div><!-- /.card-left -->
 
 									                                <div class="card-right float-right text-right">

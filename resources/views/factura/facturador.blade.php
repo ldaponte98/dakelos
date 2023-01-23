@@ -94,7 +94,7 @@
 <div class="row">
     <div class="col-sm-8">
         <div class="d-flex">
-            <input type="text" placeholder="Consulta productos aqui..." onkeyup="BuscarProductos(this.value)" class="form-control search mb-2" id="filtro-productos">
+            <input type="text" placeholder="Consulta materiales aqui..." onkeyup="BuscarProductos(this.value)" class="form-control search mb-2" id="filtro-productos">
             <button class="btn btn-secundary btn-erase" onclick="$('#filtro-productos').val(''); BuscarProductos('')"><i class="fa fa-times"></i></button>
         </div>
         
@@ -103,7 +103,7 @@
         </div>
         <div class="card card-products">
         	<div class="card-header">
-                <i class="fa fa-cutlery"></i><strong class="card-title pl-2">Productos</strong>
+                <i class="fa fa-recycle"></i><strong class="card-title pl-2">Materiales</strong>
             </div>
             <div class="card-body">
                 <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
@@ -147,7 +147,7 @@
                              <div class="col-sm-12">
                                  <center>
                                     <img width="350" height="350" src="{{ asset('plantilla/images/empty_product.svg') }}">
-                                    <h3>No hay productos en esta categoria</h3>
+                                    <h3>No hay materiales en esta categoria</h3>
                                  </center>
                              </div> 
                 			 @endif
@@ -204,21 +204,22 @@
                     <div class="location text-sm-center"><i class="fa fa-map-marker"></i> {{ $licencia->ciudad }}</div>
                 </div>
                 <hr>
-                <strong class="card-title">Productos adquiridos</strong>
+                <strong class="card-title">Materiales adquiridos</strong>
                 <br>
                 <div class="table-stats order-table ov-h mt-2">
                     <table class="table" id="table-detalles">
                         <thead>
                             <tr>
-                                <th><center><b>Producto</b></center></th>
-                                <th><center><b>Cantidad</b></center></th>
+                                <th><center><b>Material</b></center></th>
+                                <th><center><b>Peso</b></center></th>
+                                <th><center><b>V.unidad</b></center></th>
                                 <th><center><b>Total</b></center></th>
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
                         	<tr>
-                        		<td colspan="4"><center><i>No hay productos seleccionados</i></center></td>
+                        		<td colspan="4"><center><i>No hay materiales seleccionados</i></center></td>
                         	</tr>
                         </tbody>
                     </table>
@@ -238,14 +239,18 @@
                 	<label class="lb-flex">Subtotal</label>
                 	<input type="text" id="factura-subtotal" disabled placeholder="0" class="form-control">
                 </div>
-                <div class="form-group d-flex hide" id="div-domicilio">
+                <div class="form-group d-flex">
+                	<label class="lb-flex"><b>Peso total (Kg)</b></label>
+                	<input type="text" id="factura-peso" disabled placeholder="0" class="form-control">
+                </div>
+                {{-- <div class="form-group d-flex hide" id="div-domicilio">
                     <label class="lb-flex"><span class="green"><b>+</b></span> Domicilio ($)</label>
                     <input onkeyup="ValidarDescuentoServicio()" type="number" id="factura-domicilio" placeholder="0" class="form-control">
-                </div>
-                <div class="form-group d-flex">
+                </div> --}}
+                {{-- <div class="form-group d-flex">
                 	<label class="lb-flex"><span class="green"><b>+</b></span> Servicio Voluntario ($)</label>
                 	<input onkeyup="ValidarDescuentoServicio()" type="number" id="factura-servicio-voluntario" placeholder="0" class="form-control">
-                </div>
+                </div> --}}
                 <div class="form-group d-flex">
                 	<label class="lb-flex"><span class="red"><b>-</b></span> Descuento ($)</label>
                 	<input onkeyup="ValidarDescuentoServicio()" type="number" id="factura-descuento" placeholder="0" class="form-control">
@@ -286,6 +291,14 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    {{-- <div class="form-group">
+                    	<label>Identificación del cliente</label>
+                    	<input type="text" id="modal-cliente-identificacion" class="form-control">
+                    </div> --}}
+                    <div class="form-group">
+                        <label><b>Identificación</b></label>
+                        <input type="number" id="modal-cliente-identificacion"  class="form-control" name="identificacion" aria-required="true" aria-invalid="false">
+                    </div>
                     <div class="form-group">
                     	<label>Nombre del cliente</label>
                     	<input type="text" id="modal-cliente-nombre" class="form-control">
@@ -293,10 +306,6 @@
                     <div class="form-group">
                     	<label>Telefono del cliente</label>
                     	<input type="text" id="modal-cliente-telefono" class="form-control">
-                    </div>
-                    <div class="form-group">
-                    	<label>Identificación del cliente</label>
-                    	<input type="text" id="modal-cliente-identificacion" class="form-control">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -359,6 +368,7 @@
         formas_pago : null,
         servicio_voluntario: 0,
         descuento: 0,
+        peso : 0,
         total: 0,
         finalizada : 0,
         id_licencia : {{ $licencia->id_licencia }},
@@ -404,7 +414,7 @@
     }
 
     function EliminarProducto(id_producto) {
-        let resp = confirm("¿Seguro que desea eliminar este producto de la compra?")
+        let resp = confirm("¿Seguro que desea eliminar este material de la compra?")
         if (resp) {
             let pos = 0;
             this.factura.detalles.forEach((item) => {
@@ -437,12 +447,13 @@
 
 	function GuardarInfoCliente() {
 		$("#modal-cliente").modal("hide")
-		if ($("#modal-cliente-nombre").val().trim() != "") 
-			this.factura.cliente.nombre = $("#modal-cliente-nombre").val()
+		if ($("modal-cliente-identificacion").val().trim() != "") 
+            this.factura.cliente.identificacion = $("#modal-cliente-identificacion").val()
+
+		this.factura.cliente.nombre = $("#modal-cliente-nombre").val()
 
 		this.factura.cliente.telefono = $("#modal-cliente-telefono").val()
 
-		this.factura.cliente.identificacion = $("#modal-cliente-identificacion").val()
 
 		this.ActualizarVistaPedido()
 	}
@@ -451,13 +462,15 @@
 		$("#cliente-nombre").html(this.factura.cliente.nombre == null ? "Cliente" : this.factura.cliente.nombre)
         let tabla = ""
         let sub_total = 0
+        let peso_total = 0
         if (this.factura.detalles.length == 0) {
             tabla = `<tr>
-                        <td colspan="4"><center><i>No hay productos seleccionados</i></center></td>
+                        <td colspan="4"><center><i>No hay materiales seleccionados</i></center></td>
                     </tr>`
         }else{
             this.factura.detalles.forEach((item) => {
                 let valor_producto = item.cantidad * item.precio_venta;
+                let peso = item.cantidad;
                 tabla += `<tr>
                             <td><center>${item.nombre}</center></td>
                             <td><center>
@@ -473,6 +486,7 @@
                                 </div>
                             </div>
                             </center></td>
+                            <td><center>${item.precio_venta}</center></td>
                             <td><center>$${format(valor_producto)}</center></td>
                             <td>
                                 <span onclick='EliminarProducto(${item.id_producto})'>
@@ -481,12 +495,14 @@
                             </td>
                         </tr>`
                 sub_total += valor_producto
+                peso_total += peso
             })
         }
         $("#table-detalles tbody").html(tabla)
 
         //ACTUALIZAMOS CAMPOS DE TOTALES
         let total = 0
+        let totalp = 0
         $("#factura-subtotal").val("$" + format(sub_total))
         total += sub_total
         let servicio = $("#factura-servicio-voluntario").val()
@@ -494,10 +510,15 @@
         let descuento = $("#factura-descuento").val()
         if ($.isNumeric(descuento)) total -= parseFloat(descuento)
 
+        $("#factura-peso").val(format(peso_total))
+        totalp += peso_total
+        let peso = $("#factura-peso").val()
+
         let domicilio = $("#factura-domicilio").val()
         if ($.isNumeric(domicilio) && this.factura.id_dominio_canal != {{ App\Dominio::get('Mesa') }}) total += parseFloat(domicilio)
         $("#factura-total").val("$" + format(total))
         $("#factura-duracion").val(this.factura.minutos_duracion)
+        this.factura.peso = parseFloat(totalp)
         this.factura.total = parseFloat(total)
 	}
 
@@ -658,7 +679,7 @@
 
     function ValidarCampos() {
         if (this.factura.detalles.length == 0) {
-            toastr.error("Es necesario escoger por lo menos un producto para el pedido", "Error")
+            toastr.error("Es necesario escoger por lo menos un material para el pedido", "Error")
             return false;
         }
 
