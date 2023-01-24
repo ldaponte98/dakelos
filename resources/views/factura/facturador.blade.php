@@ -26,12 +26,12 @@
                     <i class="ti-printer"></i>
                 </div>
             </li>
-            <li onclick="Imprimir('comanda')" id="permiso-imprimir-comanda">
+            {{-- <li onclick="Imprimir('comanda')" id="permiso-imprimir-comanda">
                 <span class="fab-label">Imprimir comanda</span>
                 <div class="fab-icon-holder">
                     <i class="ti-printer"></i>
                 </div>
-            </li>
+            </li> --}}
             <li onclick="$('#modal-anulacion').modal('show')" id="permiso-anular">
                 <span class="fab-label">Cancelar o anular</span>
                 <div class="fab-icon-holder">
@@ -631,9 +631,9 @@
 
     function Guardar(finalizada) {
         let imprimir_comanda = false
-        let imprimir_factura = false
+        let imprimir_factura = true
 
-        if (finalizada == 0 && this.factura.id_factura == null) imprimir_comanda = true
+        if (finalizada == 0 && this.factura.id_factura == null) imprimir_comanda = false
         if (finalizada == 1 && this.factura.finalizada == 0) imprimir_factura = true
 
         this.factura.finalizada = finalizada
@@ -716,7 +716,7 @@
 
     function Imprimir(tipo) {
         let url = ""
-        if (tipo == 'factura') url = "{{ config('global.url_base') . '/ticket/imprimir/factura/' }}"+this.factura.id_factura
+        if (tipo == 'factura') url = "{{ config('global.url_base') . '/factura/imprimir/' }}"+this.factura.id_factura
         if (tipo == 'comanda') url = "{{ config('global.url_base') . '/ticket/imprimir/comanda/' }}"+this.factura.id_factura
 
         if (url != "") {

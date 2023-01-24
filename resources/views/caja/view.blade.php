@@ -116,18 +116,15 @@
                     </div>
                 </div>
                 <hr>
-                {{-- @foreach (dd($canales) as $canal)
                 <div class="row">
                     <div class="col-sm-6">
-                        <h4><span class="green"><b>+</b></span> <b>{{ $canal->nombre }}</b></h4>
+                        <h4><span class="green"><b>+</b></span> <b>Base Adicional</b></h4>
                     </div>
                     <div class="col-sm-6 text-right" >
-                        <h4>${{ number_format($caja->total_por_canal($canal->id_dominio), 0, '.', '.') }}</h4>
+                        <h4>${{ number_format($caja->get_recibo_caja(), 0, '.', '.') }}</h4>
                     </div>
                 </div>
                 <hr>
-            @endforeach
-                <hr> --}}
                 <h3><b>Canales de atención</b></h3>
                 <hr>
                 @foreach ($canales as $canal)
