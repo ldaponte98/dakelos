@@ -112,43 +112,84 @@
                                                         </div>
                                                     </div>
                                                     <div class="row">
-                                                    	<div class="col-sm-6">
-                                                    	<div class="card text-white bg-flat-color-1">
-								                            <div class="card-body">
-								                                <div class="card-left pt-1 float-left">
-								                                    <h3 class="mb-0 fw-r">
-								                                        <span class="currency float-left mr-1">$</span>
-								                                        <span class="count">{{ $tercero->get_total_compras() }}</span>
-								                                    </h3>
-								                                    <p class="text-light mt-1 m-0">Total de compras</p>
-								                                </div><!-- /.card-left -->
-
-								                                <div class="card-right float-right text-right">
-								                                    <i class="icon fade-5 icon-lg pe-7s-cart"></i>
-								                                </div><!-- /.card-right -->
-								                            </div>
-								                        </div>
-								                        </div>
-                                                    	<div class="col-sm-6">
-                                                    		<div class="card text-white bg-flat-color-3">
-									                            <div class="card-body">
-									                                <div class="card-left pt-1 float-left">
-									                                    <h3 class="mb-0 fw-r">
-									                                        <span class="count">{{ $tercero->get_total_productos_adquiridos() }}</span>
-									                                    </h3>
-									                                    <p class="text-light mt-1 m-0">Materiales adquiridos</p>
-									                                </div><!-- /.card-left -->
-
-									                                <div class="card-right float-right text-right">
-									                                    <i class="icon fade-5 icon-lg pe-7s-portfolio"></i>
-									                                </div><!-- /.card-right -->
-
-									                            </div>
-
-									                        </div>
-                                                    	</div>
+                                                        <div class="col-sm-6">
+                                                             <div class="form-group">
+                                                                <label for="cc-payment" class="control-label mb-1"><b>Clasificación: </b>{{ $tercero->clasificacion }}</label>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <div class="card text-white bg-flat-color-1">
+                                                        <div class="card-body">
+                                                            <div class="card-left pt-1 float-left">
+                                                                <h3 class="mb-0 fw-r">
+                                                                    <span class="currency float-left mr-1">$</span>
+                                                                    <span class="count">{{ $tercero->get_total_compras() }}</span>
+                                                                </h3>
+                                                                <p class="text-light mt-1 m-0">Total de compras</p>
+                                                            </div><!-- /.card-left -->
+
+                                                            <div class="card-right float-right text-right">
+                                                                <i class="icon fade-5 icon-lg pe-7s-cart"></i>
+                                                            </div><!-- /.card-right -->
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="card text-white bg-flat-color-4">
+                                                        <div class="card-body">
+                                                            <div class="card-left pt-1 float-left">
+                                                                <h3 class="mb-0 fw-r">
+                                                                    <span class="currency float-left mr-1">$</span>
+                                                                    <span class="count">{{ $tercero->get_total_ventas() }}</span>
+                                                                </h3>
+                                                                <p class="text-light mt-1 m-0">Total de ventas</p>
+                                                            </div><!-- /.card-left -->
+
+                                                            <div class="card-right float-right text-right">
+                                                                <i class="icon fade-5 icon-lg pe-7s-cart"></i>
+                                                            </div><!-- /.card-right -->
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="card text-white bg-flat-color-2">
+                                                        <div class="card-body">
+                                                            <div class="card-left pt-1 float-left">
+                                                                <h3 class="mb-0 fw-r">
+                                                                    <span class="count">{{ $tercero->get_total_productos_adquiridos() }}</span>
+                                                                </h3>
+                                                                <p class="text-light mt-1 m-0">Total materiales</p>
+                                                            </div><!-- /.card-left -->
+
+                                                            <div class="card-right float-right text-right">
+                                                                <i class="icon fade-5 icon-lg pe-7s-portfolio"></i>
+                                                            </div><!-- /.card-right -->
+
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="card text-white bg-flat-color-3">
+                                                        <div class="card-body">
+                                                            <div class="card-left pt-1 float-left">
+                                                                <h3 class="mb-0 fw-r">
+                                                                    <span class="count">{{ $tercero->get_total_peso_facturas() }}</span> Kg
+                                                                </h3>
+                                                                <p class="text-light mt-1 m-0">Peso total</p>
+                                                            </div><!-- /.card-left -->
+
+                                                            <div class="card-right float-right text-right">
+                                                                <i class="icon fade-5 icon-lg pe-7s-portfolio"></i>
+                                                            </div><!-- /.card-right -->
+
+                                                        </div>
+
+                                                    </div>
                                                 </div>
                                             </div>
                                             <br><br>

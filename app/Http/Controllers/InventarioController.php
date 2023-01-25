@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Caja;
 use App\Dominio;
 use App\Factura;
+use App\FacturaDetalle;
 use App\Inventario;
 use App\InventarioDetalle;
 use App\Licencia;
@@ -75,7 +76,7 @@ class InventarioController extends Controller
                         $item->id_inventario         = $inventario->id_inventario;
                         $item->id_producto           = $producto->id_producto;
                         $item->nombre_producto       = strtoupper($producto->nombre);
-                        $item->precio_producto       = $producto->precio_compra;
+                        $item->precio_producto       = $detalle->precio;
                         $item->presentacion_producto = $producto->presentacion->nombre;
                         $item->cantidad              = $detalle->cantidad;
                         if ($item->save()) {
@@ -98,7 +99,7 @@ class InventarioController extends Controller
                     //SI ES UNA ENTRADA DE INVENTARIO SE REGISTRA UN COMPROBANTE DE EGRESO A NOMBRE DE LA EMPRESA
                     if ($post->id_dominio_tipo_movimiento == 40) {
                         //CREAMOS FACTURA DE COMPROBANTE DE EGRESO
-                        $facturacion = $this->facturar_movimiento_inventario("ENTRADA",$total, $peso);
+                        $facturacion = $this->facturar_movimiento_inventario("ENTRADA",$total, $peso, $post->id_tercero_proveedor, $detalles);
                         if (!$facturacion->error) {
                             $inventario->id_factura = $facturacion->id_factura;
                             $inventario->save();
@@ -109,7 +110,7 @@ class InventarioController extends Controller
                         }
                     }
                     if(isset($post->check_permitir_factura)){
-                        $facturacion = $this->facturar_movimiento_inventario("SALIDA", $total, $peso);
+                        $facturacion = $this->facturar_movimiento_inventario("SALIDA", $total, $peso, $post->id_tercero_cliente, $detalles);
                         if (!$facturacion->error) {
                             $inventario->id_factura = $facturacion->id_factura;
                             $inventario->save();
@@ -149,7 +150,7 @@ class InventarioController extends Controller
         return view('inventario.stock_actual', compact('tipos'));
     }
 
-    public function facturar_movimiento_inventario($tipo_movimiento, $valor = 0, $peso = 0)
+    public function facturar_movimiento_inventario($tipo_movimiento, $valor = 0, $peso = 0, $id_tercero, $detalles)
     {
         // los tipos de movimientos permitidos son ENTRADA, SALIDA
         $error      = true;
@@ -185,7 +186,7 @@ class InventarioController extends Controller
             }
 
             if ($caja) {
-                $factura->id_tercero              = $licencia->responsable->id_tercero;
+                $factura->id_tercero              = $id_tercero;
                 $factura->id_caja                 = $caja->id_caja;
                 $factura->peso                    = $peso;
                 $factura->valor                   = $valor;
@@ -197,6 +198,23 @@ class InventarioController extends Controller
                 $factura->id_dominio_canal        = 49;
                 $factura->finalizada              = 1;
                 if ($factura->save()) {
+
+                    foreach ($detalles as $detalle) {
+                        $detalle                       = (object) $detalle;
+                        $producto                       = Producto::find($detalle->id);
+                        $factura_detalle                        = new FacturaDetalle;
+                        $factura_detalle->id_factura            = $factura->id_factura;
+                        $factura_detalle->id_producto           = $producto->id_producto;
+                        $factura_detalle->iva_producto          = $producto->iva;
+                        $factura_detalle->nombre_producto       = $producto->nombre;
+                        $factura_detalle->descripcion_producto  = $producto->descripcion;
+                        $factura_detalle->precio_producto       = $detalle->precio;
+                        $factura_detalle->cantidad              = $detalle->cantidad;
+                        $factura_detalle->descuento_producto    = 0;
+                        $factura_detalle->presentacion_producto = $detalle->presentacion;
+                        $factura_detalle->save();
+                    }
+
                     if($tipo_movimiento == "ENTRADA"){
                         $resolucion->consecutivo_comprobante_egreso += 1;
                     }else{

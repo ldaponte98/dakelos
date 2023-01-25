@@ -26,12 +26,12 @@
                     <i class="ti-printer"></i>
                 </div>
             </li>
-            <li onclick="Imprimir('comanda')" id="permiso-imprimir-comanda">
+            {{-- <li onclick="Imprimir('comanda')" id="permiso-imprimir-comanda">
                 <span class="fab-label">Imprimir comanda</span>
                 <div class="fab-icon-holder">
                     <i class="ti-printer"></i>
                 </div>
-            </li>
+            </li> --}}
             <li onclick="$('#modal-anulacion').modal('show')" id="permiso-anular">
                 <span class="fab-label">Cancelar o anular</span>
                 <div class="fab-icon-holder">
@@ -50,7 +50,7 @@
 		align-items: center;
 	}
     .hide{
-        display: none !important;
+        display: none;
     }
 	.lb-flex{
 		width: 100%;
@@ -201,6 +201,8 @@
                     	 alt="Imagen del usuario">
                     <h5 class="text-sm-center mt-2 mb-1" ><b id="cliente-nombre">Cliente</b> <a style="cursor: pointer;" onclick="ModalCliente()"><i class="fa fa-edit"></i></a>
                     </h5>
+                    <div class="text-sm-center"><span id="cliente-clasificacion" class="badge badge-success hide">  </span></div>
+                    
                     <div class="location text-sm-center"><i class="fa fa-map-marker"></i> {{ $licencia->ciudad }}</div>
                 </div>
                 <hr>
@@ -297,7 +299,7 @@
                     </div> --}}
                     <div class="form-group">
                         <label><b>Identificación</b></label>
-                        <input type="number" id="modal-cliente-identificacion"  class="form-control" name="identificacion" aria-required="true" aria-invalid="false">
+                        <input onkeyup="BuscarInfoCliente(this.value)" type="number" id="modal-cliente-identificacion"  class="form-control" name="identificacion" aria-required="true" aria-invalid="false">
                     </div>
                     <div class="form-group">
                     	<label>Nombre del cliente</label>
@@ -306,6 +308,15 @@
                     <div class="form-group">
                     	<label>Telefono del cliente</label>
                     	<input type="text" id="modal-cliente-telefono" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                    	<label>Clasificación</label>
+                        <select class="form-control" id="modal-cliente-clasificacion">
+                            <option value="NINGUNA">Ninguna</option>
+                            <option value="MINORISTA">Minorista</option>
+                            <option value="MAYORISTA">Mayorista</option>
+                        </select>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -357,7 +368,9 @@
 		cliente: {
 			nombre: null,
 			telefono: null,
-			identificacion: null 
+			identificacion: null, 
+			clasificacion: null,
+            imagen: null
 		},
         id_dominio_canal : null,
         id_mesa : null,
@@ -447,19 +460,29 @@
 
 	function GuardarInfoCliente() {
 		$("#modal-cliente").modal("hide")
-		if ($("modal-cliente-identificacion").val().trim() != "") 
+		if ($("#modal-cliente-identificacion").val().trim() != "") 
             this.factura.cliente.identificacion = $("#modal-cliente-identificacion").val()
-
 		this.factura.cliente.nombre = $("#modal-cliente-nombre").val()
-
 		this.factura.cliente.telefono = $("#modal-cliente-telefono").val()
-
-
+		this.factura.cliente.clasificacion = $("#modal-cliente-clasificacion").val()
 		this.ActualizarVistaPedido()
 	}
 
 	function ActualizarVistaPedido() {
 		$("#cliente-nombre").html(this.factura.cliente.nombre == null ? "Cliente" : this.factura.cliente.nombre)
+        if(this.factura.cliente.clasificacion != "" && this.factura.cliente.clasificacion != null && this.factura.cliente.clasificacion != "NINGUNA"){
+            $("#cliente-clasificacion").html(this.factura.cliente.clasificacion)
+            $("#cliente-clasificacion").fadeIn()
+            if(this.factura.cliente.clasificacion == "MAYORISTA"){
+                $("#cliente-clasificacion").removeClass("badge-primary")
+                $("#cliente-clasificacion").addClass("badge-success")
+            }else{
+                $("#cliente-clasificacion").removeClass("badge-success")
+                $("#cliente-clasificacion").addClass("badge-primary")
+            }
+        }else{
+            $("#cliente-clasificacion").fadeOut()
+        }
         let tabla = ""
         let sub_total = 0
         let peso_total = 0
@@ -520,6 +543,12 @@
         $("#factura-duracion").val(this.factura.minutos_duracion)
         this.factura.peso = parseFloat(totalp)
         this.factura.total = parseFloat(total)
+
+        if(factura.cliente.imagen != null){
+            $("#cliente-imagen").prop("src", factura.cliente.imagen)
+        }else{
+            $("#cliente-imagen").prop("src", "{{ asset('plantilla/images/app/user.jpg') }}")
+        }
 	}
 
     function EstablecerCantidad(id_producto) {
@@ -570,6 +599,42 @@
         }else{
             $("#div-busqueda-productos").html("")
             $("#div-busqueda-productos").fadeOut()
+        }
+    }
+
+    function BuscarInfoCliente(caracteres) {
+        if (caracteres.trim() != "" && caracteres.length >= 3) {
+            let ruta = "{{ config('global.url_base') . '/tercero/buscar/' }}" + caracteres
+            $.get(ruta, (response) => {
+                if(response.length > 0){
+                    let tercero = response[0]
+                    
+                    $("#modal-cliente-nombre").val(tercero.nombres)
+		            $("#modal-cliente-telefono").val(tercero.telefono)
+                    if(tercero.clasificacion != "" && tercero.clasificacion != null){
+                        $("#modal-cliente-clasificacion").val(tercero.clasificacion)
+                        $("#modal-cliente-clasificacion").prop('disabled', true)
+                    }else{
+                        $("#modal-cliente-clasificacion").val("NINGUNA")
+                        $("#modal-cliente-clasificacion").prop('disabled', false)
+                    }
+
+                    if(tercero.imagen != "" && tercero.imagen != null){
+                        this.factura.cliente.imagen = "{{ config('global.url_base') . '/imagenes/tercero/' }}" + tercero.imagen
+                    }else{
+                        this.factura.cliente.imagen = null;
+                    }
+                }else{
+                    $("#modal-cliente-nombre").val("")
+		            $("#modal-cliente-telefono").val("")
+                    $("#modal-cliente-clasificacion").val("NINGUNA")
+                    $("#modal-cliente-clasificacion").prop('disabled', false)
+                    this.factura.cliente.imagen = null;
+                }
+            })
+            .fail((error) => {
+
+            })
         }
     }
 
@@ -631,9 +696,9 @@
 
     function Guardar(finalizada) {
         let imprimir_comanda = false
-        let imprimir_factura = false
+        let imprimir_factura = true
 
-        if (finalizada == 0 && this.factura.id_factura == null) imprimir_comanda = true
+        if (finalizada == 0 && this.factura.id_factura == null) imprimir_comanda = false
         if (finalizada == 1 && this.factura.finalizada == 0) imprimir_factura = true
 
         this.factura.finalizada = finalizada
@@ -716,7 +781,7 @@
 
     function Imprimir(tipo) {
         let url = ""
-        if (tipo == 'factura') url = "{{ config('global.url_base') . '/ticket/imprimir/factura/' }}"+this.factura.id_factura
+        if (tipo == 'factura') url = "{{ config('global.url_base') . '/factura/imprimir/' }}"+this.factura.id_factura
         if (tipo == 'comanda') url = "{{ config('global.url_base') . '/ticket/imprimir/comanda/' }}"+this.factura.id_factura
 
         if (url != "") {

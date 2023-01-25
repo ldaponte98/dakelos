@@ -90,6 +90,19 @@ class Tercero extends Model
         return $total;
     }
 
+    public function get_total_ventas()
+    {
+        $facturas = Factura::all()
+                             ->where('id_dominio_tipo_factura', 53)
+                             ->where('id_tercero', $this->id_tercero)
+                             ->where('id_licencia', session('id_licencia'));
+        $total = 0;
+        foreach ($facturas as $factura) {
+           $total += $factura->valor;
+        }
+        return $total;
+    }
+
     public function get_total_productos_adquiridos()
     {
         $sql = "SELECT DISTINCT(descripcion_producto)
@@ -99,6 +112,17 @@ class Tercero extends Model
                         and f.id_tercero = ".$this->id_tercero;
         $response = DB::select($sql);
         return count($response);
+    }
+
+    public function get_total_peso_facturas()
+    {
+        $sql = "SELECT SUM(fd.cantidad) as total
+                        FROM factura_detalle fd 
+                        LEFT JOIN factura f USING(id_factura) 
+                        WHERE f.id_licencia = ".session('id_licencia')." 
+                        and f.id_tercero = ".$this->id_tercero;
+        $response = DB::select($sql);
+        return $response[0]->total;
     }
 
 

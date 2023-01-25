@@ -127,6 +127,18 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label>Clasificación</label>
+                                                <select class="form-control" name="clasificacion">
+                                                    <option value="NINGUNA">Ninguna</option>
+                                                    <option @if($tercero->clasificacion == "MINORISTA") selected @endif value="MINORISTA">Minorista</option>
+                                                    <option @if($tercero->clasificacion == "MAYORISTA") selected @endif value="MAYORISTA">Mayorista</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
                                 <div><center>
                                     <button class="btn btn-primary"><i class="fa fa-save"></i> Guardar</button>
                                     @if(count($errors) > 0)

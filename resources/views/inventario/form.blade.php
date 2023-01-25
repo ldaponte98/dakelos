@@ -64,7 +64,7 @@
                                                 $itemsC = \App\Tercero::all()->where('id_dominio_tipo_tercero', 3)
                                                                             ->where('id_licencia', session('id_licencia'));                           
                                             @endphp
-                                            <label for="cc-payment" class="control-label mb-1"><b>Proveedor</b></label>
+                                            <label for="cc-payment" class="control-label mb-1"><b>Reciclador</b></label>
                                             <select name="id_tercero_proveedor" id="id_tercero_proveedor" data-placeholder="Consulta aqui por nombre o identificacion..." class="form-control select2">
                                                 <option value="" label="default"></option>
                                                 @foreach($items as $item)
