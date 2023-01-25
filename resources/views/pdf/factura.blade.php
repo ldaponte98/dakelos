@@ -134,9 +134,9 @@
 	</tr>
 	<tr>
 		<td colspan="5" style="border-left: none; border-top: none; border-bottom: none; font-size: 16px;"><center>NIT. {{ $factura->licencia->nit }}</center></td>
-		<td><center>{{ date('d', strtotime($factura->fecha)) }}</center></td>
-		<td><center>{{ date('m', strtotime($factura->fecha)) }}</center></td>
-		<td><center>{{ date('Y', strtotime($factura->fecha)) }}</center></td>
+		<td><center><b>Día</b>&nbsp;&nbsp;{{ date('d', strtotime($factura->fecha)) }}</center></td>
+		<td><center><b>Mes</b>&nbsp;&nbsp;{{ date('m', strtotime($factura->fecha)) }}</center></td>
+		<td><center><b>Año</b>&nbsp;&nbsp;{{ date('Y', strtotime($factura->fecha)) }}</center></td>
 	</tr>
 	</table>
 	<table class="tabla_1" border="1" cellpadding="0" cellspacing="0">
@@ -144,7 +144,7 @@
 		<td colspan="10" style="border-top: none; background-color: #BFBFBF"><center><b>FACTURADO A:</b></center></td>
 	</tr>
 	<tr>
-		<td colspan="10"><b>Cliente: </b>{{ $factura->tercero->nombre_completo() }}</td>
+		<td colspan="10"><b>Proveedor: </b>{{ $factura->tercero->nombre_completo() }}</td>
 	</tr>
 	<tr>
 		<td colspan="5"><b>CC o Nit: </b>{{ $factura->tercero->identificacion }}</td>
@@ -274,5 +274,7 @@
 </center>
 @endif
 </body>
-
+<script>
+	window.print()
+</script>
 </html>

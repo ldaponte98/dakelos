@@ -98,7 +98,7 @@ class InventarioController extends Controller
                     //SI ES UNA ENTRADA DE INVENTARIO SE REGISTRA UN COMPROBANTE DE EGRESO A NOMBRE DE LA EMPRESA
                     if ($post->id_dominio_tipo_movimiento == 40) {
                         //CREAMOS FACTURA DE COMPROBANTE DE EGRESO
-                        $facturacion = $this->facturar_movimiento_inventario("ENTRADA",$total, $peso);
+                        $facturacion = $this->facturar_movimiento_inventario("ENTRADA",$total, $peso, $post->id_tercero_proveedor);
                         if (!$facturacion->error) {
                             $inventario->id_factura = $facturacion->id_factura;
                             $inventario->save();
@@ -109,7 +109,7 @@ class InventarioController extends Controller
                         }
                     }
                     if(isset($post->check_permitir_factura)){
-                        $facturacion = $this->facturar_movimiento_inventario("SALIDA", $total, $peso);
+                        $facturacion = $this->facturar_movimiento_inventario("SALIDA", $total, $peso, $post->id_tercero_cliente);
                         if (!$facturacion->error) {
                             $inventario->id_factura = $facturacion->id_factura;
                             $inventario->save();
@@ -149,7 +149,7 @@ class InventarioController extends Controller
         return view('inventario.stock_actual', compact('tipos'));
     }
 
-    public function facturar_movimiento_inventario($tipo_movimiento, $valor = 0, $peso = 0)
+    public function facturar_movimiento_inventario($tipo_movimiento, $valor = 0, $peso = 0, $id_tercero)
     {
         // los tipos de movimientos permitidos son ENTRADA, SALIDA
         $error      = true;
@@ -185,7 +185,7 @@ class InventarioController extends Controller
             }
 
             if ($caja) {
-                $factura->id_tercero              = $licencia->responsable->id_tercero;
+                $factura->id_tercero              = $id_tercero;
                 $factura->id_caja                 = $caja->id_caja;
                 $factura->peso                    = $peso;
                 $factura->valor                   = $valor;

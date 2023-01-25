@@ -45,6 +45,14 @@ class Caja extends Model
             ->sum('valor');
     }
 
+    public function get_recibo_caja()
+    {
+        return Factura::where('estado', 1)
+            ->where('id_caja', $this->id_caja)
+            ->where('id_dominio_tipo_factura', 57)
+            ->sum('valor');
+    }
+
     public function total_por_canal($id_dominio_canal)
     {
         return Factura::where('estado', 1)

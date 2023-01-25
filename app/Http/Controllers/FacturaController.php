@@ -205,9 +205,16 @@ class FacturaController extends Controller
         set_time_limit(72000);
         $factura = Factura::find($id_factura);
         $pdf     = \PDF::loadView('pdf.factura', compact('factura'));
-        //dd($factura);
-        // return view('pdf.factura', compact('factura'));
-        return $pdf->stream($factura->tipo->nombre . ' ' . $factura->licencia->nombre . '.pdf');
+        // dd($factura);
+        if($factura->id_dominio_tipo_factura==53){
+            $customPaper = array(0, 0, 225.80, 767.00);
+            //return view('pdf.ticket_factura', compact('factura'));
+            $pdf = \PDF::loadView('pdf.ticket_factura', compact('factura'))
+                ->setPaper($customPaper);
+            return $pdf->stream("Factura #" . $factura->numero . '.pdf');
+        }
+        return view('pdf.factura', compact('factura'));
+        // return $pdf->stream($factura->tipo->nombre . ' ' . $factura->licencia->nombre . '.pdf');
     }
 
     public function imprimir_ticket_comanda($id_factura)
