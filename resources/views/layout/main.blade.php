@@ -116,30 +116,31 @@
                         </div>
                         @if (\App\Permiso::validar(4))
                             @php
-                                $productos = \App\Producto::where('id_licencia', session('id_licencia'))
-                                                          ->where('descontado', 1)
-                                                          ->orWhere('alerta', 1)
-                                                          ->where('cantidad_actual', '<=', 'cantidad_minimo_alerta')
-                                                          ->orderBy('updated_at', 'desc')
-                                                          ->get();
-                                
+                                $productos = \App\Producto::all()->where('id_licencia', session('id_licencia'))
+                                                ->where('estado', 1);
+                                // dd($productos);
                             @endphp
                             <div class="dropdown for-notification">
                                 <button class="btn dropdown-toggle" type="button" id="notification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fa fa-bell"></i>
-                                    @if (count($productos) > 0)
-                                        <span class="count bg-danger">{{ count($productos) }}</span>
-                                    @endif
+                                    @foreach ($productos as $producto)
+                                        @if ($producto->cantidad_minimo_alerta <= $producto->cantidad_actual)
+                                            @if (count($productos) > 0)
+                                                <span class="count bg-danger">{{ count($productos) }}</span>
+                                            @endif
+                                        @endif
+                                    @endforeach
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="notification">
                                     @if (count($productos) > 0)
-                                        @foreach ($productos as $item)
-                                            <a class="dropdown-item media" href="{{ route('inventario/stock_actual') }}">
-                                                <i class="red fa fa-warning"></i>
-                                                <p>El material <b>{{ $item->nombre }}</b> esta por agotarse con <b>{{ $item->cantidad_actual }} {{ $item->presentacion->nombre }}</b> disponibles</p>
-                                            </a>
+                                        @foreach ($productos as $producto)
+                                            @if ($producto->cantidad_minimo_alerta <= $producto->cantidad_actual)
+                                                <a class="dropdown-item media" href="{{ route('inventario/stock_actual') }}">
+                                                    <i class="green fa fa-warning"></i>
+                                                    <p>El material <b>{{ $producto->nombre }}</b> ha alcanzado los <b>{{ $producto->cantidad_actual }} {{ $producto->presentacion->nombre }}</b> disponibles</p>
+                                                </a>
+                                            @endif
                                         @endforeach
-                                        
                                     @else
                                         <p>No tienes notificaciones</p>
                                     @endif

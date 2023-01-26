@@ -65,7 +65,7 @@
                                     <th class="serial"><center><i class="fa fa-laptop"></i></center></th>
                                     <th><center><b>Material</b></center></th>
                                     <th><center><b>Presentación</b></center></th>
-                                    <th><center><b>Cantidad minima de alerta</b></center></th>
+                                    <th><center><b>Cantidad máxima de alerta</b></center></th>
                                     <th><center><b>Cantidad actual</b></center></th>
                                     <th><center><b>Estado</b></center></th>
                                     <th><center><b>Acciones</b></center></th>
@@ -92,10 +92,10 @@
                                             @if ($producto->cantidad_actual <= 0)
                                                 <span class="badge badge-danger"><b>Agotado</b></span>
                                             @else
-                                                @if ($producto->cantidad_actual <= $producto->cantidad_minimo_alerta)
-                                                    <span class="badge badge-warning text-black"><b>Por agotar</b></span>
+                                                @if ($producto->cantidad_actual >= $producto->cantidad_minimo_alerta)
+                                                    <span class="badge badge-success"><b>Full</b></span>
                                                 @else
-                                                    <span class="badge badge-success"><b>Estable</b></span>
+                                                    <span class="badge badge-warning text-black"><b>Estable</b></span>
                                                 @endif
                                             @endif
                                             

@@ -19,6 +19,7 @@ class Tercero extends Model
      	'direccion',
         'id_dominio_sexo',
         'imagen',
+        'clasificacion',
         'id_dominio_tipo_tercero',
         'id_dominio_tipo_identificacion',
         'estado',

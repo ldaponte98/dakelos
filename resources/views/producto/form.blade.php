@@ -167,7 +167,7 @@
                                     </div>
                                 </div>
 
-                                <div class="row">
+                                {{-- <div class="row">
                                     <div class="col-sm-12">
                                         <div class="form-group" style="margin-left: 18px;">
                                             <label for="descontado_ingredientes" class="form-check-label ">
@@ -175,13 +175,13 @@
                                             </label>
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
 
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="form-group" style="margin-left: 18px;">
                                             <label for="alerta" class="form-check-label ">
-                                                <input onclick="validar_aviso()" type="checkbox" id="alerta" name="alerta" @if($producto->alerta == 1) checked @endif class="form-check-input"><i>Deseo que el sistema me notifique cuando este por acabarse este material.</i>
+                                                <input onclick="validar_aviso()" type="checkbox" id="alerta" name="alerta" @if($producto->alerta == 1) checked @endif class="form-check-input"><i>Deseo que el sistema me notifique cuando el material alcance <b>(X)</b> toneladas.</i>
                                             </label>
                                         </div>
                                     </div>
@@ -189,7 +189,7 @@
                                 <div class="row" id="div-alerta" @if($producto->alerta == 0) style="display: none;" @endif>
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label for="cc-payment" class="control-label mb-1"><b>*Cantidad minima de aviso </b></label> <i class="fa fa-info-circle" title="Este campo indica la cantidad minima para que el sistema informe faltantes en el inventario de este material."></i>
+                                            <label for="cc-payment" class="control-label mb-1"><b>*Alerta cantidad máxima de material en bodega</b></label> <i class="fa fa-info-circle" title="Este campo indica la cantidad minima para que el sistema informe faltantes en el inventario de este material."></i>
                                             <div class="input-group mb-3">
                                                 <input name="cantidad_minimo_alerta" type="number" class="form-control" aria-required="true" aria-invalid="false" value="{{ $producto->cantidad_minimo_alerta }}">
                                                 <div class="input-group-prepend">
