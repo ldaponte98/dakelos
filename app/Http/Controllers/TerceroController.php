@@ -12,7 +12,7 @@ class TerceroController extends Controller
     public function administrar(Request $request)
     {
         $post     = (object) $request->all();
-        $terceros = Tercero::all()->where('id_licencia', session('id_licencia'));
+        $terceros = Tercero::all()->where('id_licencia', session('id_licencia'))->where('estado', '<>', 2);
         return view('tercero.administrar', compact('terceros'));
     }
     public function crear(Request $request, $id_tercero = null)
