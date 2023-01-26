@@ -129,7 +129,7 @@
     	<label></label>
         <p class="u-small-text u-text u-text-variant u-text-1">
         	<b>{{ $licencia->nombre }}</b><br>
-        	Desarrollado por Zorax
+        	Desarrollado por Ever Lazo Castillo
         </p>
       </div>
   	</footer>

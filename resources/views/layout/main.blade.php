@@ -9,8 +9,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Zorax - Sistema de facturacion</title>
-    <meta name="description" content="Zorax - Sistema de facturacion">
+    <title>ARSI - Recuperadores</title>
+    <meta name="description" content="ARSI - Recuperadores">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="apple-touch-icon" href="{{ asset('plantilla/images/app/zorax_small.png') }}">
@@ -203,10 +203,10 @@
             <div class="footer-inner bg-white">
                 <div class="row">
                     <div class="col-sm-6">
-                        Zorax - Sistema de facturación 
+                        ARSI - Recuperadores 
                     </div>
                     <div class="col-sm-6 text-right">
-                        Designed by <a href="evernavitlazocastillo@gmail.com">Ever Navit Lazo Castillo</a>
+                        Designed by <a href="https://www.linkedin.com/in/ever-navit-lazo-castillo-109428207" target="_blank">Ever Navit Lazo Castillo</a>
                     </div>
                 </div>
             </div>
