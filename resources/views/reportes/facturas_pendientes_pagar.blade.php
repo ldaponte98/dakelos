@@ -299,7 +299,7 @@
 <script type="text/javascript">
     var id_factura = null;
     function exportar_excel() {
-        tableToExcel('tabla_excel', 'Informe Facturas a credito Zorax')
+        tableToExcel('tabla_excel', 'Informe Facturas a credito ARSI')
     }
     $(document).ready(function() {
         $('#fechas').daterangepicker({

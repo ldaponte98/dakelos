@@ -294,7 +294,7 @@
 <script type="text/javascript">
     var id_factura = null;
     function exportar_excel() {
-        tableToExcel('tabla_excel', 'Informe Facturas Zorax')
+        tableToExcel('tabla_excel', 'Informe Facturas ARSI')
     }
     $(document).ready(function() {
         $('#fechas').daterangepicker({

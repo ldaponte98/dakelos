@@ -196,7 +196,7 @@
 
 <script type="text/javascript">
     function exportar_excel() {
-        tableToExcel('tabla_excel', 'Informe Auditoria Inventario Zorax')
+        tableToExcel('tabla_excel', 'Informe Auditoria Inventario ARSI')
     }
     $(document).ready(function() {
         $('#fechas').daterangepicker({
