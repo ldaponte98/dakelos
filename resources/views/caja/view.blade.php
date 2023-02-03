@@ -125,7 +125,7 @@
                     </div>
                 </div>
                 <hr>
-                <h3><b>Canales de atención</b></h3>
+                <h3><b>Canales de venta</b></h3>
                 <hr>
                 @foreach ($canales as $canal)
                     <div class="row">

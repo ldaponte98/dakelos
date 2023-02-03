@@ -95,8 +95,8 @@
             <div class="top-left">
                 <div class="navbar-header">
                     
-                    <a class="navbar-brand" style="text-align: center; margin-right: 0px;" href=""><img height="40" width="100" src="{{ $licencia->get_imagen() }}" alt="{{ $licencia->nombre }}"></a>
-                    <a class="navbar-brand hidden" href="" ><img src="{{ $licencia->get_imagen_small() }}" alt="{{ $licencia->nombre }}"></a>
+                    <a class="navbar-brand" style="text-align: center; margin-right: 0px;" href=""><img height="43" width="100" src="{{ $licencia->get_imagen() }}" alt="{{ $licencia->nombre }}"></a>
+                    {{-- <a class="navbar-brand hidden" href="" ><img src="{{ $licencia->get_imagen_small() }}" alt="{{ $licencia->nombre }}"></a> --}}
                     <a id="menuToggle" class="menutoggle" style="width: 0px;"><i class="fa fa-bars"></i></a>
                     
                 </div>
@@ -118,18 +118,22 @@
                             @php
                                 $productos = \App\Producto::all()->where('id_licencia', session('id_licencia'))
                                                 ->where('estado', 1);
-                                // dd($productos);
+                                $notifications = 0;
+                                $info = "";
                             @endphp
                             <div class="dropdown for-notification">
                                 <button class="btn dropdown-toggle" type="button" id="notification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fa fa-bell"></i>
-                                    @foreach ($productos as $producto)
-                                        @if ($producto->cantidad_minimo_alerta <= $producto->cantidad_actual)
-                                            @if (count($productos) > 0)
-                                                <span class="count bg-danger">{{ count($productos) }}</span>
+                                    @if (count($productos) > 0)
+                                        @foreach ($productos as $product)
+                                            @if ($product->cantidad_minimo_alerta <= $product->cantidad_actual)
+                                                @php 
+                                                    $notifications ++;
+                                                @endphp
+                                                <span class="count bg-danger">{{ $notifications }}</span>
                                             @endif
-                                        @endif
-                                    @endforeach
+                                        @endforeach
+                                    @endif
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="notification">
                                     @if (count($productos) > 0)
@@ -139,11 +143,17 @@
                                                     <i class="green fa fa-warning"></i>
                                                     <p>El material <b>{{ $producto->nombre }}</b> ha alcanzado los <b>{{ $producto->cantidad_actual }} {{ $producto->presentacion->nombre }}</b> disponibles</p>
                                                 </a>
+                                            @else
+                                                @if($notifications < 1 && empty($info))  
+                                                    @php 
+                                                        $info = "Si hay notificaciones";
+                                                    @endphp
+                                                    <p>Sin notificaciones</p>
+                                                @endif
                                             @endif
                                         @endforeach
-                                    @else
-                                        <p>No tienes notificaciones</p>
                                     @endif
+
                                 </div>
                             </div>
                         @endif

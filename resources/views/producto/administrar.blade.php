@@ -11,6 +11,12 @@
                     <i class="fa fa-laptop"></i>
                 </div>
             </li>
+            <li onclick="exportar_excel()">
+                <span class="fab-label">Exportar a excel</span>
+                <div class="fab-icon-holder">
+                    <i class="ti-agenda"></i>
+                </div>
+            </li>
         </ul>
     </div>
 @endsection
@@ -67,9 +73,10 @@
                                                     <table class="table" id="table-productos-{{ $item->id_dominio }}">
                                                         <thead>
                                                             <tr>
+                                                                <th><center><b>#</b></center></th>
                                                                 <th class="serial"><center><i class="fa fa-laptop"></i></center></th>
                                                                 <th><center><b>Material</b></center></th>
-                                                                <th><center><b>Descripción</b></center></th>
+                                                                {{-- <th><center><b>Descripción</b></center></th> --}}
                                                                 <th><center><b>Precio venta</b></center></th>
                                                                 <th><center><b>Precio compra</b></center></th>
                                                                 <th><center><b>Iva</b></center></th>
@@ -82,9 +89,10 @@
                                                             @php $cont = 1; @endphp
                                                             @foreach($productos as $producto)
                                                             <tr>
+                                                                <td><center>{{ $cont }}</center></td>
                                                                 <td><center><img class="rounded-circle" src="{{ $producto->get_imagen() }}" width="45" height="45" alt="tercero"></center></td>
                                                                 <td><center>{{ $producto->nombre }}</center></td>
-                                                                <td><center>{{ $producto->descripcion }}</center></td>
+                                                                {{-- <td><center>{{ $producto->descripcion }}</center></td> --}}
                                                                 <td><center>${{ number_format($producto->precio_venta,0,'\'','.') }}</center></td>
                                                                 <td><center>${{ number_format($producto->precio_compra,0,'\'','.') }}</center></td>
                                                                 <td><center>%{{ $producto->iva }}</center></td>
@@ -97,6 +105,35 @@
                                                                     <a class="ml-3" href="{{ route('producto/editar', $producto->id_producto) }}">Editar</a>
                                                                 </center>
                                                                 </td>
+                                                            </tr>
+                                                            @php $cont++; @endphp
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                    <table class="table" id="tabla_excel" style="display: none">
+                                                        <thead>
+                                                            <tr>
+                                                                <th><center><b>Material</b></center></th>
+                                                                {{-- <th><center><b>Descripción</b></center></th> --}}
+                                                                <th><center><b>Precio venta</b></center></th>
+                                                                <th><center><b>Precio compra</b></center></th>
+                                                                <th><center><b>Iva</b></center></th>
+                                                                <th><center><b>Aplica inventario</b></center></th>
+                                                                <th><center><b>Estado</b></center></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @php $cont = 1; @endphp
+                                                            @foreach($productos as $producto)
+                                                            <tr>
+                                                                <td><center>{{ $producto->nombre }}</center></td>
+                                                                {{-- <td><center>{{ $producto->descripcion }}</center></td> --}}
+                                                                <td><center>${{ number_format($producto->precio_venta,0,'\'','.') }}</center></td>
+                                                                <td><center>${{ number_format($producto->precio_compra,0,'\'','.') }}</center></td>
+                                                                <td><center>%{{ $producto->iva }}</center></td>
+                                                                <td><center>{{ $producto->descontado == 1 ? "Aplica" : "No aplica" }}</center>
+                                                                </td>
+                                                                <td><center>{{ $producto->get_estado() }}</center></td>
                                                             </tr>
                                                             @php $cont++; @endphp
                                                             @endforeach
@@ -119,12 +156,12 @@
 
 
 <script type="text/javascript">
+    function exportar_excel() {
+        tableToExcel('tabla_excel', 'Reporte de productos ARSI')
+    }
     
-       
-        @foreach ($tipos as $item)
-            setFiltro('filtro-productos-{{ $item->id_dominio }}', 'table-productos-{{ $item->id_dominio }}')
-        @endforeach
-
-    
+    @foreach ($tipos as $item)
+        setFiltro('filtro-productos-{{ $item->id_dominio }}', 'table-productos-{{ $item->id_dominio }}')
+    @endforeach
 </script>
 @endsection

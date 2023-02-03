@@ -11,6 +11,12 @@
                     <i class="ti-plus"></i>
                 </div>
             </li>
+            <li onclick="exportar_excel()">
+                <span class="fab-label">Exportar a excel</span>
+                <div class="fab-icon-holder">
+                    <i class="ti-agenda"></i>
+                </div>
+            </li>
         </ul>
     </div>
 @endsection
@@ -33,7 +39,7 @@
                     <div class="col-lg-12">
                         {{ Form::open(array('method' => 'post')) }}
                         <div class="row">
-                            <div class="col-sm-4">
+                            <div class="col-sm-5">
                                 <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <label class="input-group-text" for="fechas">Fechas</label>
@@ -54,11 +60,12 @@
                                     <thead>
                                         <tr>
                                             <th class="serial"><center><i class="fa fa-user"></i></center></th>
+                                            <th><center><b>#</b></center></th>
                                             <th><center><b>Movimiento</b></center></th>
                                             <th><center><b>Fecha</b></center></th>
-                                            <th><center><b>Hora</b></center></th>
+                                            {{-- <th><center><b>Hora</b></center></th> --}}
                                             <th><center><b>Factura</b></center></th>
-                                            <th><center><b>Usuario</b></center></th>
+                                            <th><center><b>Responsable</b></center></th>
                                             <th><center><b>Estado</b></center></th>
                                             <th></th>
                                         </tr>
@@ -67,10 +74,11 @@
                                         @php $cont = 1; @endphp
                                         @foreach($inventarios as $item)
                                         <tr>
+                                            <td><center>{{ $cont }}</center></td>
                                             <td><center><img class="rounded-circle" src="{{ $item->usuario_registra->tercero->get_imagen() }}" width="45" height="45" alt="tercero"></center></td>
                                             <td><center>{{ $item->tipo_movimiento->nombre }}</center></td>
-                                            <td><center>{{ date('d/m/Y', strtotime($item->created_at)) }}</center></td>
-                                            <td><center>{{ date('H:i', strtotime($item->created_at)) }}</center></td>
+                                            <td><center>{{ date('d/m/Y H:i', strtotime($item->fecha)) }}</center></td>
+                                            {{-- <td><center>{{ date('H:i', strtotime($item->created_at)) }}</center></td> --}}
                                             <td><center>
                                                 @if ($item->id_factura)
                                                     <a target="_blank" href="{{ route('factura/imprimir', $item->id_factura) }}">{{ $item->factura->numero }}</a>
@@ -90,6 +98,39 @@
                                         @endforeach
                                     </tbody>
                                 </table>
+                                <table  id="tabla_excel" class="table" style="display:none">
+                                    <thead>
+                                        <tr>
+                                            <th><center><b>Movimiento</b></center></th>
+                                            <th><center><b>Fecha</b></center></th>
+                                            {{-- <th><center><b>Hora</b></center></th> --}}
+                                            <th><center><b>Factura</b></center></th>
+                                            <th><center><b>Responsable</b></center></th>
+                                            <th><center><b>Estado</b></center></th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bodytable">
+                                        @php $cont = 1; @endphp
+                                        @foreach($inventarios as $item)
+                                        <tr>
+                                            <td><center>{{ $item->tipo_movimiento->nombre }}</center></td>
+                                            <td><center>{{ date('d/m/Y H:i', strtotime($item->fecha)) }}</center></td>
+                                            {{-- <td><center>{{ date('H:i', strtotime($item->created_at)) }}</center></td> --}}
+                                            <td><center>
+                                                @if ($item->id_factura)
+                                                    <a target="_blank" href="{{ route('factura/imprimir', $item->id_factura) }}">{{ $item->factura->numero }}</a>
+                                                @else
+                                                    No registra
+                                                @endif
+                                            </center></td>
+                                            <td><center>{{ $item->usuario_registra->tercero->nombre_completo() }}</center></td>
+                                            <td><center>{{ $item->estado == 1 ? "Activa" : "Anulada" }}</center></td>
+                                        </tr>
+                                        @php $cont++; @endphp
+                                        @endforeach
+                                    </tbody>
+                                </table>
                             </div> 
                         </div>
                     </div>
@@ -102,7 +143,7 @@
 
 <script type="text/javascript">
     function exportar_excel() {
-        tableToExcel('tabla_excel', 'Reporte_de_facturas')
+        tableToExcel('tabla_excel', 'Reporte de movimientos ARSI')
     }
     $(document).ready(function() {
         $('#fechas').daterangepicker({

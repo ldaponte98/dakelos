@@ -99,7 +99,7 @@
                     <div class="col-lg-12">
                         {{ Form::open(array('method' => 'post')) }}
                         <div class="row">
-                            <div class="col-sm-4">
+                            <div class="col-sm-5">
                                 <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <label class="input-group-text" for="fechas">Fechas</label>
@@ -107,15 +107,14 @@
                                     <input required name="fechas" id="fechas" type="text" class="form-control" placeholder="Lapso de tiempo de la factura" autocomplete="off" value="{{ $fechas }}">
                                 </div>
                             </div>
-                            <div class="col-sm-4">
+                            @php
+                                $_canales = \App\Dominio::get_canales(session('id_licencia'));
+                            @endphp
+                            {{-- <div class="col-sm-4">
                                 <div class="input-group mb-3 " style="display: -webkit-inline-box;">
                                 <div class="input-group-prepend">
                                     <label class="input-group-text" for="canales">Canales</label>
                                 </div>
-
-                                @php
-                                    $_canales = \App\Dominio::get_canales(session('id_licencia'));
-                                @endphp
                                     <select id="canales" name="canales[]" data-placeholder="Todos los canales" multiple class="standardSelect form-control">
                                         <option value="" label="default"></option>
                                         @foreach($_canales as $item)
@@ -124,7 +123,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="col-sm-4">
                                 <button type="submit" class="btn btn-info"><i class="fa fa-search"></i> Consultar</button>
                             </div>                            
@@ -138,11 +137,11 @@
                                     <tr>
                                         <th class="serial"><center><b>#</b></center></th>
                                         <th><center><b>Numero</b></center></th>
-                                        <th><center><b>Cliente</b></center></th>
+                                        <th><center><b>Cliente-Proveedor</b></center></th>
                                         <th><center><b>Fecha</b></center></th>
                                         <th><center><b>Tipo</b></center></th>
                                         <th><center><b>Canal</b></center></th>
-                                        <th><center><b>Usu registro</b></center></th>
+                                        <th><center><b>Responsable</b></center></th>
                                         <th><center><b>Valor</b></center></th>
                                         <th><center><b>Estado</b></center></th>
                                         <th></th>
@@ -224,15 +223,16 @@
     
     <tr>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Numero</b></td>
-        <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Cliente</b></td>
+        <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Cliente-Proveedor</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Fecha</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Tipo</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Canal</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Cantidad de materiales</b></td>
-        <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Usu registro</b></td>
+        <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Peso en Kg</b></td>
+        <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Responsable</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Estado</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Valor</b></td>
-        
+        <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Total</b></td> 
     </tr>
     <tbody id="bodytable_excel">
         @php
@@ -246,10 +246,11 @@
                 <td>{{ $factura->tipo->nombre }} </td>
                 <td>{{ $factura->canal->nombre }} </td>
                 <td>{{ count($factura->detalles) }} </td>
+                <td>{{ $factura->peso }} </td>
                 <td>{{ $factura->usuario_registra->tercero->nombre_completo() }} </td>
                 <td><center>{{ $factura->get_estado() }}</center></td>
                 <td>{{ $factura->valor }}</td>
-                
+                <td>{{ $factura->total }}</td>
             </tr>
             @php
             if($factura->id_dominio_tipo_factura == 16){

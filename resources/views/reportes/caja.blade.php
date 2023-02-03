@@ -43,7 +43,7 @@
                     <div class="col-lg-12">
                         {{ Form::open(array('method' => 'post')) }}
                         <div class="row">
-                            <div class="col-sm-4">
+                            <div class="col-sm-5">
                                 <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <label class="input-group-text" for="fechas">Fechas</label>
@@ -69,7 +69,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-2">
                                 <button type="submit" class="btn btn-info"><i class="fa fa-search"></i> Consultar</button>
                             </div>                            
                         </div>
@@ -214,7 +214,7 @@
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Fecha de cierre</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Valor inicial</b></td>
         @foreach ($formas_pago as $item)
-        <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>{{ $item->nombre }}</b></td>
+            <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>{{ $item->nombre }}</b></td>
         @endforeach
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Descuentos</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Total</b></td>
@@ -252,7 +252,7 @@
 
 <script>
 	function exportar_excel() {
-        tableToExcel('tabla_excel', 'Reporte de caja Zorax')
+        tableToExcel('tabla_excel', 'Reporte de caja ARSI')
     }
     $(document).ready(function() {
         $('#fechas').daterangepicker({

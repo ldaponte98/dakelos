@@ -53,7 +53,7 @@
                                     <div class="col-sm-3">
                                          <div class="form-group">
                                             <label for="cc-payment" class="control-label mb-1"><b>*Fecha</b></label>
-                                            <input id="fecha" name="fecha" type="date" class="form-control" aria-required="true" required aria-invalid="false" value="{{ $inventario->fecha }}">
+                                            <input id="fecha" name="fecha" type="datetime-local" class="form-control" aria-required="true" required aria-invalid="false" value="{{ $inventario->fecha }}">
                                         </div>
                                     </div>
                                     <div class="col-sm-3">

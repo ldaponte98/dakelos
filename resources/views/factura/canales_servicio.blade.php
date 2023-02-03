@@ -8,17 +8,17 @@
             <i class="fa fa-bars"></i>
         </div>
         <ul class="fab-options">
-            <li onclick="location.href = '{{ route('factura/facturador') }}'">
+            {{-- <li onclick="location.href = '{{ route('factura/facturador') }}'">
                 <span class="fab-label">Nueva Venta Rapida</span>
                 <div class="fab-icon-holder">
                     <i class="ti-shopping-cart-full"></i>
                 </div>
-            </li> 
+            </li>  --}}
 
             @foreach ($canales as $canal)
-                @if ($canal->id_dominio != App\Dominio::get('Mesa'))
+                @if ($canal->id_dominio != App\Dominio::get('Mesa') and $canal->id_dominio != 49)
                     <li onclick="location.href = '{{ route('factura/facturador') }}?canal={{ $canal->id_dominio }}'">
-                        <span class="fab-label">Nueva pedido por {{ $canal->nombre }}</span>
+                        <span class="fab-label">Nueva venta por {{ $canal->nombre }}</span>
                         <div class="fab-icon-holder">
                             <i class="ti-shopping-cart-full"></i>
                         </div>

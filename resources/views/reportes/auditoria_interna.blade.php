@@ -47,7 +47,7 @@
                     <div class="col-lg-12">
                         {{ Form::open(array('method' => 'post')) }}
                         <div class="row">
-                            <div class="col-sm-4">
+                            <div class="col-sm-5">
                                 <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <label class="input-group-text" for="fechas">Fechas</label>
@@ -69,7 +69,7 @@
                                 </select>
                                 </div>
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-3">
                                 <button type="submit" class="btn btn-info"><i class="fa fa-search"></i> Consultar</button>
                             </div>                            
                         </div>
@@ -83,8 +83,8 @@
                                         <th class="serial"><center><b>#</b></center></th>
                                         <th><center><b>Imagen</b></center></th>
                                         <th><center><b>Material</b></center></th>
-                                        <th><center><b>Cantidad</b></center></th>
-                                        <th><center><b>Presentación</b></center></th>
+                                        <th><center><b>Cantidad Kg</b></center></th>
+                                        {{-- <th><center><b>Presentación</b></center></th> --}}
                                         <th><center><b>Factura Asociada</b></center></th>
                                         <th><center><b>Fecha</b></center></th>
                                         <th><center><b>Movimiento</b></center></th>
@@ -109,7 +109,7 @@
                                             </center>
                                         </td>
                                         <td><center>{{ $item->cantidad }}</center></td>
-                                        <td><center>{{ $item->producto->presentacion->descripcion }}</center></td>
+                                        {{-- <td><center>{{ $item->producto->presentacion->descripcion }}</center></td> --}}
                                         <td>
                                             <center>
                                                 <a href="{{ route('ticket/imprimir/factura', $item->id_factura) }}" target="_blank"> 

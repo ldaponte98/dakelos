@@ -32,8 +32,8 @@ class InventarioController extends Controller
             }
         }
         $inventarios = Inventario::where('id_licencia', session('id_licencia'))
-            ->whereBetween('created_at', [$fecha_desde, $fecha_hasta])
-            ->orderBy('created_at', 'desc')
+            ->whereBetween('fecha', [$fecha_desde, $fecha_hasta])
+            ->orderBy('fecha', 'desc')
             ->get();
         return view('inventario.movimientos', compact(['inventarios', 'fechas']));
     }
@@ -43,7 +43,7 @@ class InventarioController extends Controller
         $post               = $request->all();
         $inventario         = new Inventario;
         $inventario->estado = 1;
-        $inventario->fecha  = date('Y-m-d');
+        $inventario->fecha  = date('Y-m-d H:i');
         $detalles           = [];
         if ($id_inventario != null) {
             $inventario = Inventario::find($id_inventario);
