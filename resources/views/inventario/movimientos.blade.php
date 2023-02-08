@@ -11,6 +11,12 @@
                     <i class="ti-plus"></i>
                 </div>
             </li>
+            <li onclick="location.href = '{{ config('global.url_base') }}/inventario/creare'">
+                <span class="fab-label">Nuevo movimiento aantiguo</span>
+                <div class="fab-icon-holder">
+                    <i class="ti-plus"></i>
+                </div>
+            </li>
             <li onclick="exportar_excel()">
                 <span class="fab-label">Exportar a excel</span>
                 <div class="fab-icon-holder">
