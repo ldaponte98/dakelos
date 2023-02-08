@@ -65,6 +65,7 @@ Route::any('mesa/editar/{id_mesa}', 'MesaController@guardar')->name('mesa/editar
 
 Route::any('inventario/movimientos', 'InventarioController@administrar')->name('inventario/movimientos');
 Route::any('inventario/crear', 'InventarioController@guardar')->name('inventario/crear');
+Route::any('inventario/creare', 'InventarioController@guardare')->name('inventario/creare');
 Route::any('inventario/vista/{id_inventario}', 'InventarioController@vista')->name('inventario/vista');
 Route::any('inventario/stock_actual', 'InventarioController@stock_actual')->name('inventario/stock_actual');
 
