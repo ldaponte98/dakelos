@@ -16,6 +16,7 @@ use App\Permiso;
 use App\Producto;
 use App\ResolucionFactura;
 use App\Tercero;
+use App\Inventario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -615,15 +616,19 @@ class FacturaController extends Controller
             $post = (object) $post;
             if ($post->motivo != "" and $post->motivo != null) {
                 $factura = Factura::find($post->id_factura);
-                if ($factura) {
+                $inventario = Inventario::where('id_licencia', session('id_licencia'))
+                ->where('id_factura', $post->id_factura)->first();
+                if ($factura->estado == 1 || $inventario->estado == 1) {
                     $id_usuario = session('id_usuario');
                     $id_perfil  = session('id_perfil');
                     if ($factura->finalizada == 1) {
                         $id_permiso = 1;
                         if (Permiso::validar($id_perfil, $id_permiso)) {
-                            //DEVOLVEMOS A UN PRODUCTO LA CANTIDAD VENDIDA
-                            $this->ingresar_inventario_detalles($factura->id_factura);
+                            //DEVOLVEMOS AL PRODUCTO LA CANTIDAD COMPRADA
+                            $this->descontar_inventario_detalles($factura->detalles, $factura->id_factura);
                             $factura->estado           = 0;
+                            $inventario->estado        = 0;
+                            $inventario->save();
                             $factura->id_usuario_anula = $id_usuario;
                             $factura->motivo_anulacion = $post->motivo;
                             $factura->save();
@@ -634,7 +639,10 @@ class FacturaController extends Controller
                             $mensaje = "Usuario sin permisos para realizar esta operación";
                         }
                     } else {
+                        $this->descontar_inventario_detalles($factura->detalles, $factura->id_factura);
                         $factura->estado           = 0;
+                        $inventario->estado        = 0;
+                        $inventario->save();
                         $factura->id_usuario_anula = $id_usuario;
                         $factura->motivo_anulacion = $post->motivo;
                         $factura->save();
@@ -643,7 +651,7 @@ class FacturaController extends Controller
                         Log::write("Anulacion de factura", "El usuario [$id_usuario] anula factura [$factura->id_factura]");
                     }
                 } else {
-                    $mensaje = "Factura no valida";
+                    $mensaje = "La factura ha sido anulada anteriormente";
                 }
             } else {
                 $mensaje = "El motivo de cancelacion es obligatorio";

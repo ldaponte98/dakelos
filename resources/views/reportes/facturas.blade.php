@@ -73,7 +73,7 @@
                     <div class="stat-content">
                         <div class="text-left dib">
                             <div class="stat-text">${{ number_format($total_egresos, 0, '.', '.') }}</div>
-                            <div class="stat-heading">Egresos</div>
+                            <div class="stat-heading">Total material comprado</div>
                         </div>
                     </div>
                 </div>
@@ -175,7 +175,7 @@
                                             <center>
                                                 <a href="{{ route('factura/imprimir', $factura->id_factura) }}" class="badge badge-info" target="_blank"> <i class="ti-printer icon" title="Imprimir factura formal"></i></a>
                                                     
-                                                <a href="{{ route('ticket/imprimir/factura', $factura->id_factura) }}" class="badge badge-info" target="_blank"> <i class="ti-ticket icon" title="Imprimir factura ticket"></i></a>
+                                                {{-- <a href="{{ route('ticket/imprimir/factura', $factura->id_factura) }}" class="badge badge-info" target="_blank"> <i class="ti-ticket icon" title="Imprimir factura ticket"></i></a> --}}
                                                 @if ($permiso_anular)
                                                     <a onclick="ModalAnulacion({{ $factura->id_factura }})" class="badge badge-danger text-white pointer" > <i class="ti-close icon" title="Anular factura"></i></a>
                                                 @endif

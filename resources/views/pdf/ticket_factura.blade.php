@@ -35,8 +35,9 @@
         @endif
     </center>
     <br><br>
-    <label><b>Factura #{{ $factura->numero }}</b></label><br><br>
-    <label><b>Informacion del cliente</b></label><br>
+    <label><b>Factura #{{ $factura->numero }}</b></label><br>
+    <label><b>Fecha y hora: {{ $factura->fecha }}</b></label><br><br>
+    <center><b>INFORMACION DEL CLIENTE</b></center>
     <label><b>Nombre:</b>{{ $factura->tercero->nombre_completo() }}</label><br>
     <label><b>Identificación:</b>{{ $factura->tercero->identificacion != '000000000' ? $factura->tercero->identificacion : 'No definida' }}</label><br>
     <label><b>Telefono:</b>{{ $factura->tercero->telefono ? $factura->tercero->telefono : 'No definido' }}</label><br>
@@ -47,7 +48,8 @@
     @if ($factura->canal->id_dominio == App\Dominio::get('Domicilio'))
         <label><b>Dirección:</b>{{ $factura->direccion != '' ? $factura->direccion : 'No definida' }}</label><br>
     @endif
-    <br>
+    <br><br>
+    <center><b>DETALLE DE LA FACTURA</b></center>
     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
         <thead>
             <tr>
@@ -65,9 +67,8 @@
                 <tr>
                     <td>{{ ucfirst(strtolower(deleteTilds($item->nombre_producto))) }}</td>
                     <td style="text-align: left;">{{ $item->cantidad }} {{ $item->presentacion_producto }}</td>
-                    <td style="text-align: left;">{{ $item->precio_producto }} {{ $item->presentacion_producto }}</td>
-                    <td style="text-align: right;">
-                        ${{ number_format($item->cantidad * $item->precio_producto, 0, '.', '.') }}</td>
+                    <td style="text-align: left;">$ {{ $item->precio_producto }}</td>
+                    <td style="text-align: right;">$ {{ number_format($item->cantidad * $item->precio_producto, 0, '.', '.') }}</td>
                 </tr>
                 @php
                     $subtotal += $item->cantidad * $item->precio_producto;
@@ -96,6 +97,10 @@
         <tr>
             <td style="text-align: right;"><b>Descuento:</b></td>
             <td style="text-align: right;">${{ number_format($factura->descuento, 0, '.', '.') }}</td>
+        </tr>
+        <tr>
+            <td style="text-align: right;"><b>Peso total:</b></td>
+            <td style="text-align: right;">{{ $factura->peso }} Kg</td>
         </tr>
         <tr>
             <td style="text-align: right;"><b>Total:</b></td>
