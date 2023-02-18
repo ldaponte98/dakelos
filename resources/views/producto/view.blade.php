@@ -48,7 +48,7 @@
 	        <div class="row">
 	        	<div class="col-sm-6">
 	        		<center>
-	        			<h4><b>Precio de compra o utilidad</b></h4><p>${{ number_format($producto->precio_compra,0,'\'','.') }}</p>
+	        			<h4><b>Precio de compra</b></h4><p>${{ number_format($producto->precio_compra,0,'\'','.') }}</p>
 	        		</center>
 	        	</div>
 	        	<div class="col-sm-6">

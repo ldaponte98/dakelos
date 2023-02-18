@@ -80,7 +80,7 @@
                                     </div>
                                     <div class="col-sm-6">
                                          <div class="form-group">
-                                            <label for="cc-payment" class="control-label mb-1"><b>*Precio de compra o utilidad</b></label>
+                                            <label for="cc-payment" class="control-label mb-1"><b>*Precio de compra</b></label>
                                             <input name="precio_compra" type="number" class="form-control" aria-required="true" aria-invalid="false" value="{{ $producto->precio_compra }}" required>
                                         </div>
                                     </div>
@@ -140,13 +140,13 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div id="div_inventario" @if($producto->descontado == 0) style="display: none;" @endif>
+                                {{-- <div id="div_inventario" @if($producto->descontado == 0) style="display: none;" @endif>
                                     <div class="row">
-                                         <div class="col-sm-6">
+                                        <div class="col-sm-6">
                                             <div class="form-group">
                                                 <label for="cc-payment" class="control-label mb-1"><b>*Contenido por producto</b></label> <i class="fa fa-info-circle" title="Este campo es el contenido total del material, si es por unidad el valor por defecto es 1."></i>
                                                 <div class="input-group mb-3">
-                                                    <input name="contenido" type="number" class="form-control" aria-required="true" aria-invalid="false" value="{{ $producto->contenido }}" >
+                                                    <input name="contenido" type="number" disabled class="form-control" aria-required="true" aria-invalid="false" value="{{ $producto->contenido }}" >
                                                     <div class="input-group-prepend">
                                                         <label class="input-group-text" for="precio_compra" id="presentacion_contenido">Unidades</label>
                                                     </div>
@@ -157,7 +157,7 @@
                                              <div class="form-group">
                                                 <label for="cc-payment" class="control-label mb-1"><b>*Cantidad actual</b></label>
                                                 <div class="input-group mb-3">
-                                                    <input name="cantidad_actual" type="number" class="form-control" aria-required="true" aria-invalid="false" value="{{ $producto->cantidad_actual }}" >
+                                                    <input name="cantidad_actual" type="number" disabled class="form-control" aria-required="true" aria-invalid="false" value="{{ $producto->cantidad_actual }}" >
                                                     <div class="input-group-prepend">
                                                         <label class="input-group-text" for="cantidad_actual" id="presentacion_cantidad_actual">Unidades</label>
                                                     </div>
@@ -165,7 +165,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
 
                                 {{-- <div class="row">
                                     <div class="col-sm-12">
