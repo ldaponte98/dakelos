@@ -73,7 +73,7 @@
                                     <tr>
                                         <th class="serial"><center><b>#</b></center></th>
                                         <th><center><b>Producto</b></center></th>
-                                        <th><center><b>Cantidad</b></center></th>
+                                        <th><center><b>Cantidad(Kg)</b></center></th>
                                         <th><center><b>Total</b></center></th>
                                         <th></th>
                                     </tr>
@@ -113,7 +113,7 @@
 
 <table border="1" id="tabla_excel" style="display: none">
     <tr>
-        <td colspan='9' rowspan='2'>
+        <td colspan='4' rowspan='2'>
             <center>
                 <b>REPORTE DE VENTAS POR PRODUCTO</b>
             </center>
@@ -122,24 +122,28 @@
     <tr></tr>
      @if($fechas != "")
         <tr>
-            <td colspan='9'><center><b>Fechas: </b>{{ $fechas }}</center></td>            
+            <td colspan='4'><center><b>Fechas: </b>{{ $fechas }}</center></td>            
         </tr>
     @endif
     
-    <tr>
+    <tr>        
+        <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>#</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Producto</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Cantidad</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Total</b></td> 
     </tr>
     <tbody id="bodytable_excel">
+        @php
+            $pos = 1;
+        @endphp
         @foreach($reporte as $rep)
             <tr>
-                <td class="serial"><center>{{ $cont }}</center></td>
+                <td class="serial"><center>{{ $pos }}</center></td>
                 <td><center>{{ $rep->producto }}</center></td>
                 <td><center>{{ $rep->cantidad }} </center></td>
                 <td><center>${{ number_format($rep->total, 0, '.', '.') }}</center></td>
             </tr>
-            @php $cont++; @endphp
+            @php $pos++; @endphp
         @endforeach
     </tbody>    
 </table>

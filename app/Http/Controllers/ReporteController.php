@@ -263,8 +263,8 @@ class ReporteController extends Controller
         $id_licencia = session('id_licencia');
         $sql = "SELECT p.nombre as producto, 
         fd.presentacion_producto, 
-        count(fd.cantidad) as cantidad, 
-        sum(fd.cantidad * fd.precio_producto) as total 
+        SUM(fd.cantidad) as cantidad, 
+        SUM(fd.cantidad * fd.precio_producto) as total 
         FROM factura_detalle fd 
         LEFT JOIN producto p USING(id_producto) 
         LEFT JOIN factura f USING(id_factura) 
