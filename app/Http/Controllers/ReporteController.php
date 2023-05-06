@@ -10,6 +10,7 @@ use App\Permiso;
 use App\Producto;
 use App\Tercero;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ReporteController extends Controller
 {
@@ -240,5 +241,40 @@ class ReporteController extends Controller
             'search_tercero',
             'formas_pago',
         ]));
+    }
+
+    public function ventas_por_producto(Request $request)
+    {
+        $post           = $request->all();
+        $fecha_desde    = date('Y-m-d') . " 00:00";
+        $fecha_hasta    = date('Y-m-d') . " 23:59";
+        $fechas         = date('Y/m/d') . " 00:00 - " . date('Y/m/d') . " 23:59";
+        $id_tipo_factura = 16;
+
+        if ($post) {
+            $post   = (object) $post;
+            $fechas = $post->fechas;
+            if ($fechas != "") {
+                $fecha_desde = date('Y-m-d H:i', strtotime(explode('-', $post->fechas)[0]));
+                $fecha_hasta = date('Y-m-d H:i', strtotime(explode('-', $post->fechas)[1]));
+            }
+            $id_tipo_factura = $post->id_tipo_factura;
+        }
+        $id_licencia = session('id_licencia');
+        $sql = "SELECT p.nombre as producto, 
+        fd.presentacion_producto, 
+        count(fd.cantidad) as cantidad, 
+        sum(fd.cantidad * fd.precio_producto) as total 
+        FROM factura_detalle fd 
+        LEFT JOIN producto p USING(id_producto) 
+        LEFT JOIN factura f USING(id_factura) 
+        WHERE f.fecha BETWEEN '$fecha_desde' AND '$fecha_hasta' 
+        AND f.id_licencia = $id_licencia
+        AND f.id_dominio_tipo_factura = $id_tipo_factura
+        GROUP BY 1, 2
+        ORDER BY 3 DESC";
+
+        $reporte = DB::select($sql);
+        return view("reportes.ventas_por_producto", compact(["reporte", "fechas", "id_tipo_factura"]));
     }
 }

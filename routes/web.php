@@ -78,6 +78,7 @@ Route::any('reportes/facturas', 'ReporteController@facturas')->name('reportes/bu
 Route::any('reportes/auditoria_interna', 'ReporteController@auditoria_interna')->name('reportes/auditoria_interna');
 Route::any('reportes/caja', 'ReporteController@cajas')->name('reportes/caja');
 Route::any('reportes/facturas_pendientes_pagar', 'ReporteController@facturas_pendientes_pagar')->name('reportes/facturas_pendientes_pagar');
+Route::any('reportes/ventas_por_producto', 'ReporteController@ventas_por_producto')->name('reportes/ventas_por_producto');
 Route::get('factura_email', function () {
     return view('email.factura');
 })->name('factura_email');

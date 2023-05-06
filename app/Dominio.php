@@ -35,6 +35,13 @@ class Dominio extends Model
         return $canales;
     }
 
+    public static function get_tipos_facturas()
+    {
+        return Dominio::where('id_padre', 15)->get();
+    }
+
+    
+
     public function get_imagen()
     {
         if ($this->imagen != null and $this->imagen != '') {
