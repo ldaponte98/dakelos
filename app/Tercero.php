@@ -121,7 +121,8 @@ class Tercero extends Model
                         FROM factura_detalle fd 
                         LEFT JOIN factura f USING(id_factura) 
                         WHERE f.id_licencia = ".session('id_licencia')." 
-                        and f.id_tercero = ".$this->id_tercero;
+                        AND fd.id_producto != 37
+                        AND f.id_tercero = ".$this->id_tercero;
         $response = DB::select($sql);
         return $response[0]->total;
     }
