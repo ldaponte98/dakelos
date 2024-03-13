@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.1
+-- version 5.1.0
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-01-2023 a las 01:05:01
--- Versión del servidor: 10.4.20-MariaDB
--- Versión de PHP: 7.3.29
+-- Tiempo de generación: 13-03-2024 a las 01:42:39
+-- Versión del servidor: 10.4.19-MariaDB
+-- Versión de PHP: 7.3.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -39,6 +39,17 @@ CREATE TABLE `auditoria_inventario` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
+--
+-- Volcado de datos para la tabla `auditoria_inventario`
+--
+
+INSERT INTO `auditoria_inventario` (`id_auditoria_inventario`, `id_factura`, `id_producto`, `cantidad`, `id_dominio_tipo_movimiento`, `id_licencia`, `estado`, `created_at`, `updated_at`) VALUES
+(100, 151, 32, 2.5, 51, 2, 1, '2024-03-12 23:28:19', '2024-03-12 23:28:19'),
+(101, 151, 33, 1, 51, 2, 1, '2024-03-12 23:28:19', '2024-03-12 23:28:19'),
+(102, 153, 34, 1.5, 51, 2, 1, '2024-03-13 00:09:03', '2024-03-13 00:09:03'),
+(103, 154, 32, 1, 51, 2, 1, '2024-03-13 00:25:42', '2024-03-13 00:25:42'),
+(104, 156, 34, 1, 51, 2, 1, '2024-03-13 00:28:31', '2024-03-13 00:28:31');
+
 -- --------------------------------------------------------
 
 --
@@ -62,8 +73,9 @@ CREATE TABLE `caja` (
 --
 
 INSERT INTO `caja` (`id_caja`, `id_usuario`, `fecha_apertura`, `fecha_cierre`, `valor_inicial`, `id_licencia`, `estado`, `created_at`, `updated_at`) VALUES
-(10, 6, '2021-11-29 04:22:02', NULL, 0, 2, 1, '2021-11-29 04:22:02', '2021-11-29 04:22:02'),
-(11, 1, '2022-11-28 00:58:31', NULL, 0, 2, 1, '2022-11-28 00:58:31', '2022-11-28 00:58:31');
+(16, 1, '2024-03-12 23:09:40', NULL, 0, 2, 1, '2024-03-12 23:09:40', '2024-03-12 23:09:40'),
+(17, 9, '2024-03-12 23:35:01', '2024-03-13 00:31:05', 0, 2, 1, '2024-03-12 23:35:01', '2024-03-13 00:31:05'),
+(18, 9, '2024-03-13 00:33:05', NULL, 0, 2, 1, '2024-03-13 00:33:05', '2024-03-13 00:33:05');
 
 -- --------------------------------------------------------
 
@@ -86,7 +98,8 @@ CREATE TABLE `categoria` (
 --
 
 INSERT INTO `categoria` (`id_categoria`, `nombre`, `descripcion`, `id_licencia`, `estado`, `created_at`, `updated_at`) VALUES
-(13, 'Arroz', NULL, 2, 1, '2021-11-21 21:31:59', '2022-11-28 00:54:34');
+(19, 'Oro italiano 18k', 'Oro italiano 18k', 2, 1, '2024-03-12 22:58:39', '2024-03-12 22:58:39'),
+(20, 'Oro Nacional 18k', 'Oro Nacional 18k', 2, 1, '2024-03-12 23:36:37', '2024-03-12 23:36:37');
 
 -- --------------------------------------------------------
 
@@ -133,38 +146,29 @@ INSERT INTO `dominio` (`id_dominio`, `nombre`, `descripcion`, `id_padre`, `image
 (22, 'Tarjeta Débito', 'Tarjeta Débito', 19, NULL, '2020-08-12 14:28:22', '2020-08-12 14:28:22'),
 (23, 'Tarjeta Crédito', 'Tarjeta Crédito', 19, NULL, '2020-08-12 14:28:22', '2020-08-12 14:28:22'),
 (24, 'Presentacion de productos', 'Presentacion de productos', NULL, NULL, '2020-08-21 02:34:48', '2020-08-21 02:34:48'),
-(25, 'un', 'Unidades', 24, NULL, '2020-08-21 02:35:19', '2020-08-21 02:35:19'),
-(26, 'l', 'Litro', 24, NULL, '2020-08-21 02:36:05', '2020-08-21 02:36:05'),
-(27, 'ml', 'Mililitro', 24, NULL, '2020-08-21 02:36:05', '2020-08-21 02:36:05'),
-(28, 'kg', 'Kilogramo', 24, NULL, '2020-08-21 02:36:05', '2020-08-21 02:36:05'),
-(29, 'gr', 'Gramo', 24, NULL, '2020-08-21 02:36:05', '2020-08-21 02:36:05'),
-(30, 'oz', 'Onza', 24, NULL, '2020-08-21 02:36:05', '2020-08-21 02:36:05'),
-(31, 'cm3', 'Centimetro cubico', 24, NULL, '2020-08-21 02:38:01', '2020-08-21 02:38:01'),
-(32, 'cm', 'Centimetro', 24, NULL, '2020-08-21 02:38:57', '2020-08-21 02:38:57'),
-(33, 'mm', 'Milimetro', 24, NULL, '2020-08-21 02:38:57', '2020-08-21 02:38:57'),
-(34, 'm', 'Metro', 24, NULL, '2020-08-21 02:38:57', '2020-08-21 02:38:57'),
+(28, 'Gr', 'Gramo', 24, NULL, '2020-08-21 02:36:05', '2020-08-21 02:36:05'),
 (35, 'Tipo de producto', '', NULL, NULL, '2021-08-07 18:28:38', '2021-08-07 18:28:38'),
 (36, 'Producto', '', 35, NULL, '2021-08-07 18:29:31', '2021-08-07 18:29:31'),
-(37, 'Servicio', '', 35, NULL, '2021-08-07 18:29:31', '2021-08-07 18:29:31'),
-(38, 'Ingrediente', '', 35, NULL, '2021-08-07 18:29:31', '2021-08-07 18:29:31'),
 (39, 'Movimientos de inventario', '', NULL, NULL, '2021-08-14 18:34:58', '2021-08-14 18:34:58'),
 (40, 'Entrada de inventario', '', 39, NULL, '2021-08-14 18:35:28', '2021-08-14 18:35:28'),
 (41, 'Salida de inventario', '', 39, NULL, '2021-08-14 18:35:28', '2021-08-14 18:35:28'),
 (42, 'Proveedor', '', 1, NULL, '2021-08-16 15:30:04', '2021-08-16 15:30:04'),
 (43, 'Femenino', '', 12, NULL, '2021-08-16 15:33:04', '2021-08-16 15:33:04'),
 (44, 'Canales de venta', '', NULL, NULL, '2021-08-17 14:27:53', '2021-08-17 14:27:53'),
-(45, 'Rappi', '', 44, 'canales/rappi.png', '2021-08-17 14:28:40', '2021-08-17 14:28:40'),
-(46, 'Domicilio', '', 44, 'canales/delivery.png', '2021-08-17 14:28:40', '2021-08-17 14:28:40'),
-(47, 'Mesa', '', 44, 'canales/table.png', '2021-08-17 14:28:40', '2021-08-17 14:28:40'),
-(48, 'IFood', '', 44, 'canales/ifood.png', '2021-08-30 02:35:36', '2021-08-30 02:35:36'),
+(46, 'Whatsapp', '', 44, 'canales/delivery.png', '2021-08-17 19:28:40', '2021-08-17 19:28:40'),
+(47, 'Instagram', '', 44, 'canales/table.png', '2021-08-17 14:28:40', '2021-08-17 14:28:40'),
 (49, 'No definido', '', 44, 'canales/rappi.png', '2021-08-30 05:24:27', '2021-08-30 05:24:27'),
 (50, 'Movimientos para auditoria inventario', '', NULL, NULL, '2021-08-31 04:10:28', '2021-08-31 04:10:28'),
 (51, 'Descuento', '', 50, NULL, '2021-08-31 04:11:34', '2021-08-31 04:11:34'),
 (52, 'Ingreso', '', 50, NULL, '2021-08-31 04:11:34', '2021-08-31 04:11:34'),
 (53, 'Comprobante de egreso', 'Comprobante de egreso', 15, NULL, '2021-09-24 01:33:56', '2021-09-24 01:33:56'),
-(54, 'Menu Digital', '', 44, 'canales/mobile.png', '2021-10-06 21:22:49', '2021-10-06 21:22:49'),
+(54, 'Presencial', '', 44, 'canales/mobile.png', '2021-10-06 21:22:49', '2021-10-06 21:22:49'),
 (55, 'Credito (Saldo pendiente)', '', 19, NULL, '2021-11-21 21:35:12', '2021-11-21 21:35:12'),
-(56, 'Factura a credito (Saldo pendiente)', '', 15, NULL, '2021-11-29 04:10:27', '2021-11-29 04:10:27');
+(56, 'Factura a credito (Saldo pendiente)', '', 15, NULL, '2021-11-29 04:10:27', '2021-11-29 04:10:27'),
+(57, 'Recibo de caja', '', 15, NULL, '2023-01-23 01:45:45', '2023-01-23 01:45:45'),
+(59, 'Mesa', '', 44, NULL, '2024-03-12 23:20:28', '2024-03-12 23:20:28'),
+(60, 'Transfrencia BBVA Jhonny', '', 19, NULL, '2024-03-13 00:19:21', '2024-03-13 00:19:21'),
+(61, 'Transfrencia Bancolombia Jhonny', '', 19, NULL, '2024-03-13 00:19:38', '2024-03-13 00:19:38');
 
 -- --------------------------------------------------------
 
@@ -178,6 +182,7 @@ CREATE TABLE `factura` (
   `numero` text COLLATE utf8_spanish_ci NOT NULL,
   `descuento` double NOT NULL DEFAULT 0,
   `valor` float NOT NULL,
+  `peso` float DEFAULT 0,
   `id_licencia` int(11) NOT NULL,
   `id_caja` int(11) DEFAULT NULL,
   `id_usuario_registra` int(11) NOT NULL,
@@ -204,9 +209,15 @@ CREATE TABLE `factura` (
 -- Volcado de datos para la tabla `factura`
 --
 
-INSERT INTO `factura` (`id_factura`, `id_tercero`, `numero`, `descuento`, `valor`, `id_licencia`, `id_caja`, `id_usuario_registra`, `observaciones`, `fecha`, `id_dominio_tipo_factura`, `id_dominio_canal`, `id_mesa`, `domicilio`, `direccion`, `servicio_voluntario`, `minutos_duracion`, `finalizada`, `pagada`, `id_factura_cruce`, `id_usuario_anula`, `motivo_anulacion`, `estado`, `created_at`, `updated_at`) VALUES
-(118, 16, 'CRE-2', 0, 15000, 2, 10, 6, NULL, '2021-11-29 06:49:08', 56, 46, NULL, 0, 'Cra 23 # 7B 74 Villa concha 2 etapa', 0, 20, 0, 1, NULL, NULL, NULL, 1, '2021-11-29 06:49:08', '2021-11-29 06:49:08'),
-(120, 16, 'FV-2', 0, 15000, 2, 10, 6, NULL, '2021-11-29 06:52:44', 16, 49, NULL, 0, NULL, 0, 20, 1, 1, 118, NULL, NULL, 1, '2021-11-29 06:52:44', '2021-11-29 06:52:44');
+INSERT INTO `factura` (`id_factura`, `id_tercero`, `numero`, `descuento`, `valor`, `peso`, `id_licencia`, `id_caja`, `id_usuario_registra`, `observaciones`, `fecha`, `id_dominio_tipo_factura`, `id_dominio_canal`, `id_mesa`, `domicilio`, `direccion`, `servicio_voluntario`, `minutos_duracion`, `finalizada`, `pagada`, `id_factura_cruce`, `id_usuario_anula`, `motivo_anulacion`, `estado`, `created_at`, `updated_at`) VALUES
+(150, 1, 'CE-2', 0, 750000, 0, 2, 16, 1, 'Entrada de inventario', '2024-03-12 23:12:12', 53, 49, NULL, 0, NULL, 0, 20, 1, 1, NULL, NULL, NULL, 1, '2024-03-12 23:12:12', '2024-03-12 23:12:12'),
+(151, 1, 'FV-14', 50000, 1000000, 0, 2, 16, 1, 'Pa la novia', '2024-03-12 23:24:31', 16, 47, NULL, 0, 'Mz b casa 8b', 0, 20, 1, 1, NULL, NULL, NULL, 1, '2024-03-12 23:24:31', '2024-03-12 23:28:19'),
+(152, 1, 'CE-3', 0, 75000, 0, 2, 17, 9, 'Entrada de inventario', '2024-03-12 23:48:38', 53, 49, NULL, 0, NULL, 0, 20, 1, 1, NULL, NULL, NULL, 1, '2024-03-12 23:48:38', '2024-03-12 23:48:38'),
+(153, 1, 'FV-15', 0, 450000, 0, 2, 17, 9, NULL, '2024-03-13 00:07:10', 16, 47, NULL, 0, 'Mz b casa 8', 0, 20, 1, 1, NULL, NULL, NULL, 1, '2024-03-13 00:07:10', '2024-03-13 00:09:03'),
+(154, 25, 'CRE-2', 0, 300000, 0, 2, 16, 1, NULL, '2024-03-13 00:25:42', 56, 47, NULL, 0, NULL, 0, 20, 1, 1, NULL, NULL, NULL, 1, '2024-03-13 00:25:42', '2024-03-13 00:25:42'),
+(155, 25, 'FV-16', 0, 300000, 0, 2, 16, 1, NULL, '2024-03-13 00:27:07', 16, 49, NULL, 0, NULL, 0, 20, 1, 1, 154, NULL, NULL, 1, '2024-03-13 00:27:07', '2024-03-13 00:27:07'),
+(156, 25, 'CRE-3', 0, 300000, 0, 2, 17, 9, NULL, '2024-03-12 00:28:30', 56, 47, NULL, 0, NULL, 0, 20, 1, 1, NULL, NULL, NULL, 1, '2024-03-13 00:28:30', '2024-03-13 00:28:30'),
+(157, 25, 'FV-17', 0, 300000, 0, 2, 18, 9, NULL, '2024-03-13 00:34:04', 16, 49, NULL, 0, NULL, 0, 20, 1, 1, 156, NULL, NULL, 1, '2024-03-13 00:34:04', '2024-03-13 00:34:04');
 
 -- --------------------------------------------------------
 
@@ -234,7 +245,11 @@ CREATE TABLE `factura_detalle` (
 --
 
 INSERT INTO `factura_detalle` (`id_factura_detalle`, `id_factura`, `id_producto`, `cantidad`, `nombre_producto`, `descripcion_producto`, `precio_producto`, `presentacion_producto`, `iva_producto`, `descuento_producto`, `created_at`, `updated_at`) VALUES
-(208, 118, 24, 1, 'Salchipapa Mixta', NULL, 15000, 'un', NULL, 0, '2021-11-29 06:49:08', '2021-11-29 06:49:08');
+(245, 151, 32, 2.5, 'Cadena 70cm', NULL, 300000, 'Gr', NULL, 0, '2024-03-12 23:28:19', '2024-03-12 23:28:19'),
+(246, 151, 33, 1, 'Argolla', NULL, 300000, 'Gr', NULL, 0, '2024-03-12 23:28:19', '2024-03-12 23:28:19'),
+(249, 153, 34, 1.5, 'Topos', NULL, 300000, 'Gr', NULL, 0, '2024-03-13 00:09:03', '2024-03-13 00:09:03'),
+(250, 154, 32, 1, 'Cadena 70cm', NULL, 300000, 'Gr', NULL, 0, '2024-03-13 00:25:42', '2024-03-13 00:25:42'),
+(251, 156, 34, 1, 'Topos', NULL, 300000, 'Gr', NULL, 0, '2024-03-13 00:28:30', '2024-03-13 00:28:30');
 
 -- --------------------------------------------------------
 
@@ -257,8 +272,12 @@ CREATE TABLE `forma_pago` (
 --
 
 INSERT INTO `forma_pago` (`id_forma_pago`, `id_factura`, `id_dominio_forma_pago`, `valor`, `estado`, `created_at`, `updated_at`) VALUES
-(166, 118, 55, 15000, 1, '2021-11-29 06:49:08', '2021-11-29 06:49:08'),
-(168, 120, 20, 15000, 1, '2021-11-29 06:52:44', '2021-11-29 06:52:44');
+(188, 151, 20, 1000000, 1, '2024-03-12 23:28:19', '2024-03-12 23:28:19'),
+(190, 153, 21, 450000, 1, '2024-03-13 00:09:03', '2024-03-13 00:09:03'),
+(191, 154, 55, 300000, 1, '2024-03-13 00:25:42', '2024-03-13 00:25:42'),
+(192, 155, 21, 300000, 1, '2024-03-13 00:27:07', '2024-03-13 00:27:07'),
+(193, 156, 55, 300000, 1, '2024-03-13 00:28:30', '2024-03-13 00:28:30'),
+(194, 157, 20, 300000, 1, '2024-03-13 00:34:04', '2024-03-13 00:34:04');
 
 -- --------------------------------------------------------
 
@@ -271,6 +290,7 @@ CREATE TABLE `inventario` (
   `id_dominio_tipo_movimiento` int(11) NOT NULL,
   `fecha` date NOT NULL DEFAULT current_timestamp(),
   `id_tercero_proveedor` int(11) DEFAULT NULL,
+  `id_tercero_cliente` int(11) DEFAULT NULL,
   `id_factura` int(11) DEFAULT NULL,
   `estado` int(11) NOT NULL DEFAULT 1,
   `observaciones` text COLLATE utf8_spanish_ci DEFAULT NULL,
@@ -280,6 +300,14 @@ CREATE TABLE `inventario` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `inventario`
+--
+
+INSERT INTO `inventario` (`id_inventario`, `id_dominio_tipo_movimiento`, `fecha`, `id_tercero_proveedor`, `id_tercero_cliente`, `id_factura`, `estado`, `observaciones`, `id_usuario_registra`, `id_usuario_modifica`, `id_licencia`, `created_at`, `updated_at`) VALUES
+(49, 40, '2024-03-12', NULL, NULL, 150, 1, NULL, 1, NULL, 2, '2024-03-12 23:12:12', '2024-03-12 23:12:12'),
+(50, 40, '2024-03-12', NULL, NULL, 152, 1, NULL, 9, NULL, 2, '2024-03-12 23:48:38', '2024-03-12 23:48:38');
 
 -- --------------------------------------------------------
 
@@ -299,6 +327,14 @@ CREATE TABLE `inventario_detalle` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `inventario_detalle`
+--
+
+INSERT INTO `inventario_detalle` (`id_inventario_detalle`, `id_inventario`, `id_producto`, `nombre_producto`, `presentacion_producto`, `precio_producto`, `cantidad`, `estado`, `created_at`, `updated_at`) VALUES
+(48, 49, 32, 'CADENA 70CM', 'Gr', 150000, 5, 1, '2024-03-12 23:12:12', '2024-03-12 23:12:12'),
+(49, 50, 34, 'TOPOS', 'Gr', 15000, 5, 1, '2024-03-12 23:48:38', '2024-03-12 23:48:38');
 
 -- --------------------------------------------------------
 
@@ -334,7 +370,7 @@ CREATE TABLE `licencia` (
 --
 
 INSERT INTO `licencia` (`id_licencia`, `id_tercero_responsable`, `nombre`, `email`, `nit`, `telefonos`, `direccion`, `ciudad`, `imagen`, `imagen_small`, `imagen_url`, `color_principal`, `color_botones`, `color_letras`, `emails_reportes`, `minutos_duracion_promedio`, `estado`, `token`, `created_at`, `updated_at`) VALUES
-(2, 15, 'Distribuciones S.E.B', NULL, '', '3016136581', 'Carrera 26 # 5 a 10', 'Sincelejo', 'distribuciones_esb.png', 'distribuciones_esb.jpeg', NULL, '#cd201e', '#cd201e', '#FFFFFF', 'eydysuarez@unicesar.edu.co', 20, 1, '7f831774267cf767c5809b791731ce7f', '2020-08-10 22:47:34', '2020-08-10 22:47:34');
+(2, 1, 'Malori joyerias', 'malory@gmail.com', '901653615', '3177777028-3007780059', 'Calle 44 # 25a - 15', 'Valledupar', 'logo.jpg', 'logo.jpg', NULL, '#cd201e', '#cd201e', '#FFFFFF', 'evernavitlazocastillo@gmail.com', 20, 1, '7f831774267cf767c5809b791731ce7f', '2020-08-10 22:47:34', '2020-08-10 22:47:34');
 
 -- --------------------------------------------------------
 
@@ -356,8 +392,9 @@ CREATE TABLE `licencia_canal` (
 --
 
 INSERT INTO `licencia_canal` (`id_licencia_canal`, `id_licencia`, `id_dominio_canal`, `estado`, `created_at`, `updated_at`) VALUES
-(2, 2, 46, 1, '2021-08-30 03:02:33', '2021-08-30 03:02:33'),
-(5, 2, 54, 1, '2021-10-06 22:08:25', '2021-10-06 22:08:25');
+(6, 2, 47, 1, '2024-03-12 22:57:36', '2024-03-12 22:57:36'),
+(7, 2, 46, 1, '2024-03-12 22:57:36', '2024-03-12 22:57:36'),
+(8, 2, 54, 1, '2024-03-12 22:57:36', '2024-03-12 22:57:36');
 
 -- --------------------------------------------------------
 
@@ -379,14 +416,14 @@ CREATE TABLE `log` (
 --
 
 INSERT INTO `log` (`id_log`, `titulo`, `detalle`, `estado`, `created_at`, `updated_at`) VALUES
-(35, 'Envio email de factura', 'Envio de email para factura [113] con respuesta [OK]', 1, '2021-11-29 05:36:59', '2021-11-29 05:36:59'),
-(36, 'Pago de credito', 'El usuario [6] pago credito de factura [108] generando factura [113]', 1, '2021-11-29 05:36:59', '2021-11-29 05:36:59'),
-(37, 'Envio email de factura', 'Envio de email para factura [114] con respuesta [OK]', 1, '2021-11-29 05:39:05', '2021-11-29 05:39:05'),
-(38, 'Pago de credito', 'El usuario [6] pago credito de factura [108] generando factura [114]', 1, '2021-11-29 05:39:05', '2021-11-29 05:39:05'),
-(39, 'Envio email de factura', 'Envio de email para factura [117] con respuesta [OK]', 1, '2021-11-29 06:01:05', '2021-11-29 06:01:05'),
-(40, 'Pago de credito', 'El usuario [6] pago credito de factura [116] generando factura [117]', 1, '2021-11-29 06:01:05', '2021-11-29 06:01:05'),
-(41, 'Envio email de factura', 'Envio de email para factura [120] con respuesta [OK]', 1, '2021-11-29 06:52:47', '2021-11-29 06:52:47'),
-(42, 'Pago de credito', 'El usuario [6] pago credito de factura [118] generando factura [120]', 1, '2021-11-29 06:52:47', '2021-11-29 06:52:47');
+(52, 'Envio email de factura', 'Envio de email para factura [151] con respuesta [OK]', 1, '2024-03-12 23:28:22', '2024-03-12 23:28:22'),
+(53, 'Envio email de factura', 'Envio de email para factura [153] con respuesta [OK]', 1, '2024-03-13 00:09:06', '2024-03-13 00:09:06'),
+(54, 'Envio email de factura', 'Envio de email para factura [154] con respuesta [OK]', 1, '2024-03-13 00:25:45', '2024-03-13 00:25:45'),
+(55, 'Envio email de factura', 'Envio de email para factura [155] con respuesta [OK]', 1, '2024-03-13 00:27:10', '2024-03-13 00:27:10'),
+(56, 'Pago de credito', 'El usuario [1] pago credito de factura [154] generando factura [155]', 1, '2024-03-13 00:27:10', '2024-03-13 00:27:10'),
+(57, 'Envio email de factura', 'Envio de email para factura [156] con respuesta [OK]', 1, '2024-03-13 00:28:33', '2024-03-13 00:28:33'),
+(58, 'Envio email de factura', 'Envio de email para factura [157] con respuesta [OK]', 1, '2024-03-13 00:34:06', '2024-03-13 00:34:06'),
+(59, 'Pago de credito', 'El usuario [9] pago credito de factura [156] generando factura [157]', 1, '2024-03-13 00:34:06', '2024-03-13 00:34:06');
 
 -- --------------------------------------------------------
 
@@ -495,10 +532,6 @@ INSERT INTO `menu_perfil` (`id_menu_perfil`, `id_menu`, `id_perfil`, `estado`, `
 (99, 11, 3, 1, '2021-09-06 20:02:11', '2021-09-06 20:02:11'),
 (100, 12, 3, 1, '2021-09-06 20:02:11', '2021-09-06 20:02:11'),
 (101, 13, 3, 1, '2021-09-06 20:02:11', '2021-09-06 20:02:11'),
-(120, 1, 4, 1, '2021-09-06 20:02:11', '2021-09-06 20:02:11'),
-(121, 3, 4, 1, '2021-09-06 20:02:11', '2021-09-06 20:02:11'),
-(124, 2, 4, 1, '2021-09-06 20:02:11', '2021-09-06 20:02:11'),
-(129, 10, 4, 1, '2021-09-06 20:02:11', '2021-09-06 20:02:11'),
 (136, 17, 1, 1, '2021-09-07 15:56:42', '2021-09-07 15:56:42'),
 (137, 17, 2, 1, '2021-09-07 15:56:42', '2021-09-07 15:56:42'),
 (138, 17, 3, 1, '2021-09-07 15:56:42', '2021-09-07 15:56:42'),
@@ -524,22 +557,6 @@ CREATE TABLE `mesa` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
---
--- Volcado de datos para la tabla `mesa`
---
-
-INSERT INTO `mesa` (`id_mesa`, `numero`, `id_licencia`, `estado`, `created_at`, `updated_at`) VALUES
-(1, '1', 2, 1, '2021-08-26 01:31:33', '2021-08-26 01:31:33'),
-(2, '2', 2, 1, '2021-08-26 01:31:33', '2021-08-26 01:31:33'),
-(3, '3', 2, 1, '2021-08-30 03:35:38', '2021-08-30 03:35:38'),
-(4, '4', 2, 1, '2021-08-30 03:35:38', '2021-08-30 03:35:38'),
-(5, '5', 2, 1, '2021-08-30 03:35:38', '2021-08-30 03:35:38'),
-(6, '6', 2, 1, '2021-08-30 03:35:38', '2021-08-30 03:35:38'),
-(7, '7', 2, 1, '2021-08-30 03:35:38', '2021-08-30 03:35:38'),
-(8, '8', 2, 1, '2021-08-30 03:35:38', '2021-09-04 17:55:20'),
-(9, '9', 2, 1, '2021-09-04 17:54:00', '2021-09-04 17:54:00'),
-(10, '10', 2, 1, '2021-09-04 17:55:27', '2021-09-13 23:23:39');
-
 -- --------------------------------------------------------
 
 --
@@ -562,8 +579,7 @@ CREATE TABLE `perfil` (
 INSERT INTO `perfil` (`id_perfil`, `nombre`, `descripcion`, `estado`, `created_at`, `updated_at`) VALUES
 (1, 'SUPER ADMINISTRADOR', 'Super administrador', 1, '2020-08-04 21:50:36', '2020-08-04 21:50:36'),
 (2, 'ADMINISTRADOR', 'Administrador', 1, '2020-08-04 21:50:59', '2020-08-04 21:50:59'),
-(3, 'CAJERO', NULL, 1, '2021-09-06 17:22:37', '2021-09-06 17:22:37'),
-(4, 'MESERO', NULL, 1, '2021-09-06 17:22:37', '2021-09-06 17:22:37');
+(3, 'VENDEDOR', NULL, 1, '2021-09-06 17:22:37', '2021-09-06 17:22:37');
 
 -- --------------------------------------------------------
 
@@ -587,7 +603,6 @@ CREATE TABLE `perfil_permiso` (
 INSERT INTO `perfil_permiso` (`id_perfil_permiso`, `id_perfil`, `id_permiso`, `estado`, `created_at`, `updated_at`) VALUES
 (1, 1, 1, 1, '2021-09-01 04:51:56', '2021-09-01 04:51:56'),
 (2, 2, 1, 1, '2021-09-01 04:51:56', '2021-09-01 04:51:56'),
-(3, 4, 3, 1, '2021-09-06 20:20:07', '2021-09-06 20:20:07'),
 (4, 3, 2, 1, '2021-09-07 01:40:25', '2021-09-07 01:40:25'),
 (5, 1, 4, 1, '2021-09-07 16:39:53', '2021-09-07 16:39:53'),
 (6, 2, 4, 1, '2021-09-07 16:39:53', '2021-09-07 16:39:53'),
@@ -658,7 +673,9 @@ CREATE TABLE `producto` (
 --
 
 INSERT INTO `producto` (`id_producto`, `nombre`, `id_dominio_tipo_producto`, `descripcion`, `precio_compra`, `precio_venta`, `iva`, `contenido`, `id_dominio_presentacion`, `descontado`, `descontado_ingredientes`, `id_licencia`, `imagen`, `alerta`, `cantidad_minimo_alerta`, `cantidad_actual`, `id_usuario_registra`, `created_at`, `updated_at`, `estado`) VALUES
-(24, 'Arroz Diana', 36, 'Kilo de Arroz', 0, 3100, 0, '1', 28, 0, 1, 2, NULL, 0, 0, 0, 1, '2021-11-21 21:32:44', '2022-11-28 00:54:13', 1);
+(32, 'Cadena 70cm', 36, 'Cadena de oro de 70 cm', 150000, 300000, 0, '1', 28, 1, 0, 2, '542236-2024-03-12-18-06-32._AC_SX569_', 1, 15, 26.5, 1, '2024-03-12 23:06:32', '2024-03-13 00:25:42', 1),
+(33, 'Argolla', 36, 'Argollas', 150000, 300000, 0, '1', 28, 1, 0, 2, NULL, 1, 10, 19, 1, '2024-03-12 23:27:43', '2024-03-12 23:28:19', 1),
+(34, 'Topos', 36, 'Topos', 15000, 300000, 0, '1', 28, 1, 0, 2, '750600-2024-03-12-18-46-16.jpg', 1, 50, 202.5, 9, '2024-03-12 23:46:16', '2024-03-13 00:28:31', 1);
 
 -- --------------------------------------------------------
 
@@ -680,7 +697,9 @@ CREATE TABLE `producto_categoria` (
 --
 
 INSERT INTO `producto_categoria` (`id_producto_categoria`, `id_producto`, `id_categoria`, `estado`, `created_at`, `updated_at`) VALUES
-(38, 24, 13, 1, '2022-11-28 00:54:13', '2022-11-28 00:54:13');
+(54, 32, 19, 1, '2024-03-12 23:06:32', '2024-03-12 23:06:32'),
+(55, 33, 19, 1, '2024-03-12 23:27:43', '2024-03-12 23:27:43'),
+(56, 34, 20, 1, '2024-03-12 23:46:16', '2024-03-12 23:46:16');
 
 -- --------------------------------------------------------
 
@@ -711,10 +730,12 @@ CREATE TABLE `resolucion_factura` (
   `consecutivo_cotizacion` float NOT NULL DEFAULT 1,
   `consecutivo_comprobante_egreso` float NOT NULL DEFAULT 1,
   `consecutivo_credito` int(11) NOT NULL DEFAULT 1,
+  `consecutivo_recibo_caja` int(11) NOT NULL DEFAULT 1,
   `prefijo_factura` text COLLATE utf8_spanish_ci NOT NULL DEFAULT 'FV',
   `prefijo_cotizacion` text COLLATE utf8_spanish_ci NOT NULL DEFAULT 'COT',
   `prefijo_comprobante_egreso` text COLLATE utf8_spanish_ci NOT NULL DEFAULT 'CE',
   `prefijo_credito` text COLLATE utf8_spanish_ci NOT NULL DEFAULT 'CRE',
+  `prefijo_recibo_caja` text COLLATE utf8_spanish_ci NOT NULL DEFAULT 'RCJ',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
@@ -723,8 +744,8 @@ CREATE TABLE `resolucion_factura` (
 -- Volcado de datos para la tabla `resolucion_factura`
 --
 
-INSERT INTO `resolucion_factura` (`id_resolucion_factura`, `id_licencia`, `consecutivo_factura`, `consecutivo_cotizacion`, `consecutivo_comprobante_egreso`, `consecutivo_credito`, `prefijo_factura`, `prefijo_cotizacion`, `prefijo_comprobante_egreso`, `prefijo_credito`, `created_at`, `updated_at`) VALUES
-(2, 2, 2, 0, 0, 2, 'FV', 'COT', 'CE', 'CRE', '2020-08-10 22:48:26', '2021-11-29 06:52:44');
+INSERT INTO `resolucion_factura` (`id_resolucion_factura`, `id_licencia`, `consecutivo_factura`, `consecutivo_cotizacion`, `consecutivo_comprobante_egreso`, `consecutivo_credito`, `consecutivo_recibo_caja`, `prefijo_factura`, `prefijo_cotizacion`, `prefijo_comprobante_egreso`, `prefijo_credito`, `prefijo_recibo_caja`, `created_at`, `updated_at`) VALUES
+(1, 2, 17, 1, 3, 3, 1, 'FV', 'COT', 'CE', 'CRE', 'RCJ', '2023-01-19 02:27:31', '2024-03-13 00:34:04');
 
 -- --------------------------------------------------------
 
@@ -744,6 +765,7 @@ CREATE TABLE `tercero` (
   `telefono` text COLLATE utf8_spanish_ci DEFAULT NULL,
   `direccion` text COLLATE utf8_spanish_ci DEFAULT NULL,
   `imagen` text COLLATE utf8_spanish_ci DEFAULT NULL,
+  `clasificacion` text COLLATE utf8_spanish_ci NOT NULL DEFAULT 'MINORISTA',
   `id_licencia` int(11) NOT NULL,
   `estado` int(11) NOT NULL DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -754,10 +776,10 @@ CREATE TABLE `tercero` (
 -- Volcado de datos para la tabla `tercero`
 --
 
-INSERT INTO `tercero` (`id_tercero`, `nombres`, `apellidos`, `id_dominio_tipo_tercero`, `id_dominio_tipo_identificacion`, `identificacion`, `email`, `id_dominio_sexo`, `telefono`, `direccion`, `imagen`, `id_licencia`, `estado`, `created_at`, `updated_at`) VALUES
-(1, 'Zorax', NULL, 3, 6, '1065843703', 'ldaponte98@gmail.com', 13, '3164689467', NULL, NULL, 2, 1, '2020-08-04 22:04:50', '2021-10-11 17:11:38'),
-(15, 'Distribuciones ESB', '.', 2, 6, '3016136581', 'eydysuarez@unicesar.edu.co', 14, '3016136581', 'Carrera 26 # 5 a 10', '782219-2021-10-11-15-40-12.jpeg', 2, 1, '2021-10-11 20:40:12', '2021-10-11 20:40:39'),
-(16, 'Desconocido', NULL, 3, 5, '000000000', 'ldaponte98@gmail.com', 13, NULL, NULL, NULL, 2, 1, '2021-11-21 21:46:32', '2021-11-29 05:36:39');
+INSERT INTO `tercero` (`id_tercero`, `nombres`, `apellidos`, `id_dominio_tipo_tercero`, `id_dominio_tipo_identificacion`, `identificacion`, `email`, `id_dominio_sexo`, `telefono`, `direccion`, `imagen`, `clasificacion`, `id_licencia`, `estado`, `created_at`, `updated_at`) VALUES
+(1, 'Kelvin', 'Orcasita', 18, 5, '1065817694', 'kelvin@gmail.com', 14, '3222568433', 'Diagonal 21 # 28 - 50', NULL, 'MINORISTA', 2, 1, '2021-11-22 02:46:32', '2023-01-18 22:03:00'),
+(24, 'Ana milena', 'Charris ahumada', 2, 5, '1065832060', 'milecharris05@gmail.com', 43, NULL, NULL, '732231-2024-03-12-17-51-53.jpeg', 'MINORISTA', 2, 1, '2024-03-12 22:51:53', '2024-03-12 22:51:53'),
+(25, 'Desconocido', NULL, 3, 5, '000000000', 'desconocido@gmail.com', 13, NULL, NULL, NULL, 'MINORISTA', 2, 1, '2024-03-13 00:25:42', '2024-03-13 00:25:42');
 
 -- --------------------------------------------------------
 
@@ -781,8 +803,8 @@ CREATE TABLE `usuario` (
 --
 
 INSERT INTO `usuario` (`id_usuario`, `id_tercero`, `id_perfil`, `usuario`, `clave`, `estado`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 'administrador', '827ccb0eea8a706c4c34a16891f84e7b', 1, '2020-08-04 22:10:51', '2020-08-04 22:10:51'),
-(6, 15, 2, 'DISTRIBUCIONESESB', 'c5e8860fc9928401085e4cf099a233fa', 1, '2021-10-11 20:41:41', '2021-10-11 20:41:41');
+(1, 1, 1, 'admin', '827ccb0eea8a706c4c34a16891f84e7b', 1, '2023-01-18 20:26:17', '2023-01-18 20:26:17'),
+(9, 24, 3, 'mile', '0fe8e134da34b817feec97b6b6978dc6', 1, '2024-03-12 22:53:07', '2024-03-12 22:53:07');
 
 --
 -- Índices para tablas volcadas
@@ -961,55 +983,55 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `auditoria_inventario`
 --
 ALTER TABLE `auditoria_inventario`
-  MODIFY `id_auditoria_inventario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
+  MODIFY `id_auditoria_inventario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=105;
 
 --
 -- AUTO_INCREMENT de la tabla `caja`
 --
 ALTER TABLE `caja`
-  MODIFY `id_caja` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id_caja` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de la tabla `categoria`
 --
 ALTER TABLE `categoria`
-  MODIFY `id_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT de la tabla `dominio`
 --
 ALTER TABLE `dominio`
-  MODIFY `id_dominio` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `id_dominio` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
 -- AUTO_INCREMENT de la tabla `factura`
 --
 ALTER TABLE `factura`
-  MODIFY `id_factura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=121;
+  MODIFY `id_factura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=158;
 
 --
 -- AUTO_INCREMENT de la tabla `factura_detalle`
 --
 ALTER TABLE `factura_detalle`
-  MODIFY `id_factura_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=209;
+  MODIFY `id_factura_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=252;
 
 --
 -- AUTO_INCREMENT de la tabla `forma_pago`
 --
 ALTER TABLE `forma_pago`
-  MODIFY `id_forma_pago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=169;
+  MODIFY `id_forma_pago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=195;
 
 --
 -- AUTO_INCREMENT de la tabla `inventario`
 --
 ALTER TABLE `inventario`
-  MODIFY `id_inventario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id_inventario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT de la tabla `inventario_detalle`
 --
 ALTER TABLE `inventario_detalle`
-  MODIFY `id_inventario_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id_inventario_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT de la tabla `licencia`
@@ -1021,13 +1043,13 @@ ALTER TABLE `licencia`
 -- AUTO_INCREMENT de la tabla `licencia_canal`
 --
 ALTER TABLE `licencia_canal`
-  MODIFY `id_licencia_canal` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_licencia_canal` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `log`
 --
 ALTER TABLE `log`
-  MODIFY `id_log` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `id_log` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
 
 --
 -- AUTO_INCREMENT de la tabla `menu`
@@ -1045,7 +1067,7 @@ ALTER TABLE `menu_perfil`
 -- AUTO_INCREMENT de la tabla `mesa`
 --
 ALTER TABLE `mesa`
-  MODIFY `id_mesa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id_mesa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de la tabla `perfil`
@@ -1069,13 +1091,13 @@ ALTER TABLE `permiso`
 -- AUTO_INCREMENT de la tabla `producto`
 --
 ALTER TABLE `producto`
-  MODIFY `id_producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id_producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT de la tabla `producto_categoria`
 --
 ALTER TABLE `producto_categoria`
-  MODIFY `id_producto_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id_producto_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- AUTO_INCREMENT de la tabla `producto_ingrediente`
@@ -1093,13 +1115,13 @@ ALTER TABLE `resolucion_factura`
 -- AUTO_INCREMENT de la tabla `tercero`
 --
 ALTER TABLE `tercero`
-  MODIFY `id_tercero` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id_tercero` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Restricciones para tablas volcadas
