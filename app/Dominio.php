@@ -13,7 +13,7 @@ class Dominio extends Model
     public static function get($name)
     {
         $dominio = Dominio::where('nombre', $name)->first();
-        return $dominio ? $dominio->id_dominio : null;
+        return $dominio != null ? $dominio->id_dominio : -1;
     }
 
     public static function get_canales($id_licencia)
