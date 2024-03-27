@@ -16,6 +16,12 @@ class Dominio extends Model
         return $dominio != null ? $dominio->id_dominio : -1;
     }
 
+    public static function getName($id)
+    {
+        $dominio = Dominio::find($id);
+        return $dominio != null ? $dominio->dominio : "No valido";
+    }
+
     public static function get_canales($id_licencia)
     {
         $canales    = [];

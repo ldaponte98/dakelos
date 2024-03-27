@@ -82,9 +82,26 @@ class Factura extends Model
         return $items;
     }
 
-    public function get_cruce()
+    public function estaPagada()
     {
-        return Factura::where('id_factura_cruce', $this->id_factura)->first();
+        $facturas_abonos = Factura::where('id_factura_cruce', $this->id_factura)->get();
+        $pagada = false;
+        $total_abono = 0;
+        foreach ($facturas_abonos as $factura_abono) {
+            $total_abono += $factura_abono->valor;
+        }
+        $pagada = $total_abono == $this->valor_original;
+        return $pagada;
+    }
+
+    public function getTotalAbonos()
+    {
+        $facturas_abonos = Factura::where('id_factura_cruce', $this->id_factura)->get();
+        $total_abono = 0;
+        foreach ($facturas_abonos as $factura_abono) {
+            $total_abono += $factura_abono->valor;
+        }
+        return $total_abono;
     }
 
     public function enviar_email()

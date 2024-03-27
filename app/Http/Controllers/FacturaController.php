@@ -99,6 +99,7 @@ class FacturaController extends Controller
                     $factura->id_tercero              = $post->id_tercero;
                     $factura->id_caja                 = $caja->id_caja;
                     $factura->valor                   = $post->total_carrito;
+                    $factura->valor_original          = $factura->valor;
                     $factura->id_dominio_tipo_factura = $post->tipo_factura;
                     $factura->observaciones           = $post->observaciones;
                     $factura->id_usuario_registra     = session('id_usuario');
@@ -299,7 +300,7 @@ class FacturaController extends Controller
             }
         }
 
-        $formas_pago_selected = [20];
+        $formas_pago_selected = [];
         $post                 = $request->all();
         $factura              = null;
         $id_mesa              = null;
@@ -322,6 +323,7 @@ class FacturaController extends Controller
             }
         }
         sort($mesas);
+
         return view("factura.facturador", compact([
             'categorias', 'productos', 'mesas', 'formas_pago',
             'formas_pago_selected', 'factura', 'id_mesa', 'canal', 'canales',
@@ -378,6 +380,7 @@ class FacturaController extends Controller
                     $factura->id_tercero              = $cliente->id_tercero;
                     $factura->id_caja                 = $menu_digital ? null : $caja->id_caja;
                     $factura->valor                   = $post->factura->total;
+                    $factura->valor_original          = $post->factura->total;
                     $factura->descuento               = $post->factura->descuento;
                     $factura->id_dominio_tipo_factura = 16;
                     $factura->servicio_voluntario     = $post->factura->servicio_voluntario;
@@ -389,12 +392,13 @@ class FacturaController extends Controller
                     $factura->finalizada              = $post->factura->finalizada;
                     $factura->id_dominio_canal        = $post->factura->id_dominio_canal;
                     $factura->direccion               = $post->factura->direccion;
+                    
                     $factura->pagada                  = 1;
 
                     if ($post->factura->id_dominio_canal == Dominio::get('Mesa')) {
                         $factura->id_mesa = $post->factura->id_mesa;
                     }
-                    if ($post->factura->id_dominio_canal == Dominio::get('Domicilio')) {
+                    if ($post->factura->id_dominio_canal == Dominio::get('Domicilio') || isset($post->factura->domicilio)) {
                         $factura->domicilio = $post->factura->domicilio;
                     }
 
@@ -425,9 +429,11 @@ class FacturaController extends Controller
                                 $forma_pago->save();
 
                                 if ($forma_pago->id_dominio_forma_pago == Dominio::get('Credito (Saldo pendiente)')) {
-                                    $texto_resolucion                 = $resolucion->prefijo_credito . "-" . ($resolucion->consecutivo_credito + 1);
-                                    $factura->numero                  = $post->factura->id_factura == null ? $texto_resolucion : $factura->numero;
-                                    $factura->id_dominio_tipo_factura = Dominio::get('Factura a credito (Saldo pendiente)');
+                                    $texto_resolucion                             = $resolucion->prefijo_credito . "-" . ($resolucion->consecutivo_credito + 1);
+                                    $factura->numero                              = $post->factura->id_factura == null ? $texto_resolucion : $factura->numero;
+                                    $factura->id_dominio_tipo_factura             = Dominio::get('Factura a credito (Saldo pendiente)');
+                                    $factura->abono_inicial                       = $post->factura->abono;
+                                    $factura->id_dominio_forma_pago_abono_inicial = $post->factura->forma_pago_abono_inicial;
                                     $factura->save();
                                 }
                             }
@@ -677,9 +683,13 @@ class FacturaController extends Controller
                     ->first();
 
                 if ($caja) {
-                    $facturacion = $this->facturar_pago_credito($factura, $caja->id_caja, $post->forma_pago, $post->observaciones);
-                    $mensaje     = $facturacion->mensaje;
-                    $error       = $facturacion->error;
+                    if($post->valor > $factura->valor){
+                        $mensaje = "El valor a pagar es mayor a la deuda actual, porfavor verifique el valor del abono.";
+                    }else{
+                        $facturacion = $this->facturar_pago_credito($factura, $caja->id_caja, $post->forma_pago, $post->observaciones, $post->valor);
+                        $mensaje     = $facturacion->mensaje;
+                        $error       = $facturacion->error;
+                    }
                 } else {
                     $mensaje = "Para realizar el pago debe tener caja abierta";
                 }
@@ -696,7 +706,7 @@ class FacturaController extends Controller
         ]);
     }
 
-    public function facturar_pago_credito($factura_credito, $id_caja, $id_dominio_forma_pago, $observaciones)
+    public function facturar_pago_credito($factura_credito, $id_caja, $id_dominio_forma_pago, $observaciones, $abono)
     {
         //primero buscamos el consecutivo de la resolucion para la factura
         $id_usuario = session('id_usuario');
@@ -707,7 +717,8 @@ class FacturaController extends Controller
             $factura->numero                  = $resolucion->prefijo_factura . "-" . ($resolucion->consecutivo_factura + 1);
             $factura->id_tercero              = $factura_credito->id_tercero;
             $factura->id_caja                 = $id_caja;
-            $factura->valor                   = $factura_credito->valor;
+            $factura->valor                   = $abono;
+            $factura->valor_original          = $factura->valor;
             $factura->id_dominio_tipo_factura = Dominio::get('Factura de venta');
             $factura->observaciones           = $observaciones;
             $factura->id_usuario_registra     = session('id_usuario');
@@ -726,6 +737,11 @@ class FacturaController extends Controller
                 $forma_pago->id_dominio_forma_pago = $id_dominio_forma_pago;
                 $forma_pago->valor                 = $factura->valor;
                 $forma_pago->save();
+
+                $valor_pendiente = $factura_credito->valor - $abono;
+                $factura_credito_bd = Factura::find($factura_credito->id_factura);
+                $factura_credito_bd->valor = $valor_pendiente;
+                $factura_credito_bd->save();
 
                 $factura->enviar_email();
                 $mensaje = "Pago de credito registrado exitosamente";

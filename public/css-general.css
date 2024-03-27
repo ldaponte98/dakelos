@@ -203,6 +203,18 @@
 .modal-header {
     display: flex !important;
 }
+
+.input-group{
+    display: flex !important;
+    flex-wrap: nowrap !important;
+}
+
+.blockOverlay{
+    z-index: 99999 !important;
+}
+.blockMsg {
+    z-index: 99999 !important;
+}
 @keyframes animate{
     0%{
         box-shadow: 0 0 0 0 rgba(35, 85, 138, .5), 0 0 0 0 rgba(35, 85, 138, .5);

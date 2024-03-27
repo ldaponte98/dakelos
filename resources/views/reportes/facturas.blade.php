@@ -159,7 +159,7 @@
                                         <td><center> {{ $factura->tipo->nombre }} </center></td>
                                         <td><center>{{ $factura->canal->nombre }} </center></td>
                                         <td><center> {{ $factura->usuario_registra->tercero->nombre_completo() }} </center></td>
-                                        <td><center>${{ number_format($factura->valor, 0, '.', '.') }}</center></td>
+                                        <td><center>${{ number_format($factura->valor_original, 0, '.', '.') }}</center></td>
                                         <td><center>
                                             @if ($factura->estado == 1)
                                                 <span class="badge badge-success">
@@ -248,12 +248,12 @@
                 <td>{{ count($factura->detalles) }} </td>
                 <td>{{ $factura->usuario_registra->tercero->nombre_completo() }} </td>
                 <td><center>{{ $factura->get_estado() }}</center></td>
-                <td>{{ $factura->valor }}</td>
+                <td>{{ $factura->valor_original }}</td>
                 
             </tr>
             @php
             if($factura->id_dominio_tipo_factura == 16){
-                $total += $factura->valor;
+                $total += $factura->valor_original;
             }
             @endphp
             @endforeach

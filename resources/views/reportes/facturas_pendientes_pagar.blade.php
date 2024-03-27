@@ -87,7 +87,7 @@
                         {{ Form::close() }}
                     </div>
                     <div class="col-sm-12">
-                        <div class="table-stats order-table ov-h">
+                        <div class="table-stats order-table ov-h ">
                             <table class="table">
                                 <thead>
                                     <tr>
@@ -95,10 +95,10 @@
                                         <th><center><b>Numero</b></center></th>
                                         <th><center><b>Cliente</b></center></th>
                                         <th><center><b>Fecha</b></center></th>
-                                        <th><center><b>Tipo</b></center></th>
                                         <th><center><b>Canal</b></center></th>
                                         <th><center><b>Usu registro</b></center></th>
-                                        <th><center><b>Valor</b></center></th>
+                                        <th><center><b>Valor original</b></center></th>
+                                        <th><center><b>Pendiente por pagar</b></center></th>
                                         <th><center><b>Estado</b></center></th>
                                         <th></th>
                                     </tr>
@@ -112,19 +112,19 @@
                                     @endphp
                                     @foreach($facturas as $factura)
                                     @php
-                                        $cruce = $factura->get_cruce();
+                                        $estaPagada = $factura->estaPagada();
                                     @endphp
                                     <tr>
                                         <td class="serial"><center>{{ $cont }}</center></td>
                                         <td><center>{{ $factura->numero }}</center></td>
                                         <td><center><a href="{{ route('tercero/view', $factura->id_tercero) }}">{{ $factura->tercero->nombre_completo() }}</a></center></td>
                                         <td><center> {{ date('Y-m-d H:i' ,strtotime($factura->fecha)) }} </center></td>
-                                        <td><center> {{ $factura->tipo->nombre }} </center></td>
                                         <td><center>{{ $factura->canal->nombre }} </center></td>
                                         <td><center> {{ $factura->usuario_registra->tercero->nombre_completo() }} </center></td>
+                                        <td><center>${{ number_format($factura->valor_original, 0, '.', '.') }}</center></td>
                                         <td><center>${{ number_format($factura->valor, 0, '.', '.') }}</center></td>
                                         <td><center>
-                                            @if ($cruce == null)
+                                            @if (!$estaPagada)
                                                 <span class="badge badge-warning">
                                                     <b>Sin pagar</b>
                                                 </span>
@@ -138,19 +138,20 @@
                                         <td>
                                             <center>
                                                 <a href="{{ route('factura/imprimir', $factura->id_factura) }}" class="badge badge-info" target="_blank"> <i class="ti-printer icon" title="Imprimir factura formal"></i></a>
-                                                @if ($permiso_pagar and $factura->estado == 1 and $cruce == null)
-                                                    <a onclick="ModalAnulacion({{ $factura->id_factura }})" class="badge badge-success text-white pointer" > <i class="ti-money icon" title="Pagar factura"></i></a>
+                                                @if ($permiso_pagar and $factura->estado == 1 and !$estaPagada)
+                                                    <a onclick="ModalPagar({{ $factura->id_factura }}, {{ $factura->valor }})" class="badge badge-success text-white pointer" > <i class="ti-money icon" title="Pagar factura"></i></a>
                                                 @endif
 
-                                                @if ($cruce)
-                                                    <a target="_blank" href="{{ route('factura/imprimir', $cruce->id_factura) }}" class="badge badge-info text-white pointer" > <i class="ti-briefcase icon" title="Ver soporte de pago"></i></a>
-                                                @endif
+                                                
                                             </center>
                                         </td>
                                         @php 
-                                            $total += $factura->valor; 
-                                            if ($cruce) $total_pagado += $factura->valor; 
-                                            if ($cruce == null) $total_deuda += $factura->valor; 
+                                            $total += $factura->valor_original; 
+                                            if ($estaPagada) $total_pagado += $factura->valor_original; 
+                                            if (!$estaPagada){
+                                                $total_pagado += $factura->getTotalAbonos(); 
+                                                $total_deuda += $factura->valor; 
+                                            } 
                                         @endphp
                                     </tr>
                                     @php $cont++; @endphp
@@ -224,13 +225,12 @@
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Numero</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Cliente</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Fecha</b></td>
-        <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Tipo</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Canal</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Cantidad de productos</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Usu registro</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Estado</b></td>
-        <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Valor</b></td>
-        
+        <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Valor origina</b></td>
+        <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Pendiente por pagar</b></td>
     </tr>
     <tbody id="bodytable_excel">
         @php
@@ -241,11 +241,11 @@
                 <td>{{ $factura->numero }}</td>
                 <td>{{ $factura->tercero->nombre_completo() }}</td>
                 <td>{{ date('Y-m-d H:i' ,strtotime($factura->fecha)) }} </td>
-                <td>{{ $factura->tipo->nombre }} </td>
                 <td>{{ $factura->canal->nombre }} </td>
                 <td>{{ count($factura->detalles) }} </td>
                 <td>{{ $factura->usuario_registra->tercero->nombre_completo() }} </td>
-                <td><center>{{ $factura->get_cruce() ? "Pagada" : "Sin pagar" }}</center></td>
+                <td><center>{{ $factura->estaPagada() ? "Pagada" : "Sin pagar" }}</center></td>
+                <td>{{ $factura->valor_original }}</td>
                 <td>{{ $factura->valor }}</td>
                 
             </tr>
@@ -263,7 +263,7 @@
 </table>
 
 @if ($permiso_pagar)
-    <div class="modal fade" id="modal-anulacion" tabindex="-1" role="dialog" aria-labelledby="smallmodalLabel" aria-hidden="true">
+    <div class="modal fade" id="modal-pago" tabindex="-1" role="dialog" aria-labelledby="smallmodalLabel" aria-hidden="true">
         <div class="modal-dialog modal-sm" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -280,6 +280,10 @@
                                 <option value="{{ $item->id_dominio }}">{{ $item->nombre }}</option>
                             @endforeach
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label id="lb-modal-valor">Valor a pagar</label>
+                        <input type="number" id="modal-valor" class="form-control"></input>
                     </div>
                     <div class="form-group">
                         <label>Observaciones</label>
@@ -326,12 +330,15 @@
     })
 
 @if ($permiso_pagar)
-    function ModalAnulacion(id_factura) {
+    function ModalPagar(id_factura, valor) {
         this.id_factura = id_factura; 
-        $('#modal-anulacion').modal('show');
+        $("#lb-modal-valor").html(`Valor a pagar (Max: $${valor})`)
+        $("#modal-valor").val(valor)
+        $('#modal-pago').modal('show');
     }
     function Pagar() {
         let observaciones = $("#modal-observaciones").val()
+        let valor = $("#modal-valor").val()
         let forma_pago = $("#modal-forma-pago").val()
 
         let url = "{{ route('factura/pagar_credito') }}"
@@ -341,6 +348,7 @@
         let request = {
             '_token' : _token,
             'id_factura' : id_factura,
+            'valor' : valor,
             'observaciones' : observaciones,
             'forma_pago' : forma_pago
         }

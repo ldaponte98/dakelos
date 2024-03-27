@@ -92,6 +92,12 @@
 			<td style="text-align: right;"><b>Descuento:</b></td>
 			<td style="text-align: right;">${{ number_format($factura->descuento, 0, '.', '.') }}</td>
 		</tr>
+		@if ($factura->abono_inicial > 0)
+			<tr>
+				<td style="text-align: right;"><b>Abono inicial:</b></td>
+				<td style="text-align: right;">${{ number_format($factura->abono_inicial, 0, '.', '.') }}</td>
+			</tr>
+		@endif
 		<tr>
 			<td style="text-align: right;"><b>Total:</b></td>
 			<td style="text-align: right; font-weight: bold;">${{ number_format($factura->valor, 0, '.', '.') }}</td>

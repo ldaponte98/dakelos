@@ -38,8 +38,7 @@ class ReporteController extends Controller
         }
 
         $facturas = Factura::where('id_licencia', session('id_licencia'))
-            ->whereBetween('fecha', [$fecha_desde, $fecha_hasta])
-            ->where('id_factura_cruce', null);
+            ->whereBetween('fecha', [$fecha_desde, $fecha_hasta]);
 
         if (count($canales) > 0) {
             $facturas = $facturas->whereIn('id_dominio_canal', $canales);

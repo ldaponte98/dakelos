@@ -226,7 +226,7 @@
                 <br>
                 <div class="form-group d-flex">
                     <label class="lb-flex">Formas de pago</label>
-                    <select id="factura-formas-pago" data-placeholder="Escoje una o mas..." multiple class="standardSelect form-control">
+                    <select onchange="validarCredito()" id="factura-formas-pago" data-placeholder="Escoje una o mas..." multiple class="standardSelect form-control">
                         <option value="" label="default"></option>
                         @foreach($formas_pago as $item)
                             <option @if(in_array($item->id_dominio, $formas_pago_selected)) selected @endif 
@@ -242,10 +242,29 @@
                     <label class="lb-flex"><span class="green"><b>+</b></span> Domicilio ($)</label>
                     <input onkeyup="ValidarDescuentoServicio()" type="number" id="factura-domicilio" placeholder="0" class="form-control">
                 </div>
-                <div class="form-group d-flex">
+                <div id="div-credito" style="display: none;">
+                    <div class="form-group d-flex" >
+                        <label class="lb-flex"><span class="red"><b>-</b></span> Abono inicial ($)</label>
+                        <input onkeyup="ValidarDescuentoServicio()" type="number" id="factura-abono-inicial" placeholder="0" class="form-control">
+                    </div>
+                    <div class="form-group d-flex">
+                        <label class="lb-flex">Forma de pago del abono inicial</label>
+                        <select id="factura-forma-pago-abono" data-placeholder="Escoje una..." class="standardSelect form-control">
+                            <option value="" label="default"></option>
+                            @foreach($formas_pago as $item)
+                                @if ($item->id_dominio != 55)
+                                <option @if($factura != null and $item->id_dominio == $factura->id_dominio_forma_pago_abono_inicial) selected @endif 
+                                    value="{{ $item->id_dominio }}">{{ $item->nombre }}</option>
+                                @endif
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                
+                <!--<div class="form-group d-flex">
                 	<label class="lb-flex"><span class="green"><b>+</b></span> Servicio Voluntario ($)</label>
                 	<input onkeyup="ValidarDescuentoServicio()" type="number" id="factura-servicio-voluntario" placeholder="0" class="form-control">
-                </div>
+                </div>-->
                 <div class="form-group d-flex">
                 	<label class="lb-flex"><span class="red"><b>-</b></span> Descuento ($)</label>
                 	<input onkeyup="ValidarDescuentoServicio()" type="number" id="factura-descuento" placeholder="0" class="form-control">
@@ -365,6 +384,18 @@
         minutos_duracion : {{ $licencia->minutos_duracion_promedio ? $licencia->minutos_duracion_promedio : 0 }}		
 	}
 
+    function validarCredito() {
+        let formasPago = $("#factura-formas-pago").val()
+        let esCredito = false
+        if(formasPago != null){
+            formasPago.forEach((item) => {
+                if(item == 55) esCredito = true
+            })
+        }
+        if(esCredito) $("#div-credito").fadeIn()
+        this.factura.esCredito = esCredito
+    }
+
     function LlenarProductos() {
         @foreach ($productos as $producto)
             this.productos.push({
@@ -419,13 +450,16 @@
         let descuento = $("#factura-descuento").val()
         let servicio  = $("#factura-servicio-voluntario").val()
         let domicilio  = $("#factura-domicilio").val()
+        let abono  = $("#factura-abono-inicial").val()
         this.factura.descuento = 0
         this.factura.servicio_voluntario = 0
         this.factura.domicilio = 0
+        this.factura.abono = 0
         if ($.isNumeric(descuento))this.factura.descuento = parseFloat(descuento)
         if ($.isNumeric(servicio)) this.factura.servicio_voluntario = parseFloat(servicio)
         if ($.isNumeric(domicilio)) this.factura.domicilio = parseFloat(domicilio)
-            this.ActualizarVistaPedido()
+        if ($.isNumeric(abono)) this.factura.abono = parseFloat(abono)
+        this.ActualizarVistaPedido()
     }
 
 	function ModalCliente() {
@@ -467,7 +501,7 @@
                                 </button>
                                 <div class="dropdown-menu box-quantity">
                                     <div class="input-group dropdowncontent" >
-                                        <input type="text" id="cantidad-item-${item.id_producto}" value="${item.cantidad}" class="form-control">
+                                        <input onkeyup="if(event.keyCode == 13) EstablecerCantidad(${item.id_producto})" type="text" id="cantidad-item-${item.id_producto}" value="${item.cantidad}" class="form-control">
                                         <div class="input-group-btn"><span onclick="EstablecerCantidad(${item.id_producto})" class="btn btn-success"><i class="fa fa-check"></i></span></div>
                                     </div>  
                                 </div>
@@ -493,6 +527,8 @@
         if ($.isNumeric(servicio)) total += parseFloat(servicio)
         let descuento = $("#factura-descuento").val()
         if ($.isNumeric(descuento)) total -= parseFloat(descuento)
+        let abono = $("#factura-abono-inicial").val()
+        if ($.isNumeric(abono) && this.factura.esCredito) total -= parseFloat(abono)
 
         let domicilio = $("#factura-domicilio").val()
         if ($.isNumeric(domicilio) && this.factura.id_dominio_canal != {{ App\Dominio::get('Mesa') }}) total += parseFloat(domicilio)
@@ -619,6 +655,7 @@
         this.factura.observaciones = $("#factura-observaciones").val()
         this.factura.direccion = $("#factura-direccion-domicilio").val()
         this.factura.formas_pago = $("#factura-formas-pago").val()
+        this.factura.forma_pago_abono_inicial = $("#factura-forma-pago-abono").val()
 
         if (!ValidarCampos()) return false;
 
@@ -690,6 +727,15 @@
                 return false;
             }
         @endif
+
+        if(this.factura.esCredito && (this.factura.abono == null || this.factura.abono == "")){
+            toastr.error("Para establecer una forma de pago a credito debe agregar en el abono inicial un valor mayor o igual a cero", "Error")
+            return false;
+        }
+        if(this.factura.esCredito && (this.factura.forma_pago_abono_inicial == null || this.factura.forma_pago_abono_inicial == "") && this.factura.abono != 0) {
+            toastr.error("Para establecer una forma de pago a credito debe agregar una forma de pago especifica para el abono inicial", "Error")
+            return false;
+        }
         return true;
     }
 
