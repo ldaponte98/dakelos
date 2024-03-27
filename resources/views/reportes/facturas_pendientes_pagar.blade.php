@@ -138,6 +138,7 @@
                                         <td>
                                             <center>
                                                 <a href="{{ route('factura/imprimir', $factura->id_factura) }}" class="badge badge-info" target="_blank"> <i class="ti-printer icon" title="Imprimir factura formal"></i></a>
+                                                <a onclick="ModalAbonos({{ $factura->id_factura }})" class="badge badge-warning text-white pointer" > <i class="ti-server icon" title="Ver abonos"></i></a>
                                                 @if ($permiso_pagar and $factura->estado == 1 and !$estaPagada)
                                                     <a onclick="ModalPagar({{ $factura->id_factura }}, {{ $factura->valor }})" class="badge badge-success text-white pointer" > <i class="ti-money icon" title="Pagar factura"></i></a>
                                                 @endif
