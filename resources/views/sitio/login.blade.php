@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Zorax - Sistema de facturación</title>
+	<title>Dakelos - Sistema de facturación</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->	
@@ -34,7 +34,7 @@
 			<div class="wrap-login100">
 				<div class="login100-form-title" style="background-image: url({{ asset('plantilla/login/images/bg-01.jpg') }});">
 					<span class="login100-form-title-1">
-						Zorax
+						Dakelos
 					</span>
 				</div>
 				{{ Form::open(array('method' => 'post' ,'route' =>'usuario/auth' , 'files' => true, 'class' => 'login100-form validate-form')) }}
