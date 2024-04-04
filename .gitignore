@@ -6,6 +6,7 @@
 /public/error_log
 /storage/*.key
 /vendor
+/env
 .env.backup
 .phpunit.result.cache
 Homestead.json
