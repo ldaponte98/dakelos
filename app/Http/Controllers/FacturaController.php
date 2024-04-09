@@ -157,7 +157,7 @@ class FacturaController extends Controller
                             }
                         }
 
-                        if ($post->factura->id_factura == null) {
+                        if ($post->factura == null || $post->factura->id_factura == null) {
                             //ahora aumentamos el consecutivo de la resolucion
                             if ($factura->id_dominio_tipo_factura == Dominio::get('Factura a credito (Saldo pendiente)')) {
                                 $resolucion->consecutivo_credito += 1;
