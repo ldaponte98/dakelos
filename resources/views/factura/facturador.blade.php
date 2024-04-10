@@ -101,9 +101,9 @@
         <div class="dropdown for-notification">
             <div class="dropdown-menu dropdown-search" aria-labelledby="notification" id="div-busqueda-productos"></div>
         </div>
-        <div class="card card-products">
+        <div class="card card-products" style="height: 95%" >
         	<div class="card-header">
-                <i class="fa fa-cutlery"></i><strong class="card-title pl-2">Productos</strong>
+                <i></i><strong class="card-title pl-2">Productos</strong>
             </div>
             <div class="card-body">
                 <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
@@ -190,7 +190,7 @@
         </div>
     	<div class="card">
             <div class="card-header">
-                <i class="fa fa-shopping-basket"></i><strong class="card-title pl-2">Factura de venta</strong>
+                <i></i><strong class="card-title pl-2">Factura de venta</strong>
             </div>
             <div class="card-body">
                 <div class="mx-auto d-block">
@@ -276,7 +276,11 @@
                 </div>
 
                 <div class="form-group">
-                	<label>Observaciones</label>
+                	<label>Descripciones</label>
+                	<textarea id="factura-descripciones" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                	<label title="Este campo no se mostrará en la factura del cliente" class="fa fa-exclamation-circle"> Observaciones</label> 
                 	<textarea id="factura-observaciones" class="form-control" rows="3"></textarea>
                 </div>
                 <div class="form-group d-flex">
@@ -284,12 +288,6 @@
                     <input type="number" id="factura-duracion" style="width: 30%;" placeholder="0" class="form-control">
                 </div>
                 <hr>
-                <div class="card-text text-sm-center">
-                    <a href="#"><i class="fa fa-facebook pr-1"></i></a>
-                    <a href="#"><i class="fa fa-twitter pr-1"></i></a>
-                    <a href="#"><i class="fa fa-linkedin pr-1"></i></a>
-                    <a href="#"><i class="fa fa-pinterest pr-1"></i></a>
-                </div>
             </div>
         </div>
     </div>
@@ -304,7 +302,11 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div data-spy="scroll" class="modal-body">
+                    <div class="form-group">
+                        <label>Identificación del cliente</label>
+                        <input type="text" id="modal-cliente-identificacion" class="form-control">
+                    </div>
                     <div class="form-group">
                     	<label>Nombre del cliente</label>
                     	<input type="text" id="modal-cliente-nombre" class="form-control">
@@ -314,8 +316,8 @@
                     	<input type="text" id="modal-cliente-telefono" class="form-control">
                     </div>
                     <div class="form-group">
-                    	<label>Identificación del cliente</label>
-                    	<input type="text" id="modal-cliente-identificacion" class="form-control">
+                    	<label>Correo del cliente</label>
+                    	<input type="text" id="modal-cliente-correo" class="form-control">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -365,13 +367,15 @@
 	var factura = {
         id_factura: null,
 		cliente: {
+			identificacion: null,
 			nombre: null,
 			telefono: null,
-			identificacion: null 
+            email: null
 		},
         id_dominio_canal : null,
         id_mesa : null,
         domicilio : 0,
+        descripciones : "",
         observaciones : "",
         direccion : "",
         detalles : [],
@@ -464,19 +468,19 @@
 
 	function ModalCliente() {
 		$("#modal-cliente").modal("show")
+        if (this.factura.cliente.identificacion) $("#modal-cliente-identificacion").val(this.factura.cliente.identificacion)
         if (this.factura.cliente.nombre) $("#modal-cliente-nombre").val(this.factura.cliente.nombre)
         if (this.factura.cliente.telefono) $("#modal-cliente-telefono").val(this.factura.cliente.telefono)
-        if (this.factura.cliente.identificacion) $("#modal-cliente-identificacion").val(this.factura.cliente.identificacion)
-	}
+        if (this.factura.cliente.email) $("#modal-cliente-correo").val(this.factura.cliente.email)
+    }
 
 	function GuardarInfoCliente() {
 		$("#modal-cliente").modal("hide")
 		if ($("#modal-cliente-nombre").val().trim() != "") 
-			this.factura.cliente.nombre = $("#modal-cliente-nombre").val()
-
-		this.factura.cliente.telefono = $("#modal-cliente-telefono").val()
-
 		this.factura.cliente.identificacion = $("#modal-cliente-identificacion").val()
+        this.factura.cliente.nombre = $("#modal-cliente-nombre").val()
+		this.factura.cliente.telefono = $("#modal-cliente-telefono").val()
+        this.factura.cliente.email = $("#modal-cliente-correo").val()
 
 		this.ActualizarVistaPedido()
 	}
@@ -497,7 +501,7 @@
                             <td><center>
                             <div class="dropdown for-notification">
                                 <button class="btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true">
-                                    ${item.cantidad} ${item.presentacion}
+                                    ${item.cantidad} <small>${item.presentacion}</small>
                                 </button>
                                 <div class="dropdown-menu box-quantity">
                                     <div class="input-group dropdowncontent" >
@@ -653,6 +657,7 @@
 
         this.factura.finalizada = finalizada
         this.factura.observaciones = $("#factura-observaciones").val()
+        this.factura.descripciones = $("#factura-descripciones").val()
         this.factura.direccion = $("#factura-direccion-domicilio").val()
         this.factura.formas_pago = $("#factura-formas-pago").val()
         this.factura.forma_pago_abono_inicial = $("#factura-forma-pago-abono").val()
@@ -790,14 +795,17 @@
             this.factura.cliente.nombre = "{{ $factura->tercero->nombres }}"
             this.factura.cliente.identificacion = "{{ $factura->tercero->identificacion }}"
             this.factura.cliente.telefono = "{{ $factura->tercero->telefono }}"
+            this.factura.cliente.email = "{{ $factura->tercero->email }}"
             this.factura.descuento = {{ $factura->descuento }}
             this.factura.domicilio = {{ $factura->domicilio }}
             this.factura.servicio_voluntario = {{ $factura->servicio_voluntario }}
             this.factura.direccion = "{{ $factura->direccion }}"
             this.factura.minutos_duracion = "{{ $factura->minutos_duracion }}"
             this.factura.finalizada = {{ $factura->finalizada }}
+            this.factura.descripciones = "{{ $factura->descripciones }}"
             this.factura.observaciones = "{{ $factura->observaciones }}"
             $("#factura-observaciones").val(this.factura.observaciones)
+            $("#factura-descripciones").val(this.factura.descripciones)
             $("#factura-direccion-domicilio").val(this.factura.direccion)
             this.factura.id_dominio_canal = {{ $factura->id_dominio_canal }}
             $('#select-canal').val(this.factura.id_dominio_canal).prop('selected', true);
