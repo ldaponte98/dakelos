@@ -156,8 +156,7 @@ class FacturaController extends Controller
                                 }
                             }
                         }
-
-                        if ($post->factura == null || $post->factura->id_factura == null) {
+                        if(!isset($post->factura)){
                             //ahora aumentamos el consecutivo de la resolucion
                             if ($factura->id_dominio_tipo_factura == Dominio::get('Factura a credito (Saldo pendiente)')) {
                                 $resolucion->consecutivo_credito += 1;
@@ -169,6 +168,7 @@ class FacturaController extends Controller
 
                             $resolucion->save();
                         }
+                        
 
                         $this->descontar_inventario_detalles($factura->detalles, $factura->id_factura);
 
