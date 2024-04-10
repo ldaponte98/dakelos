@@ -238,7 +238,7 @@
 		<td colspan="3" style="border-bottom: none; background-color: #BFBFBF;"><b>TOTAL: </b>${{ number_format($factura->valor, 0, '.','.') }}</td>
 	</tr>
 	<tr>		
-	<td colspan="10"><b>Observaciones: </b><br>{{ $factura->observaciones}}</td>
+	<td colspan="10"><b>Descripciones: </b><br>{{ $factura->descripciones}}</td>
 	</tr>
 	@if($factura->id_dominio_tipo_factura == 17)
 	<tr>

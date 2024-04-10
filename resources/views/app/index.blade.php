@@ -278,6 +278,7 @@
         id_dominio_canal : 54,
         id_mesa : null,
         domicilio : 0,
+        descripciones : "",
         observaciones : "",
         direccion : $("#direccion").val(),
         detalles : this.carrito,
