@@ -156,7 +156,6 @@ class FacturaController extends Controller
                                 }
                             }
                         }
-
                         if(!isset($post->factura)){
                             //ahora aumentamos el consecutivo de la resolucion
                             if ($factura->id_dominio_tipo_factura == Dominio::get('Factura a credito (Saldo pendiente)')) {
@@ -385,6 +384,7 @@ class FacturaController extends Controller
                     $factura->descuento               = $post->factura->descuento;
                     $factura->id_dominio_tipo_factura = 16;
                     $factura->servicio_voluntario     = $post->factura->servicio_voluntario;
+                    $factura->descripciones           = $post->factura->descripciones;
                     $factura->observaciones           = $post->factura->observaciones;
                     $factura->id_usuario_registra     = $id_usuario;
                     $factura->id_licencia             = $id_licencia;
@@ -512,6 +512,8 @@ class FacturaController extends Controller
             if ($cliente_busqueda) {
                 $cliente = $cliente_busqueda;
             }
+
+            
         }
 
         //AHORA VALIDAMOS SI NO ENCONTRO UN CLIENTE IGUAL LO ASIGNAMOS A UN CLIENTE GENERAL DESCONOCIDO
@@ -519,6 +521,7 @@ class FacturaController extends Controller
             $iden     = $post->factura->cliente->identificacion ? $post->factura->cliente->identificacion : "000000000";
             $nombre   = $post->factura->cliente->nombre ? $post->factura->cliente->nombre : "Desconocido";
             $telefono = $post->factura->cliente->telefono ? $post->factura->cliente->telefono : null;
+            $email = $post->factura->cliente->email ? $post->factura->cliente->email : null;
 
             $cliente->nombres                        = $nombre;
             $cliente->id_dominio_tipo_tercero        = 3;
@@ -550,6 +553,9 @@ class FacturaController extends Controller
         }
 
         return $cliente;
+        
+    
+
     }
 
     public function descontar_inventario_detalles($detalles, $id_factura)
@@ -687,7 +693,7 @@ class FacturaController extends Controller
                     if($post->valor > $factura->valor){
                         $mensaje = "El valor a pagar es mayor a la deuda actual, porfavor verifique el valor del abono.";
                     }else{
-                        $facturacion = $this->facturar_pago_credito($factura, $caja->id_caja, $post->forma_pago, $post->observaciones, $post->valor);
+                        $facturacion = $this->facturar_pago_credito($factura, $caja->id_caja, $post->forma_pago, $post->descripciones, $post->observaciones, $post->valor);
                         $mensaje     = $facturacion->mensaje;
                         $error       = $facturacion->error;
                     }
@@ -707,7 +713,7 @@ class FacturaController extends Controller
         ]);
     }
 
-    public function facturar_pago_credito($factura_credito, $id_caja, $id_dominio_forma_pago, $observaciones, $abono)
+    public function facturar_pago_credito($factura_credito, $id_caja, $id_dominio_forma_pago, $descripciones, $observaciones, $abono)
     {
         //primero buscamos el consecutivo de la resolucion para la factura
         $id_usuario = session('id_usuario');
@@ -721,6 +727,7 @@ class FacturaController extends Controller
             $factura->valor                   = $abono;
             $factura->valor_original          = $factura->valor;
             $factura->id_dominio_tipo_factura = Dominio::get('Factura de venta');
+            $factura->descripciones           = $descripciones;
             $factura->observaciones           = $observaciones;
             $factura->id_usuario_registra     = session('id_usuario');
             $factura->id_licencia             = session('id_licencia');

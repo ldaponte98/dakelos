@@ -71,7 +71,7 @@
 		</tbody>
 	</table>
 	<br>
-	<label><b>Observaciones:</b>{{ $factura->observaciones != "" ? $factura->observaciones : "Ninguna" }}</label><br>
+	<label><b>Descripciones:</b>{{ $factura->descripciones != "" ? $factura->descripciones : "Ninguna" }}</label><br>
 	<br>
 	<table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
 		<tr>

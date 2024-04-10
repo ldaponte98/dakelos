@@ -184,7 +184,7 @@
 	<tr>
 		<td><center>{{ $cont }}</center></td>
 		<td colspan="2">{{ $detalle->nombre_producto }}</td>
-		<td><center>{{ $detalle->cantidad }}</center></td>
+		<td><center>{{ $detalle->cantidad }} {{$detalle->presentacion_producto}}</center></td>
 		<td colspan="2">${{ number_format($valor_producto , 0, '.','.') }}</td>
 		<td style="text-align: right; padding-right: 5px;">${{ number_format($valor_iva, 0, '.','.') }}</td>
 		<td style="text-align: right; padding-right: 5px;">${{ number_format($detalle->descuento_producto, 0, '.','.') }}</td>
@@ -238,7 +238,7 @@
 		<td colspan="3" style="border-bottom: none; background-color: #BFBFBF;"><b>TOTAL: </b>${{ number_format($factura->valor, 0, '.','.') }}</td>
 	</tr>
 	<tr>		
-	<td colspan="10"><b>Observaciones: </b><br>{{ $factura->observaciones}}</td>
+	<td colspan="10"><b>Descripciones: </b><br>{{ $factura->descripciones}}</td>
 	</tr>
 	@if($factura->id_dominio_tipo_factura == 17)
 	<tr>
