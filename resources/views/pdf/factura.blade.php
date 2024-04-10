@@ -184,7 +184,7 @@
 	<tr>
 		<td><center>{{ $cont }}</center></td>
 		<td colspan="2">{{ $detalle->nombre_producto }}</td>
-		<td><center>{{ $detalle->cantidad }}</center></td>
+		<td><center>{{ $detalle->cantidad }} {{$detalle->presentacion_producto}}</center></td>
 		<td colspan="2">${{ number_format($valor_producto , 0, '.','.') }}</td>
 		<td style="text-align: right; padding-right: 5px;">${{ number_format($valor_iva, 0, '.','.') }}</td>
 		<td style="text-align: right; padding-right: 5px;">${{ number_format($detalle->descuento_producto, 0, '.','.') }}</td>
