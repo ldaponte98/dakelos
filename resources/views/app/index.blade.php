@@ -282,7 +282,8 @@
           identificacion: $("#identificacion").val(),
           email: $("#email").val()
         },
-        id_dominio_canal : 54,
+        menu_digital: 1,
+        id_dominio_canal : {{ App\Dominio::get('Domicilio') }},
         id_mesa : null,
         domicilio : 0,
         descripciones : "",
