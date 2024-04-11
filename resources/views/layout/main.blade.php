@@ -117,8 +117,8 @@
                         @if (\App\Permiso::validar(4))
                             @php
                                 $productos = \App\Producto::where('id_licencia', session('id_licencia'))
-                                                          ->where('descontado', 1)
-                                                          ->orWhere('alerta', 1)
+                                                          ->where('alerta', 1)
+                                                          ->where('estado', 1)
                                                           ->where('cantidad_actual', '<=', 'cantidad_minimo_alerta')
                                                           ->orderBy('updated_at', 'desc')
                                                           ->get();
