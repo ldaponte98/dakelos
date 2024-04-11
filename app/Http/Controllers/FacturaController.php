@@ -393,7 +393,7 @@ class FacturaController extends Controller
                     $factura->finalizada              = $post->factura->finalizada;
                     $factura->id_dominio_canal        = $post->factura->id_dominio_canal;
                     $factura->direccion               = $post->factura->direccion;
-                    
+                    $factura->menu_digital            = isset($post->factura->menu_digital) ? $post->factura->menu_digital : 0;
                     $factura->pagada                  = 1;
 
                     if ($post->factura->id_dominio_canal == Dominio::get('Mesa')) {
@@ -521,13 +521,13 @@ class FacturaController extends Controller
             $iden     = $post->factura->cliente->identificacion ? $post->factura->cliente->identificacion : "000000000";
             $nombre   = $post->factura->cliente->nombre ? $post->factura->cliente->nombre : "Desconocido";
             $telefono = $post->factura->cliente->telefono ? $post->factura->cliente->telefono : null;
-            $email = $post->factura->cliente->email ? $post->factura->cliente->email : null;
+            $email    = $post->factura->cliente->email ? $post->factura->cliente->email : "desconocido@gmail.com";
 
             $cliente->nombres                        = $nombre;
             $cliente->id_dominio_tipo_tercero        = 3;
             $cliente->id_dominio_tipo_identificacion = 5;
             $cliente->identificacion                 = $iden;
-            $cliente->email                          = "desconocido@gmail.com";
+            $cliente->email                          = $email;
             $cliente->id_dominio_sexo                = 13;
             $cliente->telefono                       = $telefono;
             $cliente->id_licencia                    = $id_licencia;
@@ -665,7 +665,7 @@ class FacturaController extends Controller
         $pedidos = Factura::where('id_licencia', session('id_licencia'))
             ->where('estado', 1)
             ->where('finalizada', 0)
-            ->where('id_dominio_canal', 54)
+            ->where('menu_digital', 1)
             ->orderBy('created_at', 'desc')
             ->get();
         return view('factura.pedidos_pendientes', compact(['pedidos']));
