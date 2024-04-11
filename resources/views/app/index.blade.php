@@ -71,9 +71,14 @@
             <input type="text" id="identificacion" placeholder="" class="form-control">
           </div>
           <div class="form-group">
+            <label for="email" class=" form-control-label">Correo electrónico</label>
+            <input type="text" id="email" placeholder="" class="form-control">
+          </div>
+          <div class="form-group">
             <label for="company" class=" form-control-label">Direccion</label>
             <input type="text" id="direccion" placeholder="" class="form-control">
           </div>
+          
           <div style="display: none" class="alert alert-danger" id="alert"><small id="msg-alert"></small></div>
           <br>
           <button id="btn-confirmar" class="btn btn-primary mb-2" onclick="ConfirmarChekOut()"> <i></i> Realizar pedido </button>
@@ -258,6 +263,7 @@
       $("#telefono").val(user.telefono)
       $("#identificacion").val(user.identificacion)
       $("#direccion").val(user.direccion)
+      $("#email").val(user.email)
     }
   }
 
@@ -273,7 +279,8 @@
         cliente: {
           nombre: $("#nombre").val(),
           telefono: $("#telefono").val(),
-          identificacion: $("#identificacion").val() 
+          identificacion: $("#identificacion").val(),
+          email: $("#email").val()
         },
         id_dominio_canal : 54,
         id_mesa : null,
@@ -319,7 +326,8 @@
       'nombre' : $("#nombre").val(),
       'telefono' : $("#telefono").val(),
       'identificacion' : $("#identificacion").val(),
-      'direccion' : $("#direccion").val()
+      'direccion' : $("#direccion").val(),
+      'email' : $("#email").val()
     }
     localStorage.setItem('user', JSON.stringify(user))
   }
