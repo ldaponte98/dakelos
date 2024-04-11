@@ -693,7 +693,7 @@ class FacturaController extends Controller
                     if($post->valor > $factura->valor){
                         $mensaje = "El valor a pagar es mayor a la deuda actual, porfavor verifique el valor del abono.";
                     }else{
-                        $facturacion = $this->facturar_pago_credito($factura, $caja->id_caja, $post->forma_pago, $post->descripciones, $post->observaciones, $post->valor);
+                        $facturacion = $this->facturar_pago_credito($factura, $caja->id_caja, $post->forma_pago, isset($post->descripciones) ? $post->descripciones : "", $post->observaciones, $post->valor);
                         $mensaje     = $facturacion->mensaje;
                         $error       = $facturacion->error;
                     }
