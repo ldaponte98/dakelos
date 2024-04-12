@@ -305,19 +305,19 @@
                     </div>
 
                     <div class="form-group">
-                        <i class="fa fa-exclamation-circle"
-                            title="Este campo sera visible en la factura"></i><label>Descripción</label>
-                        <textarea id="factura-descripciones" class="form-control" rows="3"></textarea>
+                        <i class="fa fa-exclamation-circle pointer"
+                            title="Este campo sera visible en la factura"></i><label class="ml-1">Descripción</label>
+                        <textarea id="factura-descripciones" class="form-control" rows="1"></textarea>
                     </div>
                     <div class="form-group">
-                        <i class="fa fa-exclamation-circle"></i><label>Observaciones internas</label>
-                        <textarea id="factura-observaciones" class="form-control" rows="3"></textarea>
+                        <i title="Este campo no se mostrará en la factura del cliente" class="fa fa-exclamation-circle pointer"></i><label class="ml-1">Observaciones internas</label>
+                        <textarea id="factura-observaciones" class="form-control" rows="1"></textarea>
                     </div>
-                    <div class="form-group d-flex">
+                    <!--<div class="form-group d-flex">
                         <label class="lb-flex"><b>Duración estimada (minutos)</b></label>
                         <input type="number" id="factura-duracion" style="width: 30%;" placeholder="0"
                             class="form-control">
-                    </div>
+                    </div>-->
                     <hr>
                 </div>
             </div>
@@ -336,7 +336,7 @@
                     <div data-spy="scroll" class="modal-body">
                         <div class="form-group">
                             <label>Identificación del cliente</label>
-                            <input type="text" id="modal-cliente-identificacion" class="form-control">
+                            <input onkeyup="buscarPersona(this.value)" onchange="buscarPersona(this.value)" type="text" id="modal-cliente-identificacion" class="form-control">
                         </div>
                         <div class="form-group">
                             <label>Nombre del cliente</label>
@@ -418,6 +418,23 @@
             finalizada: 0,
             id_licencia: {{ $licencia->id_licencia }},
             minutos_duracion: {{ $licencia->minutos_duracion_promedio ? $licencia->minutos_duracion_promedio : 0 }}
+        }
+
+        function buscarPersona(caracter) {
+            if(caracter.length > 6){
+                let url = "{{ config('global.url_base') }}/tercero/buscar/" + caracter
+                $.get(url, (res) => {
+                    if(res.length == 1){
+                        const data = res[0]
+                        $("#modal-cliente-identificacion").val(data.identificacion)
+                        $("#modal-cliente-nombre").val(data.nombres + " " + data.apellidos)
+                        $("#modal-cliente-telefono").val(data.telefono)
+                        $("#modal-cliente-correo").val(data.email)
+                    }
+                }).fail((error) => {
+
+                })
+            }
         }
 
         function validarCredito() {
@@ -777,14 +794,14 @@
                 }
             @endif
 
-            if (this.factura.esCredito && (this.factura.abono == null || this.factura.abono == "")) {
+            if (this.factura.esCredito && (this.factura.abono === null || this.factura.abono === "")) {
                 toastr.error(
                     "Para establecer una forma de pago a credito debe agregar en el abono inicial un valor mayor o igual a cero",
                     "Error")
                 return false;
             }
             if (this.factura.esCredito && (this.factura.forma_pago_abono_inicial == null || this.factura
-                    .forma_pago_abono_inicial == "") && this.factura.abono != 0) {
+                    .forma_pago_abono_inicial == "") && this.factura.abono > 0) {
                 toastr.error(
                     "Para establecer una forma de pago a credito debe agregar una forma de pago especifica para el abono inicial",
                     "Error")

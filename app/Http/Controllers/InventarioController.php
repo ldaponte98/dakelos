@@ -170,6 +170,7 @@ class InventarioController extends Controller
                 $factura->id_tercero              = $licencia->responsable->id_tercero;
                 $factura->id_caja                 = $caja->id_caja;
                 $factura->valor                   = $valor;
+                $factura->valor_original          = $valor;
                 $factura->id_dominio_tipo_factura = 53;
                 $factura->observaciones           = "Entrada de inventario";
                 $factura->id_usuario_registra     = session('id_usuario');
