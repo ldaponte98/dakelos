@@ -202,7 +202,6 @@ class FacturaController extends Controller
 
     public function imprimir($id_factura)
     {
-        set_time_limit(72000);
         $factura = Factura::find($id_factura);
         $pdf     = \PDF::loadView('pdf.factura', compact('factura'));
         return $pdf->stream($factura->tipo->nombre . ' ' . $factura->licencia->nombre . '.pdf');
@@ -433,8 +432,8 @@ class FacturaController extends Controller
                                     $texto_resolucion                             = $resolucion->prefijo_credito . "-" . ($resolucion->consecutivo_credito + 1);
                                     $factura->numero                              = $post->factura->id_factura == null ? $texto_resolucion : $factura->numero;
                                     $factura->id_dominio_tipo_factura             = Dominio::get('Factura a credito (Saldo pendiente)');
-                                    $factura->abono_inicial                       = $post->factura->abono;
-                                    $factura->id_dominio_forma_pago_abono_inicial = $post->factura->forma_pago_abono_inicial;
+                                    $factura->abono_inicial                       = isset($post->factura->abono) ? $post->factura->abono : 0;
+                                    $factura->id_dominio_forma_pago_abono_inicial = isset($post->factura->forma_pago_abono_inicial) ? $post->factura->forma_pago_abono_inicial : null;
                                     $factura->save();
                                 }
                             }
