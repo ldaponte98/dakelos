@@ -88,9 +88,16 @@ class CajaController extends Controller
             if ($resolucion) {
                 DB::beginTransaction();
                 //RESOLUCION DEL DOCUMENTO
-                if ($post->id_dominio_tipo_factura == 53) {
-                    //COMPROBANTE DE EGRESO
+                if ($post->id_dominio_tipo_factura == Dominio::get("Comprobante de egreso")) {
                     $factura->numero = $resolucion->prefijo_comprobante_egreso . "-" . ($resolucion->consecutivo_comprobante_egreso + 1);
+                }
+
+                if ($post->id_dominio_tipo_factura == Dominio::get("Recibo de caja")) {
+                    $factura->numero = $resolucion->prefijo_recibo_caja . "-" . ($resolucion->consecutivo_recibo_caja + 1);
+                }
+
+                if ($post->id_dominio_tipo_factura == Dominio::get("Factura a credito (Saldo pendiente)")) {
+                    $factura->numero = $resolucion->prefijo_credito . "-" . ($resolucion->consecutivo_credito + 1);
                 }
 
                 $caja = Caja::where('id_usuario', session('id_usuario'))
@@ -102,6 +109,7 @@ class CajaController extends Controller
                     $factura->id_tercero              = $post->id_tercero;
                     $factura->id_caja                 = $caja->id_caja;
                     $factura->valor                   = $post->valor;
+                    $factura->valor_original          = $post->valor;
                     $factura->id_dominio_tipo_factura = $post->id_dominio_tipo_factura;
                     $factura->observaciones           = $post->observaciones;
                     $factura->id_usuario_registra     = session('id_usuario');

@@ -61,13 +61,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <br>
                             <div class="row">
                                 <div class="col-sm-12">
                                     <label for="cc-payment" class="control-label mb-1"><b>Observaciones</b></label>
-                                    <textarea rows="2" name="observaciones" class="form-control" aria-required="true"  aria-invalid="false">
-                                        {{ $factura->observaciones }}
-                                    </textarea>
+                                    <textarea rows="2" name="observaciones" class="form-control" aria-required="true"  aria-invalid="false">{{ $factura->observaciones }}</textarea>
                                 </div>
                             </div>
 
