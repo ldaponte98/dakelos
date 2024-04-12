@@ -129,21 +129,21 @@
 		<td colspan="3" style="background-color: #BFBFBF; font-size:14px;"><center><b>{{ strtoupper($factura->tipo->nombre) }}</b></center></td>
 	</tr>
 	<tr>
-		<td colspan="5" style="border-left: none; border-top: none; border-bottom: none; font-size: 16px;">&nbsp;</td>
+		<td colspan="5" style="border-left: none; border-top: none; border-bottom: none; font-size: 16px;text-align: center;">{{$factura->licencia->redes_sociales}}</td>
 		<td colspan="3"><center>{{ $factura->numero }}</center> <br></td>
 	</tr>
 	<tr>
-		<td colspan="5" style="border-left: none; border-top: none; border-bottom: none; font-size: 16px;"><center>{{ $factura->licencia->telefono }}</center></td>
+		<td colspan="5" style="border-left: none; border-top: none; border-bottom: none; font-size: 16px;"><center>{{ $factura->licencia->telefono }}</center><</td>
 		<td colspan="3" style="background-color: #BFBFBF;"><center><b>Fecha</b></center></td>
 	</tr>
 	<tr>
-		<td colspan="5" style="border-left: none; border-top: none; border-bottom: none; font-size: 16px;">
-			<p><i>@</i>malori_joyeria1  <i>@</i>malori_joyeria2    Tel. {{ $factura->licencia->telefonos }}</p>
+		<td colspan="5" style="border-left: none; border-top: none; border-bottom: none; font-size: 16px; text-align: center;">
+			<br> <p>Tel. {{ $factura->licencia->telefonos }}</p>
 		
 		</td>
-		<td><center>{{ date('d', strtotime($factura->fecha)) }}</center></td>
-		<td><center>{{ date('m', strtotime($factura->fecha)) }}</center></td>
-		<td><center>{{ date('Y', strtotime($factura->fecha)) }}</center></td>
+		<td><br><center>{{ date('d', strtotime($factura->fecha)) }}</center></td>
+		<td><br><center>{{ date('m', strtotime($factura->fecha)) }}</center></td>
+		<td><br><center>{{ date('Y', strtotime($factura->fecha)) }}</center></td>
 	</tr>
 	</table>
 	<table class="tabla_1" border="1" cellpadding="0" cellspacing="0">
@@ -200,7 +200,7 @@
 	@php $cont++; @endphp
 	@endforeach
 	<tr>
-		<td colspan="7" style="border-bottom: none;"><center></center></td>
+		<td colspan="7" style="border-bottom: none; font-size:6px; text-align: center;"><b>{{$factura->licencia->politica_garantia}}</b></td>
 		<td colspan="3" style="background-color: #BFBFBF; "><b>SUBTOTAL: </b>${{ number_format($subtotal, 0, '.','.') }}</td>
 	</tr>
 	@if ($factura->servicio_voluntario > 0)
@@ -216,11 +216,7 @@
 		</tr>
 	@endif
 	<tr>
-		<td class="p-2" colspan="7" style="border-bottom: none; border-top: none; border-bottom: none; font-size:6px;"><center>En cumplimiento de la <b> ley estatutaria 1581 del 2012,</b> de protección de datos, informamos que mediante el registro de sus datos en la presente factura, usted autoriza a <b>MAROLI JOYERÍA</b> para que éstos sean incorporados en sus bases de datos con la finalidad de generar facturas, cuentas de cobro y demás tipos de contratos que se den de forma contractual y prospección comercial. Así mismo, le informamos en la recolección, almacenamiento y uso de sus datos serán tratados conforme al ordenamiento legal vigente que rige la protección, de datos personales entregados de los titulares.
-		Usted puede ejercitar los derechos a conocer, corregir, actualizar, suministrar y/o revocar la autorización dada, mediante escrito dirigido a <b>MAROLI JOYERÍA</b>.
-		<br>
-		<b>Todas nuestras joyas están elaboradas en oro 18 k por lo tanto se garantiza el material. No cubre danos originados por mal uso </b>
-			</center>
+		<td class="text-center" colspan="7" style="border-bottom: none; border-top: none; border-bottom: none; font-size:6px; text-align: center;">{{$factura->licencia->politica_datos}}
 		<td colspan="3" style="border-bottom: none; background-color: #BFBFBF;"><b>IVA: </b>${{ number_format($total_iva, 0, '.','.') }}</td>
 
 	</tr>

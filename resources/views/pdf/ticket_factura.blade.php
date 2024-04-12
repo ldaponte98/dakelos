@@ -101,9 +101,9 @@
 		</tr>		
 	</table>
 	<br>
-	<center><label style="font-size: 4px;" class="mx-5">En cumplimiento de la<b style="font-size: 3px;">ley estatutaria 1581 del 2012,</b> de protección de datos, informamos que mediante el registro de sus datos en la presente factura, usted autoriza a<b style="font-size: 3px;">MAROLI JOYERÍA</b>para que éstos sean incorporados en sus bases de datos con la finalidad de generar facturas, cuentas de cobro y demás tipos de contratos que se den de forma contractual y prospección comercial. Así mismo, le informamos en la recolección, almacenamiento y uso de sus datos serán tratados conforme al ordenamiento legal vigente que rige la protección, de datos personales entregados de los titulares. Usted puede ejercitar los derechos a conocer, corregir, actualizar, suministrar y/o revocar la autorización dada, mediante escrito dirigido a<b style="font-size: 3px;">MAROLI JOYERÍA</b></label></center>
+	<center><label style="font-size: 4px;" class="mx-5">{{$factura->licencia->politica_datos}}</label></center>
 
-	<center><label><b style="font-size: 4px;">Todas nuestras joyas están elaboradas en oro 18 k por lo tanto se garantiza el material. No cubre danos originados por mal uso </b></labe>
+	<center><label><b style="font-size: 4px;">{{$factura->licencia->politica_garantia}}</b></labe>
 	
 		<br><br>
 	@if ($factura->estado == 0)
