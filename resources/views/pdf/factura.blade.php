@@ -121,19 +121,26 @@
 		@else
 			<td colspan="3" rowspan="4" style="border-right: none; border-bottom: none; border-top: none;"><center><img   src="plantilla/images/app/sinimagen.jpg"></center></td>
 		@endif
-		<td colspan="5" style="border-left: none; border-bottom: none; font-size: 16px; border-top: none;"><center>{{ $factura->licencia->direccion }}</center></td>
+		<td colspan="5" style="border-left: none; border-bottom: none; font-size: 16px; border-top: none;">
+				<center><label>Direccion: {{ $factura->licencia->direccion }} {{ $factura->licencia->ciudad }}</label></center>
+
+				<center><label>NIT. {{ $factura->licencia->nit }}</label></center>
+		</td>
 		<td colspan="3" style="background-color: #BFBFBF; font-size:14px;"><center><b>{{ strtoupper($factura->tipo->nombre) }}</b></center></td>
 	</tr>
 	<tr>
-		<td colspan="5" style="border-left: none; border-top: none; border-bottom: none; font-size: 16px;"><center>{{ $factura->licencia->ciudad }}</center></td>
-		<td colspan="3"><center>{{ $factura->numero }}</center></td>
+		<td colspan="5" style="border-left: none; border-top: none; border-bottom: none; font-size: 16px;">&nbsp;</td>
+		<td colspan="3"><center>{{ $factura->numero }}</center> <br></td>
 	</tr>
 	<tr>
 		<td colspan="5" style="border-left: none; border-top: none; border-bottom: none; font-size: 16px;"><center>{{ $factura->licencia->telefono }}</center></td>
 		<td colspan="3" style="background-color: #BFBFBF;"><center><b>Fecha</b></center></td>
 	</tr>
 	<tr>
-		<td colspan="5" style="border-left: none; border-top: none; border-bottom: none; font-size: 16px;"><center>NIT. {{ $factura->licencia->nit }}</center></td>
+		<td colspan="5" style="border-left: none; border-top: none; border-bottom: none; font-size: 16px;">
+			<p><i>@</i>malori_joyeria1  <i>@</i>malori_joyeria2    Tel. {{ $factura->licencia->telefonos }}</p>
+		
+		</td>
 		<td><center>{{ date('d', strtotime($factura->fecha)) }}</center></td>
 		<td><center>{{ date('m', strtotime($factura->fecha)) }}</center></td>
 		<td><center>{{ date('Y', strtotime($factura->fecha)) }}</center></td>
@@ -164,9 +171,9 @@
 		<td style="background-color: #BFBFBF" colspan="2"><center><b>DESCRIPCIÓN</b></center></td>
 		<td style="background-color: #BFBFBF"><center><b>CANT</b></center></td>
 		<td style="background-color: #BFBFBF" colspan="2"><center><b>Vr. UNIT</b></center></td>
-		<td style="background-color: #BFBFBF"><center><b>IVA</b></center></td>
+		{{-- <td style="background-color: #BFBFBF"><center><b>IVA</b></center></td> --}}
 		<td style="background-color: #BFBFBF"><center><b>DESC</b></center></td>
-		<td style="background-color: #BFBFBF" colspan="2"><center><b>Vr. TOTAL</b></center></td>
+		<td style="background-color: #BFBFBF" colspan="3"><center><b>Vr. TOTAL</b></center></td>
 	</tr>
 	@php $cont = 1; $total_iva = 0; $subtotal = 0;@endphp
 	@foreach($factura->detalles as $detalle)
@@ -186,9 +193,9 @@
 		<td colspan="2">{{ $detalle->nombre_producto }}</td>
 		<td><center>{{ $detalle->cantidad }} {{$detalle->presentacion_producto}}</center></td>
 		<td colspan="2">${{ number_format($valor_producto , 0, '.','.') }}</td>
-		<td style="text-align: right; padding-right: 5px;">${{ number_format($valor_iva, 0, '.','.') }}</td>
+		{{-- <td style="text-align: right; padding-right: 5px;">${{ number_format($valor_iva, 0, '.','.') }}</td> --}}
 		<td style="text-align: right; padding-right: 5px;">${{ number_format($detalle->descuento_producto, 0, '.','.') }}</td>
-		<td style="text-align: right; padding-right: 5px;" colspan="2">${{ number_format(($valor_producto * $detalle->cantidad) + $valor_iva - $detalle->descuento_producto, 0, '.','.') }}</td>
+		<td style="text-align: right; padding-right: 5px;" colspan="3">${{ number_format(($valor_producto * $detalle->cantidad) + $valor_iva - $detalle->descuento_producto, 0, '.','.') }}</td>
 	</tr>
 	@php $cont++; @endphp
 	@endforeach
@@ -209,7 +216,11 @@
 		</tr>
 	@endif
 	<tr>
-		<td colspan="7" style="border-bottom: none; border-top: none; border-bottom: none; font-size:8px;"><center>Formulario dian 18762013422870 de 2019/03/12 habilitada del 00001 al 1000.<br>Esta factura se asimila en todos sus efectos legales a una letra de Cambio según art.774 del Código de Comercio.</center></td>
+		<td class="p-2" colspan="7" style="border-bottom: none; border-top: none; border-bottom: none; font-size:6px;"><center>En cumplimiento de la <b> ley estatutaria 1581 del 2012,</b> de protección de datos, informamos que mediante el registro de sus datos en la presente factura, usted autoriza a <b>MAROLI JOYERÍA</b> para que éstos sean incorporados en sus bases de datos con la finalidad de generar facturas, cuentas de cobro y demás tipos de contratos que se den de forma contractual y prospección comercial. Así mismo, le informamos en la recolección, almacenamiento y uso de sus datos serán tratados conforme al ordenamiento legal vigente que rige la protección, de datos personales entregados de los titulares.
+		Usted puede ejercitar los derechos a conocer, corregir, actualizar, suministrar y/o revocar la autorización dada, mediante escrito dirigido a <b>MAROLI JOYERÍA</b>.
+		<br>
+		<b>Todas nuestras joyas están elaboradas en oro 18 k por lo tanto se garantiza el material. No cubre danos originados por mal uso </b>
+			</center>
 		<td colspan="3" style="border-bottom: none; background-color: #BFBFBF;"><b>IVA: </b>${{ number_format($total_iva, 0, '.','.') }}</td>
 
 	</tr>

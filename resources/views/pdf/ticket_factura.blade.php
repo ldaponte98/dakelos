@@ -49,7 +49,7 @@
 	<table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
 		<thead>
 			<tr>
-				<th style="text-align: left; width: 50%;">Descripcion</th>
+				<th style="text-align: left; width: 50%;">Producto</th>
 				<th style="text-align: right;">Cant</th>
 				<th style="text-align: right;">Total</th>
 			</tr>
@@ -71,17 +71,14 @@
 		</tbody>
 	</table>
 	<br>
-	<label><b>Descripciones:</b>{{ $factura->descripciones != "" ? $factura->descripciones : "Ninguna" }}</label><br>
+	<label><b>Descripcion:</b>{{ $factura->descripciones != "" ? $factura->descripciones : "Ninguna" }}</label><br>
 	<br>
 	<table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
 		<tr>
 			<td style="text-align: right; width: 80%"><b>Subtotal:</b></td>
 			<td style="text-align: right;">${{ number_format($subtotal, 0, '.', '.') }}</td>
 		</tr>
-		<tr>
-			<td style="text-align: right;"><b>Servicio Vol:</b></td>
-			<td style="text-align: right;">${{ number_format($factura->servicio_voluntario, 0, '.', '.') }}</td>
-		</tr>
+		
 		@if ($factura->canal->id_dominio != App\Dominio::get('Mesa'))
 		<tr>
 			<td style="text-align: right;"><b>Domicilio:</b></td>
@@ -101,9 +98,14 @@
 		<tr>
 			<td style="text-align: right;"><b>Total:</b></td>
 			<td style="text-align: right; font-weight: bold;">${{ number_format($factura->valor, 0, '.', '.') }}</td>
-		</tr>
+		</tr>		
 	</table>
-	<br><br><br>
+	<br>
+	<center><label style="font-size: 4px;" class="mx-5">En cumplimiento de la<b style="font-size: 3px;">ley estatutaria 1581 del 2012,</b> de protección de datos, informamos que mediante el registro de sus datos en la presente factura, usted autoriza a<b style="font-size: 3px;">MAROLI JOYERÍA</b>para que éstos sean incorporados en sus bases de datos con la finalidad de generar facturas, cuentas de cobro y demás tipos de contratos que se den de forma contractual y prospección comercial. Así mismo, le informamos en la recolección, almacenamiento y uso de sus datos serán tratados conforme al ordenamiento legal vigente que rige la protección, de datos personales entregados de los titulares. Usted puede ejercitar los derechos a conocer, corregir, actualizar, suministrar y/o revocar la autorización dada, mediante escrito dirigido a<b style="font-size: 3px;">MAROLI JOYERÍA</b></label></center>
+
+	<center><label><b style="font-size: 4px;">Todas nuestras joyas están elaboradas en oro 18 k por lo tanto se garantiza el material. No cubre danos originados por mal uso </b></labe>
+	
+		<br><br>
 	@if ($factura->estado == 0)
 		<center>
 			<label ><b style="font-size: 32px; color: red;">Cancelada</b></label>

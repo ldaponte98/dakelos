@@ -276,17 +276,18 @@
                 </div>
 
                 <div class="form-group">
-                	<label>Descripciones</label>
+                	<label>Descripcion</label>
                 	<textarea id="factura-descripciones" class="form-control" rows="3"></textarea>
                 </div>
                 <div class="form-group">
-                	<label title="Este campo no se mostrará en la factura del cliente" class="fa fa-exclamation-circle"> Observaciones</label> 
+                	<i title="Este campo no se mostrará en la factura del cliente" class="fa fa-exclamation-circle"></i>
+                    <label>Observaciones</label>&nbsp
                 	<textarea id="factura-observaciones" class="form-control" rows="3"></textarea>
                 </div>
-                <div class="form-group d-flex">
+                {{-- <div class="form-group d-flex">
                     <label class="lb-flex"><b>Duración estimada (minutos)</b></label>
                     <input type="number" id="factura-duracion" style="width: 30%;" placeholder="0" class="form-control">
-                </div>
+                </div> --}}
                 <hr>
             </div>
         </div>
