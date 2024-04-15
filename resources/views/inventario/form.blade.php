@@ -83,7 +83,7 @@
                                     <div class="col-sm-4 div-credito hide">
                                         <div class="form-group">
                                             <label for="credito-abono" class="control-label mb-1"><b>Abono inicial (Max: <b id="total-max">$0</b>)</b></label>
-                                            <input id="credito-abono" name="abono_inicial" type="number" class="form-control" aria-required="true" required aria-invalid="false" placeholder="0">
+                                            <input id="credito-abono" name="abono_inicial" type="number" class="form-control" aria-required="true" aria-invalid="false" placeholder="0">
                                         </div>
                                     </div>
                                     <div class="col-sm-4 div-credito hide">
