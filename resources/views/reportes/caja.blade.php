@@ -76,7 +76,7 @@
                         {{ Form::close() }}
                     </div>
                     <div class="col-sm-12">
-                        <div class="table-stats order-table ov-h">
+                        <div class="table-stats table-responsive">
                             <table class="table">
                                 <thead>
                                     <tr>
@@ -90,6 +90,8 @@
                                         @endforeach
                                         <th><center><b>Descuentos</b></center></th>
                                         <th><center><b>Egresos</b></center></th>
+                                        <th><center><b>Egresos a credito</b></center></th>
+                                        <th><center><b>Abono de egresos a credito</b></center></th>
                                         <th><center><b>Total</b></center></th>
                                         <th><center><b>Acciones</b></center></th>
                                     </tr>
@@ -105,6 +107,8 @@
                                     	$total_valores_iniciales = 0;
                                         $total_descuentos = 0;
                                         $total_egresos = 0;
+                                        $total_egresos_credito = 0;
+                                        $total_abonos_egresos_a_credito = 0;
                                     @endphp
                                     @foreach($cajas as $caja)
                                     <tr>
@@ -135,11 +139,17 @@
                                             ${{ number_format($caja->get_egresos(), 0, '.', '.') }}
                                         </td>
                                         <td style="text-align: right;">
+                                            ${{ number_format($caja->get_egresos_a_credito(), 0, '.', '.') }}
+                                        </td>
+                                        <td style="text-align: right;">
+                                            ${{ number_format($caja->get_abonos_egresos_a_credito(), 0, '.', '.') }}
+                                        </td>
+                                        <td style="text-align: right;">
                                         	${{ number_format($caja->get_total(), 0, '.', '.') }}
                                         </td>
                                         <td>
                                             <center>
-                                                <a href="{{ route('caja/view', $caja->id_caja) }}" class="badge badge-info" target="_blank"> <i class="ti-search icon" title="IVer detalles caja"></i></a>
+                                                <a href="{{ route('caja/view', $caja->id_caja) }}" class="btn btn-info" target="_blank"> <i class="ti-eye icon" title="Ver detalles caja"></i></a>
                                             </center>
                                         </td>
 
@@ -148,6 +158,8 @@
                                     		$total_valores_iniciales += $caja->valor_inicial;
                                             $total_descuentos += $caja->get_descuentos();
                                             $total_egresos += $caja->get_egresos();
+                                            $total_egresos_credito += $caja->get_egresos_a_credito();
+                                            $total_abonos_egresos_a_credito += $caja->get_abonos_egresos_a_credito();
                                     	@endphp
                                     </tr>
                                     @php $cont++; @endphp
@@ -176,6 +188,12 @@
                                         	</td>
                                              <td style="text-align: right;">
                                                 <b>${{ number_format($total_egresos, 0, '.', '.') }}</b>
+                                            </td>
+                                            <td style="text-align: right;">
+                                                <b>${{ number_format($total_egresos_credito, 0, '.', '.') }}</b>
+                                            </td>
+                                            <td style="text-align: right;">
+                                                <b>${{ number_format($total_abonos_egresos_a_credito, 0, '.', '.') }}</b>
                                             </td>
                                         	<td style="text-align: right;">
                                         		<b>${{ number_format($total_cajas, 0, '.', '.') }}</b>

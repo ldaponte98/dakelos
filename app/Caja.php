@@ -17,16 +17,22 @@ class Caja extends Model
 
     public function get_total()
     {
-        return $this->valor_inicial + Factura::where('estado', 1)
-            ->where('id_caja', $this->id_caja)
-            ->where('id_dominio_tipo_factura', '<>', 17)
-            ->where('id_dominio_tipo_factura', '<>', 53)
-            ->where('id_dominio_tipo_factura', '<>', 56)
-            ->where('pagada', 1)
-            ->sum('valor') - Factura::where('estado', 1)
-            ->where('id_caja', $this->id_caja)
-            ->where('id_dominio_tipo_factura', 53)
-            ->sum('valor');
+        $facturas = Factura::where('estado', 1)
+                    ->where('id_caja', $this->id_caja)->get();
+        $total = $this->valor_inicial;
+        foreach ($facturas as $factura) {
+            if($factura->id_dominio_tipo_factura <> 17 && 
+            $factura->id_dominio_tipo_factura <> 53 &&
+            $factura->id_dominio_tipo_factura <> 56 &&
+            $factura->pagada == 1) $total += $factura->valor_original;
+
+            if($factura->id_dominio_tipo_factura == 53 && 
+            $factura->credito_comprobante_egreso == 0) $total -= $factura->valor_original;
+
+            if($factura->id_dominio_tipo_factura == 53 && 
+            $factura->credito_comprobante_egreso == 1) $total -= $factura->abono_inicial;
+        }            
+        return $total;
     }
 
     public function get_descuentos()
@@ -42,7 +48,39 @@ class Caja extends Model
         return Factura::where('estado', 1)
             ->where('id_caja', $this->id_caja)
             ->where('id_dominio_tipo_factura', 53)
-            ->sum('valor');
+            ->sum('valor_original');
+    }
+
+    public function get_egresos_a_credito()
+    {
+        $facturas = Factura::where('estado', 1)
+        ->where('id_caja', $this->id_caja)
+        ->where('id_dominio_tipo_factura', 53)
+        ->where('credito_comprobante_egreso', 1)
+        ->get();
+        $total = 0;
+        foreach ($facturas as $item) {
+            $total += $item->valor_original - $item->abono_inicial;
+        }
+        return $total;
+    }
+
+    public function get_egresos_inmediatos()
+    {
+        return Factura::where('estado', 1)
+            ->where('id_caja', $this->id_caja)
+            ->where('id_dominio_tipo_factura', 53)
+            ->where('credito_comprobante_egreso', 0)
+            ->sum('valor_original');
+    }
+
+    public function get_abonos_egresos_a_credito()
+    {
+        return Factura::where('estado', 1)
+            ->where('id_caja', $this->id_caja)
+            ->where('id_dominio_tipo_factura', 53)
+            ->where('credito_comprobante_egreso', 1)
+            ->sum('abono_inicial');
     }
 
     public function total_por_canal($id_dominio_canal)
@@ -51,7 +89,7 @@ class Caja extends Model
             ->where('id_caja', $this->id_caja)
             ->where('id_dominio_tipo_factura', '<>', 17)
             ->where('id_dominio_canal', $id_dominio_canal)
-            ->sum('valor');
+            ->sum('valor_original');
     }
 
     public function total_por_forma_pago($id_dominio_forma_pago)

@@ -9,6 +9,12 @@ class Permiso extends Model
     protected $table      = 'permiso';
     protected $primaryKey = 'id_permiso';
 
+    public static function get($name)
+    {
+        $result = Permiso::where("nombre", $name)->first();
+        return $result == null ? 0 : $result->id_permiso;
+    }
+
     public static function validar($id_permiso, $id_perfil = null)
     {
         $id_perfil = $id_perfil == null ? session('id_perfil') : $id_perfil;
