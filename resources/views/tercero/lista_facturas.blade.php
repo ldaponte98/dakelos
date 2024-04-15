@@ -17,15 +17,15 @@
                         </thead>
                         <tbody>
                         	@php $cont = 1; @endphp
-                        	@foreach($tercero->facturas as $factura)
-                        	@if($factura->id_dominio_tipo_factura == 16)
+                        	@foreach($facturas as $factura)
+                        	@if($factura->id_dominio_tipo_factura == \App\Dominio::get("Factura de venta"))
                         	<tr>
                                 <td class="serial">{{ $cont }}</td>
                                 <td>{{ $factura->numero }}</td>
                                 <td> {{ date('Y-m-d H:i' ,strtotime($factura->fecha)) }} </td>
                                 <td> {{ $factura->tipo->nombre }} </td>
                                 <td> {{ $factura->usuario_registra->tercero->nombre_completo() }} </td>
-                                <td><span class="count">{{ $factura->valor }}</span></td>
+                                <td>${{ number_format($factura->valor_original, 0, '.', '.') }}</td>
                                 <td><center>{{ $factura->get_estado() }}</center></td>
                                 <td>
                                     <center>

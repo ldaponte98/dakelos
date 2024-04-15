@@ -47,7 +47,8 @@ class InventarioController extends Controller
         if ($id_inventario != null) {
             $inventario = Inventario::find($id_inventario);
         }
-
+        $formas_pago = Dominio::where('id_padre', 19)
+            ->get();
         $errors = [];
         if ($post) {
             DB::beginTransaction();
@@ -74,18 +75,18 @@ class InventarioController extends Controller
                         $item->id_inventario         = $inventario->id_inventario;
                         $item->id_producto           = $producto->id_producto;
                         $item->nombre_producto       = strtoupper($producto->nombre);
-                        $item->precio_producto       = $producto->precio_compra;
+                        $item->precio_producto       = $detalle->precio;
                         $item->presentacion_producto = $producto->presentacion->nombre;
                         $item->cantidad              = $detalle->cantidad;
                         if ($item->save()) {
                             $total += $item->cantidad * $item->precio_producto;
                             //AHORA DESCONTAMOS O SUMAMOS A LA CANTIDAD ACTUAL DEL PRODUCTO
-                            if ($inventario->id_dominio_tipo_movimiento == 40) {
+                            if ($inventario->id_dominio_tipo_movimiento == Dominio::get('Entrada de inventario')) {
                                 //ENTRADA
                                 $producto->cantidad_actual += $detalle->cantidad;
                             }
 
-                            if ($inventario->id_dominio_tipo_movimiento == 41) {
+                            if ($inventario->id_dominio_tipo_movimiento == Dominio::get('Salida de inventario')) {
                                 //SALIDA
                                 $producto->cantidad_actual -= $detalle->cantidad;
                             }
@@ -94,9 +95,13 @@ class InventarioController extends Controller
                     }
 
                     //SI ES UNA ENTRADA DE INVENTARIO SE REGISTRA UN COMPROBANTE DE EGRESO A NOMBRE DE LA EMPRESA
-                    if ($post->id_dominio_tipo_movimiento == 40) {
+                    if ($post->id_dominio_tipo_movimiento == Dominio::get("Entrada de inventario")) {
                         //CREAMOS FACTURA DE COMPROBANTE DE EGRESO
-                        $facturacion = $this->facturar_entrada_inventario($total, $detalles);
+                        $licencia   = Licencia::find(session('id_licencia'));
+                        $id_tercero = isset($post->id_tercero_proveedor) && $post->id_tercero_proveedor != "" && $post->id_tercero_proveedor != null ? 
+                            $post->id_tercero_proveedor : 
+                            $licencia->id_tercero_responsable;
+                        $facturacion = $this->facturar_entrada_inventario($id_tercero, $total, $detalles, $inventario);
                         if (!$facturacion->error) {
                             $inventario->id_factura = $facturacion->id_factura;
                             $inventario->save();
@@ -118,7 +123,7 @@ class InventarioController extends Controller
                 return view('inventario.form', compact(['inventario', 'detalles', 'errors']));
             }
         }
-        return view('inventario.form', compact(['inventario', 'detalles', 'errors']));
+        return view('inventario.form', compact(['inventario', 'detalles', 'formas_pago', 'errors']));
     }
 
     public function vista($id_inventario)
@@ -136,13 +141,11 @@ class InventarioController extends Controller
         return view('inventario.stock_actual', compact('tipos'));
     }
 
-    public function facturar_entrada_inventario($valor = 0, $detalles = [])
+    public function facturar_entrada_inventario($id_tercero, $valor = 0, $detalles = [], $inventario)
     {
         $error      = true;
         $message    = "";
         $id_factura = null;
-
-        $licencia   = Licencia::find(session('id_licencia'));
         $resolucion = ResolucionFactura::where('id_licencia', session('id_licencia'))->first();
 
         $caja = Caja::where('id_usuario', session('id_usuario'))
@@ -167,15 +170,23 @@ class InventarioController extends Controller
             $factura->numero = $resolucion->prefijo_comprobante_egreso . "-" . ($resolucion->consecutivo_comprobante_egreso + 1);
 
             if ($caja) {
-                $factura->id_tercero              = $licencia->responsable->id_tercero;
-                $factura->id_caja                 = $caja->id_caja;
-                $factura->valor                   = $valor;
-                $factura->id_dominio_tipo_factura = 53;
-                $factura->observaciones           = "Entrada de inventario";
-                $factura->id_usuario_registra     = session('id_usuario');
-                $factura->id_licencia             = session('id_licencia');
-                $factura->id_dominio_canal        = 49;
-                $factura->finalizada              = 1;
+                $factura->id_tercero                 = $id_tercero;
+                $factura->id_caja                    = $caja->id_caja;
+                $factura->valor                      = $valor;
+                $factura->valor_original             = $valor;
+                $factura->id_dominio_tipo_factura    = Dominio::get("Comprobante de egreso");
+                $factura->observaciones              = "Entrada de inventario";
+                $factura->id_usuario_registra        = session('id_usuario');
+                $factura->id_licencia                = session('id_licencia');
+                $factura->id_dominio_canal           = 49;
+                $factura->finalizada                 = 1;
+                if($inventario->tipo_pago == "Credito"){
+                    $factura->credito_comprobante_egreso = 1;
+                    $factura->abono_inicial = $inventario->abono_inicial;
+                    $factura->id_dominio_forma_pago_abono_inicial = $inventario->id_dominio_forma_pago_abono;
+                    $factura->valor = $valor - $inventario->abono_inicial;
+                    $factura->pagada = 0;
+                }
                 if ($factura->save()) {
                     $resolucion->consecutivo_comprobante_egreso += 1;
                     $resolucion->save();

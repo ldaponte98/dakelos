@@ -119,7 +119,7 @@
 		@if($factura->licencia->imagen != null and $factura->licencia->imagen != "")
 			<td colspan="3" rowspan="4" style="width:30px;border-right: none; border-bottom: none; border-top: none; text-align: center;"><img height="90" width="90" src="{{ $factura->licencia->get_imagen_email() }}"></td>
 		@else
-			<td colspan="3" rowspan="4" style="border-right: none; border-bottom: none; border-top: none;"><center><img   src="plantilla/images/app/sinimagen.jpg"></center></td>
+			<td colspan="3" rowspan="4" style="border-right: none; border-bottom: none; border-top: none;"><center></center></td>
 		@endif
 		<td colspan="5" style="border-left: none; border-bottom: none; font-size: 16px; border-top: none;">
 				<center><label>Direccion: {{ $factura->licencia->direccion }} {{ $factura->licencia->ciudad }}</label></center>

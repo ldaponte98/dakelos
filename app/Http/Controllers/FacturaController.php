@@ -202,7 +202,6 @@ class FacturaController extends Controller
 
     public function imprimir($id_factura)
     {
-        set_time_limit(72000);
         $factura = Factura::find($id_factura);
         $pdf     = \PDF::loadView('pdf.factura', compact('factura'));
         return $pdf->stream($factura->tipo->nombre . ' ' . $factura->licencia->nombre . '.pdf');
@@ -393,7 +392,7 @@ class FacturaController extends Controller
                     $factura->finalizada              = $post->factura->finalizada;
                     $factura->id_dominio_canal        = $post->factura->id_dominio_canal;
                     $factura->direccion               = $post->factura->direccion;
-                    
+                    $factura->menu_digital            = isset($post->factura->menu_digital) ? $post->factura->menu_digital : 0;
                     $factura->pagada                  = 1;
 
                     if ($post->factura->id_dominio_canal == Dominio::get('Mesa')) {
@@ -433,8 +432,8 @@ class FacturaController extends Controller
                                     $texto_resolucion                             = $resolucion->prefijo_credito . "-" . ($resolucion->consecutivo_credito + 1);
                                     $factura->numero                              = $post->factura->id_factura == null ? $texto_resolucion : $factura->numero;
                                     $factura->id_dominio_tipo_factura             = Dominio::get('Factura a credito (Saldo pendiente)');
-                                    $factura->abono_inicial                       = $post->factura->abono;
-                                    $factura->id_dominio_forma_pago_abono_inicial = $post->factura->forma_pago_abono_inicial;
+                                    $factura->abono_inicial                       = isset($post->factura->abono) ? $post->factura->abono : 0;
+                                    $factura->id_dominio_forma_pago_abono_inicial = isset($post->factura->forma_pago_abono_inicial) ? $post->factura->forma_pago_abono_inicial : null;
                                     $factura->save();
                                 }
                             }
@@ -521,13 +520,13 @@ class FacturaController extends Controller
             $iden     = $post->factura->cliente->identificacion ? $post->factura->cliente->identificacion : "000000000";
             $nombre   = $post->factura->cliente->nombre ? $post->factura->cliente->nombre : "Desconocido";
             $telefono = $post->factura->cliente->telefono ? $post->factura->cliente->telefono : null;
-            $email = $post->factura->cliente->email ? $post->factura->cliente->email : null;
+            $email    = $post->factura->cliente->email ? $post->factura->cliente->email : "desconocido@gmail.com";
 
             $cliente->nombres                        = $nombre;
             $cliente->id_dominio_tipo_tercero        = 3;
             $cliente->id_dominio_tipo_identificacion = 5;
             $cliente->identificacion                 = $iden;
-            $cliente->email                          = "desconocido@gmail.com";
+            $cliente->email                          = $email;
             $cliente->id_dominio_sexo                = 13;
             $cliente->telefono                       = $telefono;
             $cliente->id_licencia                    = $id_licencia;
@@ -665,7 +664,7 @@ class FacturaController extends Controller
         $pedidos = Factura::where('id_licencia', session('id_licencia'))
             ->where('estado', 1)
             ->where('finalizada', 0)
-            ->where('id_dominio_canal', 54)
+            ->where('menu_digital', 1)
             ->orderBy('created_at', 'desc')
             ->get();
         return view('factura.pedidos_pendientes', compact(['pedidos']));
@@ -693,7 +692,7 @@ class FacturaController extends Controller
                     if($post->valor > $factura->valor){
                         $mensaje = "El valor a pagar es mayor a la deuda actual, porfavor verifique el valor del abono.";
                     }else{
-                        $facturacion = $this->facturar_pago_credito($factura, $caja->id_caja, $post->forma_pago, $post->descripciones, $post->observaciones, $post->valor);
+                        $facturacion = $this->facturar_pago_credito($factura, $caja->id_caja, $post->forma_pago, isset($post->descripciones) ? $post->descripciones : "", $post->observaciones, $post->valor);
                         $mensaje     = $facturacion->mensaje;
                         $error       = $facturacion->error;
                     }
@@ -702,6 +701,48 @@ class FacturaController extends Controller
                 }
             } else {
                 $mensaje = "Factura no valida";
+            }
+        } else {
+            $mensaje = "No data valid";
+        }
+
+        return response()->json([
+            'error'   => $error,
+            'mensaje' => $mensaje,
+        ]);
+    }
+
+    public function pagar_proveedor(Request $request)
+    {
+        $post    = $request->all();
+        $error   = true;
+        $mensaje = "";
+        if ($post) {
+            $post    = (object) $post;
+            $factura = Factura::find($post->id_factura);
+            if ($factura) {
+                $id_usuario = session('id_usuario');
+                $id_perfil  = session('id_perfil');
+
+                //validamos si el usuario tiene caja abierta para facturar
+                $caja = Caja::where('id_usuario', $id_usuario)
+                    ->where('estado', 1)
+                    ->where('fecha_cierre', null)
+                    ->first();
+
+                if ($caja) {
+                    if($post->valor > $factura->valor){
+                        $mensaje = "El valor a pagar es mayor a la deuda actual, porfavor verifique el valor del abono.";
+                    }else{
+                        $facturacion = $this->facturar_pago_proveedor($factura, $caja->id_caja, $post->forma_pago, isset($post->descripciones) ? $post->descripciones : "", $post->observaciones, $post->valor);
+                        $mensaje     = $facturacion->mensaje;
+                        $error       = $facturacion->error;
+                    }
+                } else {
+                    $mensaje = "Para realizar el pago debe tener caja abierta";
+                }
+            } else {
+                $mensaje = "Documento no valido";
             }
         } else {
             $mensaje = "No data valid";
@@ -755,6 +796,66 @@ class FacturaController extends Controller
                 $mensaje = "Pago de credito registrado exitosamente";
                 $error   = false;
                 Log::write("Pago de credito", "El usuario [$id_usuario] pago credito de factura [$factura_credito->id_factura] generando factura [$factura->id_factura]");
+                DB::commit();
+            } else {
+                DB::rollBack();
+                $mensaje = "Error al registrar la factura";
+                $errors  = $factura->errors;
+            }
+        } else {
+            DB::rollBack();
+            $mensaje = "No tiene resolucion activa";
+        }
+
+        return (object) [
+            'error'   => $error,
+            'mensaje' => $mensaje,
+        ];
+    }
+
+    public function facturar_pago_proveedor($factura_credito, $id_caja, $id_dominio_forma_pago, $descripciones, $observaciones, $abono)
+    {
+        //primero buscamos el consecutivo de la resolucion para la factura
+        $id_usuario = session('id_usuario');
+        $resolucion = ResolucionFactura::where('id_licencia', session('id_licencia'))->first();
+        DB::beginTransaction();
+        if ($resolucion) {
+            $factura                          = new Factura;
+            $factura->numero                  = $resolucion->prefijo_comprobante_egreso . "-" . ($resolucion->consecutivo_comprobante_egreso + 1);
+            $factura->id_tercero              = $factura_credito->id_tercero;
+            $factura->id_caja                 = $id_caja;
+            $factura->valor                   = $abono;
+            $factura->valor_original          = $abono;
+            $factura->id_dominio_tipo_factura = Dominio::get('Comprobante de egreso');
+            $factura->descripciones           = $descripciones;
+            $factura->observaciones           = $observaciones;
+            $factura->id_usuario_registra     = session('id_usuario');
+            $factura->id_licencia             = session('id_licencia');
+            $factura->id_dominio_canal        = 49;
+            $factura->finalizada              = 1;
+            $factura->pagada                  = 1;
+            $factura->id_factura_cruce        = $factura_credito->id_factura;
+            $factura->credito_comprobante_egreso = 0;
+            if ($factura->save()) {
+                //ahora aumentamos el consecutivo de la resolucion
+                $resolucion->consecutivo_comprobante_egreso += 1;
+                $resolucion->save();
+                //Ahora registramos las formas de pago
+                $forma_pago                        = new FormaPago;
+                $forma_pago->id_factura            = $factura->id_factura;
+                $forma_pago->id_dominio_forma_pago = $id_dominio_forma_pago;
+                $forma_pago->valor                 = $factura->valor;
+                $forma_pago->save();
+
+                $valor_pendiente = $factura_credito->valor - $abono;
+                $factura_credito_bd = Factura::find($factura_credito->id_factura);
+                $factura_credito_bd->valor = $valor_pendiente;
+                $factura_credito_bd->save();
+
+                $factura->enviar_email();
+                $mensaje = "Pago de credito registrado exitosamente";
+                $error   = false;
+                Log::write("Pago de proveedores", "El usuario [$id_usuario] pago credito a proveedores de documento [$factura_credito->numero] generando factura [$factura->numero]");
                 DB::commit();
             } else {
                 DB::rollBack();

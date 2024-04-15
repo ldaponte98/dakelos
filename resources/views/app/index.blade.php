@@ -17,7 +17,7 @@
                   <i class="fa fa-minus"></i>
                 </a>
               </div>
-              <input id="txt-cantidad-{{ $item->id_producto }}" readonly type="number" class="form-control">
+              <input id="txt-cantidad-{{ $item->id_producto }}" onkeyup="AsignarCantidadProducto({{ $item->id_producto }})" type="number" class="form-control">
               <div class="input-group-btn">
                 <a onclick="SumarProducto({{ $item->id_producto }})" class="btn btn-action">
                   <i class="fa fa-plus"></i>
@@ -71,9 +71,14 @@
             <input type="text" id="identificacion" placeholder="" class="form-control">
           </div>
           <div class="form-group">
+            <label for="email" class=" form-control-label">Correo electrónico</label>
+            <input type="text" id="email" placeholder="" class="form-control">
+          </div>
+          <div class="form-group">
             <label for="company" class=" form-control-label">Direccion</label>
             <input type="text" id="direccion" placeholder="" class="form-control">
           </div>
+          
           <div style="display: none" class="alert alert-danger" id="alert"><small id="msg-alert"></small></div>
           <br>
           <button id="btn-confirmar" class="btn btn-primary mb-2" onclick="ConfirmarChekOut()"> <i></i> Realizar pedido </button>
@@ -149,11 +154,23 @@
   }
 
   function SumarProducto(id_producto) {
-
     let busqueda = this.carrito.find(item => item.id_producto == id_producto)
     if (busqueda) {
       busqueda.cantidad++
       $(`#txt-cantidad-${id_producto}`).val(busqueda.cantidad)
+      let pos = this.carrito.indexOf(busqueda)
+      this.carrito.splice(pos, 1, busqueda)
+      ActualizarLocalStorage()
+    }else{
+      $(`#txt-cantidad-${id_producto}`).val(1)
+      AgregarProducto(id_producto)
+    }
+  }
+
+  function AsignarCantidadProducto(id_producto) {
+    let busqueda = this.carrito.find(item => item.id_producto == id_producto)
+    if (busqueda) {
+      busqueda.cantidad = $(`#txt-cantidad-${id_producto}`).val() == "" ? 0 : $(`#txt-cantidad-${id_producto}`).val()
       let pos = this.carrito.indexOf(busqueda)
       this.carrito.splice(pos, 1, busqueda)
       ActualizarLocalStorage()
@@ -258,6 +275,7 @@
       $("#telefono").val(user.telefono)
       $("#identificacion").val(user.identificacion)
       $("#direccion").val(user.direccion)
+      $("#email").val(user.email)
     }
   }
 
@@ -273,9 +291,11 @@
         cliente: {
           nombre: $("#nombre").val(),
           telefono: $("#telefono").val(),
-          identificacion: $("#identificacion").val() 
+          identificacion: $("#identificacion").val(),
+          email: $("#email").val()
         },
-        id_dominio_canal : 54,
+        menu_digital: 1,
+        id_dominio_canal : {{ App\Dominio::get('Domicilio') }},
         id_mesa : null,
         domicilio : 0,
         descripciones : "",
@@ -319,7 +339,8 @@
       'nombre' : $("#nombre").val(),
       'telefono' : $("#telefono").val(),
       'identificacion' : $("#identificacion").val(),
-      'direccion' : $("#direccion").val()
+      'direccion' : $("#direccion").val(),
+      'email' : $("#email").val()
     }
     localStorage.setItem('user', JSON.stringify(user))
   }

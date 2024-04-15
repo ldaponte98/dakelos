@@ -32,7 +32,7 @@
             <div class="card-header">
                 <div class="row">
                     <div class="col-sm-9" style="padding-top: 7px;">
-                        <strong>Facturas a creditos (Saldo pendiente)</strong>
+                        <strong>Pago a proveedores</strong>
                     </div>
                     <div class="col-sm-3" style="text-align: right !important;">
                         <input id="filtro" type="text" class="form-control" placeholder="Consulte aqui..." autocomplete="on">
@@ -52,31 +52,17 @@
                                     <input required name="fechas" id="fechas" type="text" class="form-control" placeholder="Todas" autocomplete="off" value="{{ $fechas }}">
                                 </div>
                             </div>
-                            <div class="col-sm-3">
-                                <div class="input-group mb-3 " style="display: -webkit-inline-box;">
-                                <div class="input-group-prepend">
-                                    <label class="input-group-text" for="canales">Canales</label>
-                                </div>
-
-                                @php
-                                    $_canales = \App\Dominio::get_canales(session('id_licencia'));
-                                @endphp
-                                    <select id="canales" name="canales[]" data-placeholder="Todos los canales" multiple class="standardSelect form-control">
+                            <div class="col-sm-4">
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="search_tercero">Proveedor</label>
+                                    </div>
+                                    <select name="search_tercero[]" data-placeholder="Escoje uno o mas..." multiple class="standardSelect">
                                         <option value="" label="default"></option>
-                                        @foreach($_canales as $item)
-                                            <option @if(in_array($item->id_dominio, $canales)) selected @endif 
-                                                value="{{ $item->id_dominio }}">{{ $item->nombre }}</option>
+                                        @foreach($proveedores as $item)
+                                        <option @if(in_array($item->id_tercero, $search_tercero)) selected @endif value="{{ $item->id_tercero }}">{{ $item->nombre_completo() . " (".$item->identificacion.")" }}</option>
                                         @endforeach
                                     </select>
-                                </div>
-                            </div>
-
-                            <div class="col-sm-3">
-                                <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <label class="input-group-text" for="search_tercero">Tercero</label>
-                                </div>
-                                    <input name="search_tercero" id="search_tercero" type="text" class="form-control" placeholder="Identificación del tercero" autocomplete="off" value="{{ $search_tercero }}">
                                 </div>
                             </div>
 
@@ -93,11 +79,11 @@
                                     <tr>
                                         <th class="serial"><center><b>#</b></center></th>
                                         <th><center><b>Numero</b></center></th>
-                                        <th><center><b>Cliente</b></center></th>
+                                        <th><center><b>Proveedor</b></center></th>
                                         <th><center><b>Fecha</b></center></th>
-                                        <th><center><b>Canal</b></center></th>
                                         <th><center><b>Usu registro</b></center></th>
                                         <th><center><b>Valor original</b></center></th>
+                                        <th><center><b>Abono inicial</b></center></th>
                                         <th><center><b>Pendiente por pagar</b></center></th>
                                         <th><center><b>Estado</b></center></th>
                                         <th></th>
@@ -105,65 +91,50 @@
                                 </thead>
                                 <tbody id="bodytable">
                                     @php $cont = 1; @endphp
-                                    @php
-                                        $total = 0;
-                                        $total_pagado = 0;
-                                        $total_deuda = 0;
-                                    @endphp
-                                    @foreach($facturas as $factura)
-                                    @php
-                                        $estaPagada = $factura->estaPagada();
-                                    @endphp
-                                    <tr>
-                                        <td class="serial"><center>{{ $cont }}</center></td>
-                                        <td><center>{{ $factura->numero }}</center></td>
-                                        <td><center><a href="{{ route('tercero/view', $factura->id_tercero) }}">{{ $factura->tercero->nombre_completo() }}</a></center></td>
-                                        <td><center> {{ date('Y-m-d H:i' ,strtotime($factura->fecha)) }} </center></td>
-                                        <td><center>{{ $factura->canal->nombre }} </center></td>
-                                        <td><center> {{ $factura->usuario_registra->tercero->nombre_completo() }} </center></td>
-                                        <td><center>${{ number_format($factura->valor_original, 0, '.', '.') }}</center></td>
-                                        <td><center>${{ number_format($factura->valor, 0, '.', '.') }}</center></td>
-                                        <td><center>
-                                            @if (!$estaPagada)
-                                                <span class="badge badge-warning">
-                                                    <b>Sin pagar</b>
-                                                </span>
-                                            @else
-                                                <span class="badge badge-success">
-                                                    <b>Pagada</b>
-                                                </span>
-                                            @endif
-                                            
-                                        </center></td>
-                                        <td>
-                                            <center>
-                                                <a href="{{ route('factura/imprimir', $factura->id_factura) }}" class="badge badge-info" target="_blank"> <i class="ti-printer icon" title="Imprimir factura formal"></i></a>
-                                                <a target="_blank" href="{{ route('reportes/documentos-asociados-factura', $factura->id_factura) }}"  class="badge badge-warning text-white pointer" > <i class="ti-server icon" title="Ver abonos"></i></a>
-                                                @if ($permiso_pagar and $factura->estado == 1 and !$estaPagada)
-                                                    <a onclick="ModalPagar({{ $factura->id_factura }}, {{ $factura->valor }})" class="badge badge-success text-white pointer" > <i class="ti-money icon" title="Pagar factura"></i></a>
-                                                @endif
-
-                                                
-                                            </center>
-                                        </td>
-                                        @php 
-                                            $total += $factura->valor_original; 
-                                            if ($estaPagada) $total_pagado += $factura->valor_original; 
-                                            if (!$estaPagada){
-                                                $total_pagado += $factura->getTotalAbonos(); 
-                                                $total_deuda += $factura->valor; 
-                                            } 
+                                    @foreach($documentos as $factura)
+                                        @php
+                                            $estaPagada = $factura->estaPagada();
                                         @endphp
-                                    </tr>
-                                    @php $cont++; @endphp
+                                        <tr>
+                                            <td class="serial"><center>{{ $cont }}</center></td>
+                                            <td><center>{{ $factura->numero }}</center></td>
+                                            <td><center><a target="_blank" href="{{ route('tercero/view', $factura->id_tercero) }}">{{ $factura->tercero->nombre_completo() }}</a></center></td>
+                                            <td><center> {{ date('Y-m-d H:i' ,strtotime($factura->fecha)) }} </center></td>
+                                            <td><center> {{ $factura->usuario_registra->tercero->nombre_completo() }} </center></td>
+                                            <td><center>${{ number_format($factura->valor_original, 0, '.', '.') }}</center></td>
+                                            <td><center>${{ number_format($factura->abono_inicial, 0, '.', '.') }}</center></td>
+                                            <td><center>${{ number_format($factura->valor, 0, '.', '.') }}</center></td>
+                                            <td><center>
+                                                @if (!$estaPagada)
+                                                    <span class="badge badge-warning">
+                                                        <b>Sin pagar</b>
+                                                    </span>
+                                                @else
+                                                    <span class="badge badge-success">
+                                                        <b>Pagada</b>
+                                                    </span>
+                                                @endif
+                                                
+                                            </center></td>
+                                            <td>
+                                                <center>
+                                                    <a target="_blank" href="{{ route('factura/imprimir', $factura->id_factura) }}" class="badge badge-info" target="_blank"> <i class="ti-printer icon" title="Imprimir factura formal"></i></a>
+                                                    <a target="_blank" href="{{ route('reportes/documentos-asociados-factura', $factura->id_factura) }}"  class="badge badge-warning text-white pointer" > <i class="ti-server icon" title="Ver abonos"></i></a>
+                                                    @if ($permiso_pagar and $factura->estado == 1 and !$estaPagada)
+                                                        <a onclick="ModalPagar({{ $factura->id_factura }}, {{ $factura->valor }})" class="badge badge-success text-white pointer" > <i class="ti-money icon" title="Pagar o abonar"></i></a>
+                                                    @endif
+                                                </center>
+                                            </td>
+                                        </tr>
+                                        @php $cont++; @endphp
                                     @endforeach
 
-                                    @if (count($facturas) == 0)
+                                    @if (count($documentos) == 0)
                                         <tr>
                                             <td colspan="10">
                                                 <center>
                                                     <br>
-                                                    <i>No hay registros para esta consulta</i>
+                                                        <i>No hay registros para esta consulta</i>
                                                     <br>
                                                 </center>
                                             </td>
@@ -183,19 +154,19 @@
                                 <tbody>
                                     <tr>
                                         <td><center><b>N° documentos</b></center></td>
-                                        <td><center>{{ count($facturas) }}</center></td>
+                                        <td><center>{{ number_format($total_documentos, 0, ".", ".") }}</center></td>
                                     </tr>
                                     <tr>
-                                        <td><center><b>Total facturado</b></center></td>
-                                        <td><center>${{ number_format($total, 0, '.', '.') }}</center></td>
+                                        <td><center><b>Total acreditado</b></center></td>
+                                        <td><center>${{ number_format($total_acreditado, 0, '.', '.') }}</center></td>
                                     </tr>
                                     <tr>
                                         <td><center><b>Pagado</b></center></td>
                                         <td><center>${{ number_format($total_pagado, 0, '.', '.') }}</center></td>
                                     </tr>
                                     <tr>
-                                        <td><center><b>En deuda</b></center></td>
-                                        <td><center>${{ number_format($total_deuda, 0, '.', '.') }}</center></td>
+                                        <td><center><b>Pendiente por pagar</b></center></td>
+                                        <td><center>${{ number_format($total_pendiente, 0, '.', '.') }}</center></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -203,7 +174,7 @@
                     </div>
                 </div>
             </div>
-        </div> <!-- .card -->
+        </div>
     </div>
 </div>
 
@@ -211,7 +182,7 @@
     <tr>
         <td colspan='9' rowspan='2'>
             <center>
-                <b>REPORTE DE FACTURAS A CREDITO PENDIENTES</b>
+                <b>REPORTE DE PAGOS PENDIENTES A PROVEEDORES</b>
             </center>
         </td>
     </tr>
@@ -224,40 +195,35 @@
     
     <tr>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Numero</b></td>
-        <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Cliente</b></td>
+        <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Proveedor</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Fecha</b></td>
-        <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Canal</b></td>
-        <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Cantidad de productos</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Usu registro</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Estado</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Valor original</b></td>
+        <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Abono inicial</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Pendiente por pagar</b></td>
     </tr>
     <tbody id="bodytable_excel">
         @php
             $total = 0;
         @endphp
-            @foreach($facturas as $factura)
-             <tr>
-                <td>{{ $factura->numero }}</td>
-                <td>{{ $factura->tercero->nombre_completo() }}</td>
-                <td>{{ date('Y-m-d H:i' ,strtotime($factura->fecha)) }} </td>
-                <td>{{ $factura->canal->nombre }} </td>
-                <td>{{ count($factura->detalles) }} </td>
-                <td>{{ $factura->usuario_registra->tercero->nombre_completo() }} </td>
-                <td><center>{{ $factura->estaPagada() ? "Pagada" : "Sin pagar" }}</center></td>
-                <td>{{ $factura->valor_original }}</td>
-                <td>{{ $factura->valor }}</td>
-                
-            </tr>
-            @php
-            if($factura->id_dominio_tipo_factura == 16){
-                $total += $factura->valor;
-            }
-            @endphp
+            @foreach($documentos as $factura)
+                <tr>
+                    <td>{{ $factura->numero }}</td>
+                    <td>{{ $factura->tercero->nombre_completo() }}</td>
+                    <td>{{ date('Y-m-d H:i' ,strtotime($factura->fecha)) }} </td>
+                    <td>{{ $factura->usuario_registra->tercero->nombre_completo() }} </td>
+                    <td><center>{{ $factura->estaPagada() ? "Pagada" : "Sin pagar" }}</center></td>
+                    <td>{{ $factura->valor_original }}</td>
+                    <td>{{ $factura->abono_inicial }}</td>
+                    <td>{{ $factura->valor }}</td>
+                </tr>
+                @php
+                    $total += $factura->valor;
+                @endphp
             @endforeach
             <tr>
-                <td colspan="8"><b>Total</b></td>
+                <td colspan="7"><b>Total</b></td>
                 <td colspan="1" style="text-align: right;"><b>{{ $total }}</b></td>
             </tr>
     </tbody>    
@@ -300,11 +266,10 @@
     </div>
 @endif
 
-
 <script type="text/javascript">
     var id_factura = null;
     function exportar_excel() {
-        tableToExcel('tabla_excel', 'Informe facturas a credito')
+        tableToExcel('tabla_excel', 'Informe pagos pendientes a proveedores')
     }
     $(document).ready(function() {
         $('#fechas').daterangepicker({
@@ -330,44 +295,44 @@
 
     })
 
-@if ($permiso_pagar)
-    function ModalPagar(id_factura, valor) {
-        this.id_factura = id_factura; 
-        $("#lb-modal-valor").html(`Valor a pagar (Max: $${valor})`)
-        $("#modal-valor").val(valor)
-        $('#modal-pago').modal('show');
-    }
-    function Pagar() {
-        let observaciones = $("#modal-observaciones").val()
-        let valor = $("#modal-valor").val()
-        let forma_pago = $("#modal-forma-pago").val()
-
-        let url = "{{ route('factura/pagar_credito') }}"
-        Loading(true, "Pagando credito pendiente...")
-        var _token = ""
-        $("[name='_token']").each(function() { _token = this.value })
-        let request = {
-            '_token' : _token,
-            'id_factura' : id_factura,
-            'valor' : valor,
-            'observaciones' : observaciones,
-            'forma_pago' : forma_pago
+    @if ($permiso_pagar)
+        function ModalPagar(id_factura, valor) {
+            this.id_factura = id_factura; 
+            $("#lb-modal-valor").html(`Valor a pagar (Max: $${valor})`)
+            $("#modal-valor").val(valor)
+            $('#modal-pago').modal('show');
         }
-        $.post(url, request, (response) => {
-            if (!response.error) {
-                this.id_factura = null;
-                toastr.success(response.mensaje, "Proceso exitoso")
-                setTimeout(function() { location.reload() }, 1500);                
-            }else{
-                Loading(false)
-                toastr.error(response.mensaje, "Error")
+        function Pagar() {
+            let observaciones = $("#modal-observaciones").val()
+            let valor = $("#modal-valor").val()
+            let forma_pago = $("#modal-forma-pago").val()
+
+            let url = "{{ route('factura/pagar_proveedor') }}"
+            Loading(true, "Pagando a proveedor...")
+            var _token = ""
+            $("[name='_token']").each(function() { _token = this.value })
+            let request = {
+                '_token' : _token,
+                'id_factura' : id_factura,
+                'valor' : valor,
+                'observaciones' : observaciones,
+                'forma_pago' : forma_pago
             }
-        })
-        .fail((error) => {
-            console.log(error)
-            toastr.error("Ha ocurrido un error, por favor intentelo nuevamente", "Error")
-        })           
-    }
-@endif
+            $.post(url, request, (response) => {
+                if (!response.error) {
+                    this.id_factura = null;
+                    toastr.success(response.mensaje, "Proceso exitoso")
+                    setTimeout(function() { location.reload() }, 1000);                
+                }else{
+                    Loading(false)
+                    toastr.error(response.mensaje, "Error")
+                }
+            })
+            .fail((error) => {
+                console.log(error)
+                toastr.error("Ha ocurrido un error, por favor intentelo nuevamente", "Error")
+            })           
+        }
+    @endif
 </script>
 @endsection

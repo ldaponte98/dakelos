@@ -62,7 +62,7 @@ class ReporteController extends Controller
                 $total_facturas_ventas += 1;
             }
             if ($factura->estado == 1 and $factura->id_dominio_tipo_factura == 53) {
-                $total_egresos += $factura->valor;
+                $total_egresos += $factura->valor_original;
             }
         }
 
@@ -157,7 +157,21 @@ class ReporteController extends Controller
         ]));
     }
 
-    public function facturas_pendientes_pagar(Request $request)
+    public function documentos_asociados_factura($id_factura)
+    {
+        $documento = Factura::find($id_factura);
+        if($documento == null) {
+            echo "Documento invalido"; die;
+        }
+
+        $facturas = Factura::where('id_factura_cruce', $id_factura)->get();
+        return view('reportes.pago_abonos_credito', compact([
+            'documento',
+            'facturas'
+        ]));
+    }
+
+    public function creditos_pendientes(Request $request)
     {
         $post           = $request->all();
         $fecha_desde    = "";
@@ -233,6 +247,73 @@ class ReporteController extends Controller
             'permiso_pagar',
             'search_tercero',
             'formas_pago',
+        ]));
+    }
+
+    public function pago_proveedores(Request $request)
+    {
+        $post           = $request->all();
+        $fecha_desde    = "";
+        $fecha_hasta    = "";
+        $id_perfil      = session('id_perfil');
+        $id_permiso     = Permiso::get("Pagar saldo proveedores");
+        $permiso_pagar  = Permiso::validar($id_permiso, $id_perfil);
+        $fechas         = date('Y/m/d') . " 00:00 - " . date('Y/m/d') . " 23:59";
+        $fechas         = date('Y/m/d') . " 00:00 - " . date('Y/m/d') . " 23:59";
+        $search_tercero = [];
+        $formas_pago    = Dominio::where('id_padre', Dominio::get("Formas de pago"))
+            ->where('id_dominio', '<>', Dominio::get('Credito (Saldo pendiente)'))
+            ->get();
+
+        $proveedores = Tercero::where("id_licencia", session("id_licencia"))
+                              ->where("id_dominio_tipo_tercero", Dominio::get("Proveedor"))
+                              ->get();
+        if ($post) {
+            $post   = (object) $post;
+            $fechas = $post->fechas;
+            if ($fechas != "") {
+                $fecha_desde = date('Y-m-d H:i', strtotime(explode('-', $post->fechas)[0]));
+                $fecha_hasta = date('Y-m-d H:i', strtotime(explode('-', $post->fechas)[1]));
+            }
+            if(isset($post->search_tercero)) $search_tercero = $post->search_tercero;
+        }
+
+        $documentos = Factura::where('id_licencia', session('id_licencia'))
+        ->where('estado', 1)
+        ->where('credito_comprobante_egreso', 1)
+        ->where('id_dominio_tipo_factura', Dominio::get("Comprobante de egreso"));
+        if ($fechas != "") {
+            $documentos = $documentos->whereBetween('fecha', [$fecha_desde, $fecha_hasta]);
+        }
+        if (count($search_tercero) > 0) {
+            $documentos = $documentos->whereIn('id_tercero', $search_tercero);
+        }
+
+        $documentos = $documentos->orderBy('fecha', 'desc');
+        $documentos = $documentos->get();
+
+        $total_documentos    = count($documentos);
+        $total_acreditado    = 0;
+        $total_pagado        = 0;
+        $total_pendiente     = 0;
+
+        foreach ($documentos as $item) {
+            $total_acreditado += $item->valor_original;
+            $total_pagado     += $item->valor_original - $item->valor;
+            $total_pendiente  += $item->valor;
+        }
+
+        return view('reportes.pago_proveedores', compact([
+            'documentos',
+            'total_documentos',
+            'total_acreditado',
+            'total_pagado',
+            'total_pendiente',
+            'fechas',
+            'permiso_pagar',
+            'search_tercero',
+            'formas_pago',
+            'proveedores'
         ]));
     }
 }
