@@ -44,6 +44,23 @@
                                 <td><b>Proveedor</b></td>
                                 <td>{{ $inventario->proveedor ? $inventario->proveedor->nombre_completo() : "No definido" }}</td>
                             </tr>
+                            <tr>
+                                <td><b>Tipo de pago</b></td>
+                                <td>{{ $inventario->tipo_pago }}</td>
+                            </tr>
+                            @if ($inventario->tipo_pago == "Credito")
+                            <tr>
+                                <td><b>Abono inicial</b></td>
+                                <td>${{ number_format($inventario->abono_inicial, 0, '.', '.') }}</td>
+                            </tr>
+                            <tr>
+                                @php
+                                    $forma_pago_abono = \App\Dominio::find($inventario->id_dominio_forma_pago_abono);
+                                @endphp
+                                <td><b>Forma de pago de abono inicial</b></td>
+                                <td>{{ $forma_pago_abono != null ? $forma_pago_abono->nombre : "Ninguna" }}</td>
+                            </tr>
+                            @endif
                             @endif
                             <tr>
                                 <td><b>Creación</b></td>

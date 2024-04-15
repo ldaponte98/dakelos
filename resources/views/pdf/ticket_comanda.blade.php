@@ -41,8 +41,11 @@
 		</tbody>
 	</table>
 	<br>
-	<label><b>Descripciones</b></label><br>
+	<label><b>Descripcion</b></label><br>
 	<label>{{ $factura->descripciones != "" ? $factura->descripciones : "Ninguna" }}</label>
+	<br><br>
+	<label><b>Observaciones</b></label><br>
+	<label>{{ $factura->observaciones != "" ? $factura->observaciones : "Ninguna" }}</label>
 </body>
 </html>
 

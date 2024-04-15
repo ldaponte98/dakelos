@@ -92,6 +92,10 @@
     display: none;
 }
 
+.hide{
+    display: none;
+}
+
 .fab-container{
     position: fixed;
     top: 70px;
