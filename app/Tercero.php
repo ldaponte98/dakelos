@@ -126,7 +126,7 @@ class Tercero extends Model
     {
         $facturas = Factura::all()
                              ->where('estado', 1)
-                             ->where('id_dominio_tipo_factura', Dominio::get("Comprobande de egreso"))
+                             ->where('id_dominio_tipo_factura', Dominio::get("Comprobante de egreso"))
                              ->where('id_tercero', $this->id_tercero)
                              ->where('valor', '>' , 0)
                              ->where('id_factura_cruce', null)

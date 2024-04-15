@@ -71,6 +71,37 @@
                                     </div>
                                 </div>
                                 <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="form-group" style="">
+                                            <label for="cc-payment" class="control-label mb-1"><b>*Tipo de pago</b></label><br>
+                                            <select class="form-control" name="tipo_pago" id="tipo_pago" onchange="validar_credito(this.value)">
+                                                <option value="Inmediato">Inmediato</option>
+                                                <option value="Credito">Credito (Saldo pendiente)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4 div-credito hide">
+                                        <div class="form-group">
+                                            <label for="credito-abono" class="control-label mb-1"><b>Abono inicial (Max: <b id="total-max">$0</b>)</b></label>
+                                            <input id="credito-abono" name="abono_inicial" type="number" class="form-control" aria-required="true" required aria-invalid="false" placeholder="0">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4 div-credito hide">
+                                        <div class="form-group">
+                                            <label for="cc-payment" class="control-label mb-1"><b>Forma de pago del abono inicial</b></label>
+                                            <select id="credito-forma-pago-abono" name="id_dominio_forma_pago_abono" data-placeholder="Escoje una..."
+                                                class="standardSelect form-control">
+                                                <option value="" label="default"></option>
+                                                @foreach ($formas_pago as $item)
+                                                    @if ($item->id_dominio != \App\Dominio::get("Credito (Saldo pendiente)"))
+                                                        <option value="{{ $item->id_dominio }}">{{ $item->nombre }}</option>
+                                                    @endif
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
                                     <div class="col-sm-12">
                                         <div class="form-group">
                                             <label for="cc-payment" class="control-label mb-1"><b>Observaciones</b></label>
@@ -83,12 +114,12 @@
 
                         <input type="hidden" id="detalles" name="detalles">
                         {{ Form::close() }}
-
+                        <hr>
                         <div class="row">
                             <div class="col-sm-12">
-                                <div class="alert alert-info"><b>Productos</b></div>
+                                <h3><b>Productos</b></h3>
                             </div>
-                        </div>
+                        </div><br>
                         <div class="row">
                             <div class="col-sm-4">
                                 <div class="form-group">
@@ -165,6 +196,15 @@
     var productos = []
     var detalles = []
 
+    function validar_credito(option) {
+        if(option == "Credito"){
+            $(".div-credito").fadeIn()
+        }else{
+            $(".div-credito").fadeOut()
+            $("#credito-abono").val("")
+        }
+    }
+
     function llenar_productos(){
         @foreach ($productos as $item)
             productos.push({
@@ -230,6 +270,8 @@
             toastr.error("Debe establecer un precio del producto valido", "Error")
             return;
         }
+
+        
 
 
         let producto = this.productos.find(item => item.id == id_producto)
@@ -299,22 +341,45 @@
                 total += item.precio * item.cantidad
             })
         }
+        $("#total-max").html(`$${format(total)}`)
         $("#total_inventario").html(`Total: $${format(total)}`)
         $("#table-detalles tbody").html(tabla)
     }
 
 
     function guardar() {
-        if (this.detalles.length > 0) {
-           let json_detalles = JSON.stringify(this.detalles)
+        if (validarFormulario()) {
+            let json_detalles = JSON.stringify(this.detalles)
             $("#detalles").val(json_detalles)
             if ($('#form-inventario').validate()) {
                 Loading(true, "Registrando movimiento...")
                 $('#form-inventario').submit()
             } 
-        }else{
+        }      
+    }
+
+    function validarFormulario() {
+        if($("#tipo_pago").val() == "Credito" && ($("#id_tercero_proveedor").val() == null || $("#id_tercero_proveedor").val() == "")){
+            toastr.error("Para realizar una entrada de inventario a crédito debe quedar asociada a un proveedor.", "Error")
+            return false
+        }
+        if($("#tipo_pago").val() == "Credito" && $("#credito-abono").val() > 0 && ($("#credito-forma-pago-abono").val() == null || $("#credito-forma-pago-abono").val() == "")){
+            toastr.error("Para realizar una entrada de inventario a crédito con abono inicial debe definir la forma de pago de dicho abono.", "Error")
+            return false
+        }
+        if (this.detalles.length == 0) {
             toastr.error("Debe agregar por lo menos un producto al movimiento de inventario", "Error")
-        }        
+            return false
+        }
+        let total = 0
+        this.detalles.forEach(item => {
+            total += item.precio * item.cantidad
+        });
+        if($("#credito-abono").val() > 0 && $("#credito-abono").val() >= total){
+            toastr.error("El abono inicial del crédito no puede ser igual o exceder el total de la operación de entrada.", "Error")
+            return false
+        }
+        return true
     }
     
     $(document).ready(() => {

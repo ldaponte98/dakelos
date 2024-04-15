@@ -129,7 +129,7 @@
                                             <div class="card-left pt-1 float-left">
                                                 <h3 class="mb-0 fw-r">
                                                     <span class="currency float-left mr-1">$</span>
-                                                    <span class="count">{{ $tercero->get_total_deuda() }}</span>
+                                                    <span id="count-1" class="count">{{ $tercero->get_total_deuda() }}</span>
                                                 </h3>
                                                 <p class="text-light mt-1 m-0">Deuda</p>
                                             </div>
@@ -146,7 +146,7 @@
                                             <div class="card-left pt-1 float-left">
                                                 <h3 class="mb-0 fw-r">
                                                     <span class="currency float-left mr-1">$</span>
-                                                    <span class="count">{{ $tercero->get_total_ahorro() }}</span>
+                                                    <span id="count-2" class="count">{{ $tercero->get_total_ahorro() }}</span>
                                                 </h3>
                                                 <p class="text-light mt-1 m-0">Ahorro</p>
                                             </div>
@@ -162,12 +162,12 @@
                                             <div class="card-left pt-1 float-left">
                                                 <h3 class="mb-0 fw-r">
                                                     <span class="currency float-left mr-1">$</span>
-                                                    <span class="count">{{ $tercero->get_total_se_le_debe() }}</span>
+                                                    <span id="count-3" class="count">{{ $tercero->get_total_se_le_debe() }}</span>
                                                 </h3>
                                                 <p class="text-light mt-1 m-0">Se le debe</p>
                                             </div>
                                             <div class="card-right float-right text-right">
-                                                <i class="icon fade-5 icon-lg pe-7s-portfolio"></i>
+                                                <i class="icon fade-5 icon-lg pe-7s-cash"></i>
                                             </div>
                                         </div>
                                     </div>
@@ -179,13 +179,16 @@
                                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                                         <a class="nav-item nav-link active show" id="nav-home-tab" data-toggle="tab"
                                             href="#nav-home" role="tab" aria-controls="nav-home"
-                                            aria-selected="true">Facturas</a>
+                                            aria-selected="true">Facturas de venta</a>
                                         <a class="nav-item nav-link" id="nav-creditos-tab" data-toggle="tab"
                                             href="#nav-creditos" role="tab" aria-controls="nav-creditos"
-                                            aria-selected="false">Creditos</a>
+                                            aria-selected="false">Creditos por pagar</a>
                                         <a class="nav-item nav-link" id="nav-ahorros-tab" data-toggle="tab"
                                             href="#nav-ahorros" role="tab" aria-controls="nav-ahorros"
                                             aria-selected="false">Ahorros</a>
+                                        <a class="nav-item nav-link" id="nav-creditos-deber-tab" data-toggle="tab"
+                                            href="#nav-creditos-deber" role="tab" aria-controls="nav-creditos-deber"
+                                            aria-selected="false">Creditos a deber</a>    
                                         <a class="nav-item nav-link" id="nav-cotizaciones-tab" data-toggle="tab"
                                             href="#nav-cotizaciones" role="tab" aria-controls="nav-cotizaciones"
                                             aria-selected="false">Cotizaciones</a>
@@ -210,6 +213,11 @@
                                         {{ view('tercero.lista_ahorros', compact('tercero', ['facturas'])) }}
                                     </div>
 
+                                    <div class="tab-pane fade" id="nav-creditos-deber" role="tabpanel"
+                                        aria-labelledby="nav-creditos-deber-tab">
+                                        {{ view('tercero.lista_creditos_deber', compact('tercero', ['facturas'])) }}
+                                    </div>
+
                                     <div class="tab-pane fade" id="nav-cotizaciones" role="tabpanel"
                                         aria-labelledby="nav-cotizaciones-tab">
                                         {{ view('tercero.lista_cotizaciones', compact('tercero', ['facturas'])) }}
@@ -223,4 +231,27 @@
             </div>
         </div>
     </div>
+    <script>
+        setTimeout(() => {
+            $(".count").each(function(index) {
+                let id = $(this)[0].id
+                let value = $(this)[0].innerHTML
+                $("#" + id).html(setPuntosNumero(value))
+            });
+        }, 5 * 1000);
+
+        function setPuntosNumero(strNumber) {
+            let cont = 0;
+            let result = ""
+            for (let i = strNumber.length - 1; i >= 0; i--) {
+                cont++
+                result = strNumber[i] + result
+                if(cont == 3 && i != 0){
+                    result = "." + result
+                    cont = 0
+                } 
+            }
+            return result
+        }
+    </script>
 @endsection

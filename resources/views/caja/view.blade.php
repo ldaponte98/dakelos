@@ -54,7 +54,7 @@
                                 <td><center> {{ $factura->tipo->nombre }} </center></td>
                                 <td><center>{{ $factura->canal->nombre }} </center></td>
                                 <td><center> {{ $factura->usuario_registra->tercero->nombre_completo() }} </center></td>
-                                <td><center>${{ number_format($factura->valor, 0, '.', '.') }}</center></td>
+                                <td><center>${{ number_format($factura->valor_original, 0, '.', '.') }}</center></td>
                                 <td><center>
                                     @if ($factura->estado == 1)
                                         <span class="badge badge-success">
@@ -153,10 +153,37 @@
                 <hr>
                 <div class="row">
                     <div class="col-sm-6">
-                        <h4><span class="red"><b>-</b></span> <b>Egresos</b></h4>
+                        <h4><span class="red"><b>&nbsp;</b></span> <b>Egresos</b></h4>
                     </div>
                     <div class="col-sm-6 text-right" >
                         <h4>${{ number_format($caja->get_egresos(), 0, '.', '.') }}</h4>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h4><span class="red"><b>&nbsp;</b></span> <b>Egresos a credito</b></h4>
+                    </div>
+                    <div class="col-sm-6 text-right" >
+                        <h4>${{ number_format($caja->get_egresos_a_credito(), 0, '.', '.') }}</h4>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h4><span class="red"><b>-</b></span> <b>Abono de egresos a credito</b></h4>
+                    </div>
+                    <div class="col-sm-6 text-right" >
+                        <h4>${{ number_format($caja->get_abonos_egresos_a_credito(), 0, '.', '.') }}</h4>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h4><span class="red"><b>-</b></span> <b>Egresos cobro inmediato</b></h4>
+                    </div>
+                    <div class="col-sm-6 text-right" >
+                        <h4>${{ number_format($caja->get_egresos_inmediatos(), 0, '.', '.') }}</h4>
                     </div>
                 </div>
                 <hr>

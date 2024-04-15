@@ -121,22 +121,29 @@
 		@else
 			<td colspan="3" rowspan="4" style="border-right: none; border-bottom: none; border-top: none;"><center></center></td>
 		@endif
-		<td colspan="5" style="border-left: none; border-bottom: none; font-size: 16px; border-top: none;"><center>{{ $factura->licencia->direccion }}</center></td>
+		<td colspan="5" style="border-left: none; border-bottom: none; font-size: 16px; border-top: none;">
+				<center><label>Direccion: {{ $factura->licencia->direccion }} {{ $factura->licencia->ciudad }}</label></center>
+
+				<center><label>NIT. {{ $factura->licencia->nit }}</label></center>
+		</td>
 		<td colspan="3" style="background-color: #BFBFBF; font-size:14px;"><center><b>{{ strtoupper($factura->tipo->nombre) }}</b></center></td>
 	</tr>
 	<tr>
-		<td colspan="5" style="border-left: none; border-top: none; border-bottom: none; font-size: 16px;"><center>{{ $factura->licencia->ciudad }}</center></td>
-		<td colspan="3"><center>{{ $factura->numero }}</center></td>
+		<td colspan="5" style="border-left: none; border-top: none; border-bottom: none; font-size: 16px;text-align: center;">{{$factura->licencia->redes_sociales}}</td>
+		<td colspan="3"><center>{{ $factura->numero }}</center> <br></td>
 	</tr>
 	<tr>
-		<td colspan="5" style="border-left: none; border-top: none; border-bottom: none; font-size: 16px;"><center>{{ $factura->licencia->telefono }}</center></td>
+		<td colspan="5" style="border-left: none; border-top: none; border-bottom: none; font-size: 16px;"><center>{{ $factura->licencia->telefono }}</center><</td>
 		<td colspan="3" style="background-color: #BFBFBF;"><center><b>Fecha</b></center></td>
 	</tr>
 	<tr>
-		<td colspan="5" style="border-left: none; border-top: none; border-bottom: none; font-size: 16px;"><center>NIT. {{ $factura->licencia->nit }}</center></td>
-		<td><center>{{ date('d', strtotime($factura->fecha)) }}</center></td>
-		<td><center>{{ date('m', strtotime($factura->fecha)) }}</center></td>
-		<td><center>{{ date('Y', strtotime($factura->fecha)) }}</center></td>
+		<td colspan="5" style="border-left: none; border-top: none; border-bottom: none; font-size: 16px; text-align: center;">
+			<br> <p>Tel. {{ $factura->licencia->telefonos }}</p>
+		
+		</td>
+		<td><br><center>{{ date('d', strtotime($factura->fecha)) }}</center></td>
+		<td><br><center>{{ date('m', strtotime($factura->fecha)) }}</center></td>
+		<td><br><center>{{ date('Y', strtotime($factura->fecha)) }}</center></td>
 	</tr>
 	</table>
 	<table class="tabla_1" border="1" cellpadding="0" cellspacing="0">
@@ -164,9 +171,9 @@
 		<td style="background-color: #BFBFBF" colspan="2"><center><b>DESCRIPCIÓN</b></center></td>
 		<td style="background-color: #BFBFBF"><center><b>CANT</b></center></td>
 		<td style="background-color: #BFBFBF" colspan="2"><center><b>Vr. UNIT</b></center></td>
-		<td style="background-color: #BFBFBF"><center><b>IVA</b></center></td>
+		{{-- <td style="background-color: #BFBFBF"><center><b>IVA</b></center></td> --}}
 		<td style="background-color: #BFBFBF"><center><b>DESC</b></center></td>
-		<td style="background-color: #BFBFBF" colspan="2"><center><b>Vr. TOTAL</b></center></td>
+		<td style="background-color: #BFBFBF" colspan="3"><center><b>Vr. TOTAL</b></center></td>
 	</tr>
 	@php $cont = 1; $total_iva = 0; $subtotal = 0;@endphp
 	@foreach($factura->detalles as $detalle)
@@ -186,14 +193,14 @@
 		<td colspan="2">{{ $detalle->nombre_producto }}</td>
 		<td><center>{{ $detalle->cantidad }} {{$detalle->presentacion_producto}}</center></td>
 		<td colspan="2">${{ number_format($valor_producto , 0, '.','.') }}</td>
-		<td style="text-align: right; padding-right: 5px;">${{ number_format($valor_iva, 0, '.','.') }}</td>
+		{{-- <td style="text-align: right; padding-right: 5px;">${{ number_format($valor_iva, 0, '.','.') }}</td> --}}
 		<td style="text-align: right; padding-right: 5px;">${{ number_format($detalle->descuento_producto, 0, '.','.') }}</td>
-		<td style="text-align: right; padding-right: 5px;" colspan="2">${{ number_format(($valor_producto * $detalle->cantidad) + $valor_iva - $detalle->descuento_producto, 0, '.','.') }}</td>
+		<td style="text-align: right; padding-right: 5px;" colspan="3">${{ number_format(($valor_producto * $detalle->cantidad) + $valor_iva - $detalle->descuento_producto, 0, '.','.') }}</td>
 	</tr>
 	@php $cont++; @endphp
 	@endforeach
 	<tr>
-		<td colspan="7" style="border-bottom: none;"><center></center></td>
+		<td colspan="7" style="border-bottom: none; font-size:6px; text-align: center;"><b>{{$factura->licencia->politica_garantia}}</b></td>
 		<td colspan="3" style="background-color: #BFBFBF; "><b>SUBTOTAL: </b>${{ number_format($subtotal, 0, '.','.') }}</td>
 	</tr>
 	@if ($factura->servicio_voluntario > 0)
@@ -209,7 +216,7 @@
 		</tr>
 	@endif
 	<tr>
-		<td colspan="7" style="border-bottom: none; border-top: none; border-bottom: none; font-size:8px;"><center>Formulario dian 18762013422870 de 2019/03/12 habilitada del 00001 al 1000.<br>Esta factura se asimila en todos sus efectos legales a una letra de Cambio según art.774 del Código de Comercio.</center></td>
+		<td class="text-center" colspan="7" style="border-bottom: none; border-top: none; border-bottom: none; font-size:6px; text-align: center;">{{$factura->licencia->politica_datos}}
 		<td colspan="3" style="border-bottom: none; background-color: #BFBFBF;"><b>IVA: </b>${{ number_format($total_iva, 0, '.','.') }}</td>
 
 	</tr>

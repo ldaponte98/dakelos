@@ -49,7 +49,7 @@
 	<table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
 		<thead>
 			<tr>
-				<th style="text-align: left; width: 50%;">Descripcion</th>
+				<th style="text-align: left; width: 50%;">Producto</th>
 				<th style="text-align: right;">Cant</th>
 				<th style="text-align: right;">Total</th>
 			</tr>
@@ -71,17 +71,14 @@
 		</tbody>
 	</table>
 	<br>
-	<label><b>Descripciones:</b>{{ $factura->descripciones != "" ? $factura->descripciones : "Ninguna" }}</label><br>
+	<label><b>Descripcion:</b>{{ $factura->descripciones != "" ? $factura->descripciones : "Ninguna" }}</label><br>
 	<br>
 	<table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
 		<tr>
 			<td style="text-align: right; width: 80%"><b>Subtotal:</b></td>
 			<td style="text-align: right;">${{ number_format($subtotal, 0, '.', '.') }}</td>
 		</tr>
-		<tr>
-			<td style="text-align: right;"><b>Servicio Vol:</b></td>
-			<td style="text-align: right;">${{ number_format($factura->servicio_voluntario, 0, '.', '.') }}</td>
-		</tr>
+		
 		@if ($factura->canal->id_dominio != App\Dominio::get('Mesa'))
 		<tr>
 			<td style="text-align: right;"><b>Domicilio:</b></td>
@@ -101,9 +98,14 @@
 		<tr>
 			<td style="text-align: right;"><b>Total:</b></td>
 			<td style="text-align: right; font-weight: bold;">${{ number_format($factura->valor, 0, '.', '.') }}</td>
-		</tr>
+		</tr>		
 	</table>
-	<br><br><br>
+	<br>
+	<center><label style="font-size: 4px;" class="mx-5">{{$factura->licencia->politica_datos}}</label></center>
+
+	<center><label><b style="font-size: 4px;">{{$factura->licencia->politica_garantia}}</b></labe>
+	
+		<br><br>
 	@if ($factura->estado == 0)
 		<center>
 			<label ><b style="font-size: 32px; color: red;">Cancelada</b></label>
