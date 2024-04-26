@@ -23,6 +23,11 @@ class Factura extends Model
         return $this->belongsTo(Licencia::class, 'id_licencia');
     }
 
+    public function cruce()
+    {
+        return $this->belongsTo(Factura::class, 'id_factura_cruce', 'id_factura');
+    }
+
     public function tercero()
     {
         return $this->belongsTo(Tercero::class, 'id_tercero');
@@ -104,6 +109,32 @@ class Factura extends Model
         return $total_abono;
     }
 
+    public function formas_pago_recibos_caja()
+    {
+        $result = FacturaPagoReciboCaja::where('id_factura', $this->id_factura)->get();
+        return $result;
+    }
+
+    public function facturas_donde_han_usado_ahorro()
+    {
+        $result = FacturaPagoReciboCaja::where('id_factura_recibo_caja', $this->id_factura)->get();
+        $facturas = [];
+        foreach ($result as $value) {
+            $facturas[] = $value->factura;
+        }
+        return $facturas;
+    }
+
+    public function total_donde_han_usado_ahorro()
+    {
+        $result = FacturaPagoReciboCaja::where('id_factura_recibo_caja', $this->id_factura)->get();
+        $total = 0;
+        foreach ($result as $value) {
+            $total += $value->valor;
+        }
+        return $total;
+    }
+
     public function enviar_email()
     {
         $mensaje = "";
@@ -113,26 +144,27 @@ class Factura extends Model
         //ahora enviamos email con la factura al cliente
         $subject = $factura->tipo->nombre . ' ' . $factura->licencia->nombre;
         $for     = $tercero->email;
-
-        $data_email = array(
-            'factura'         => $factura,
-            'imagen_licencia' => $factura->licencia->get_imagen_email(),
-            'tipo_factura'    => $factura->tipo->nombre,
-            'id_factura'      => $factura->id_factura,
-        );
-        if ($for) {
-            try {
-                Mail::send('email.factura', $data_email, function ($msj) use ($subject, $for) {
-                    $msj->from(config('global.email_zorax'), session('nombre_licencia'));
-                    $msj->subject($subject);
-                    $msj->to($for);
-                });
-                $error   = false;
-                $mensaje = "OK";
-            } catch (Exception $e) {
-                $mensaje = "Error en envio email: " . $e->getMessage();
+        if($for != null && $for != ""){
+            $data_email = array(
+                'factura'         => $factura,
+                'imagen_licencia' => $factura->licencia->get_imagen_email(),
+                'tipo_factura'    => $factura->tipo->nombre,
+                'id_factura'      => $factura->id_factura,
+            );
+            if ($for) {
+                try {
+                    Mail::send('email.factura', $data_email, function ($msj) use ($subject, $for) {
+                        $msj->from(config('global.email_app'), session('nombre_licencia'));
+                        $msj->subject($subject);
+                        $msj->to($for);
+                    });
+                    $error   = false;
+                    $mensaje = "OK";
+                } catch (Exception $e) {
+                    $mensaje = "Error en envio email: " . $e->getMessage();
+                }
+                Log::write("Envio email de factura", "Envio de email para factura [$factura->id_factura] con respuesta [$mensaje]");
             }
-            Log::write("Envio email de factura", "Envio de email para factura [$factura->id_factura] con respuesta [$mensaje]");
         }
         return $error;
     }

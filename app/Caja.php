@@ -26,11 +26,16 @@ class Caja extends Model
             $factura->id_dominio_tipo_factura <> 56 &&
             $factura->pagada == 1) $total += $factura->valor_original;
 
+            if($factura->id_dominio_tipo_factura == 56 &&
+            $factura->pagada == 1) $total += $factura->abono_inicial;
+
             if($factura->id_dominio_tipo_factura == 53 && 
             $factura->credito_comprobante_egreso == 0) $total -= $factura->valor_original;
 
             if($factura->id_dominio_tipo_factura == 53 && 
             $factura->credito_comprobante_egreso == 1) $total -= $factura->abono_inicial;
+
+            $total -= $factura->total_donde_han_usado_ahorro();
         }            
         return $total;
     }
@@ -94,6 +99,7 @@ class Caja extends Model
 
     public function total_por_forma_pago($id_dominio_forma_pago)
     {
+        echo "<script>console.log({forma:$id_dominio_forma_pago})</script>";
         return DB::table('factura as f')
             ->join('forma_pago as fp', 'fp.id_factura', '=', 'f.id_factura')
             ->where('f.estado', 1)

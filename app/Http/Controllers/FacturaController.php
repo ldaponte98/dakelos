@@ -16,6 +16,7 @@ use App\Permiso;
 use App\Producto;
 use App\ResolucionFactura;
 use App\Tercero;
+use App\FacturaPagoReciboCaja;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -394,6 +395,7 @@ class FacturaController extends Controller
                     $factura->direccion               = $post->factura->direccion;
                     $factura->menu_digital            = isset($post->factura->menu_digital) ? $post->factura->menu_digital : 0;
                     $factura->pagada                  = 1;
+                    $factura->enviar_email            = $post->factura->enviar_email ? 1 : 0;
 
                     if ($post->factura->id_dominio_canal == Dominio::get('Mesa')) {
                         $factura->id_mesa = $post->factura->id_mesa;
@@ -420,12 +422,26 @@ class FacturaController extends Controller
 
                         //Ahora registramos las formas de pago
                         DB::statement('delete from forma_pago where id_factura = ' . $factura->id_factura);
-                        if (isset($post->factura->formas_pago)) {
-                            foreach ($post->factura->formas_pago as $id_dominio_forma_pago) {
+                        if (isset($post->factura->division_formas_pago)) {
+                            foreach ($post->factura->division_formas_pago as $division_fp) {
+                                $division_fp                       = (object) $division_fp;
                                 $forma_pago                        = new FormaPago;
                                 $forma_pago->id_factura            = $factura->id_factura;
-                                $forma_pago->id_dominio_forma_pago = $id_dominio_forma_pago;
-                                $forma_pago->valor                 = ($factura->valor / count($post->factura->formas_pago));
+                                $forma_pago->id_dominio_forma_pago = $division_fp->id;
+                                $valor                             = $division_fp->valor;
+                                
+                                if($forma_pago->id_dominio_forma_pago == Dominio::get('Credito (Saldo pendiente)')){
+                                    $abono = isset($post->factura->abono) ? $post->factura->abono : 0;
+                                    $valor = $factura->valor_original - $abono;
+                                    if(isset($post->factura->abono) && $post->factura->abono > 0){
+                                        $forma_pago_abono                        = new FormaPago;
+                                        $forma_pago_abono->id_factura            = $factura->id_factura;
+                                        $forma_pago_abono->id_dominio_forma_pago = isset($post->factura->forma_pago_abono_inicial) ? $post->factura->forma_pago_abono_inicial : null;
+                                        $forma_pago_abono->valor                 = $abono;
+                                        $forma_pago_abono->save();
+                                    }
+                                }
+                                $forma_pago->valor = $valor;
                                 $forma_pago->save();
 
                                 if ($forma_pago->id_dominio_forma_pago == Dominio::get('Credito (Saldo pendiente)')) {
@@ -436,6 +452,22 @@ class FacturaController extends Controller
                                     $factura->id_dominio_forma_pago_abono_inicial = isset($post->factura->forma_pago_abono_inicial) ? $post->factura->forma_pago_abono_inicial : null;
                                     $factura->save();
                                 }
+                            }
+                        }
+
+                        if (isset($post->factura->division_ahorros)) {
+                            foreach ($post->factura->division_ahorros as $division_ahorro) {
+                                $division_ahorro = (object) $division_ahorro;
+                                $recibo_caja = Factura::find($division_ahorro->id_documento);
+                                $recibo_caja->valor -= $division_ahorro->valor;
+                                $recibo_caja->id_factura_cruce = $factura->id_factura;
+                                $recibo_caja->save();
+                                
+                                $forma_pago                         = new FacturaPagoReciboCaja;
+                                $forma_pago->id_factura             = $factura->id_factura;
+                                $forma_pago->id_factura_recibo_caja = $division_ahorro->id_documento;
+                                $forma_pago->valor                  = $division_ahorro->valor;
+                                $forma_pago->save();
                             }
                         }
 
@@ -461,7 +493,7 @@ class FacturaController extends Controller
                         $error      = false;
                         DB::commit();
 
-                        if ($factura->finalizada == 1) {
+                        if ($factura->finalizada == 1 && $factura->enviar_email == 1) {
                             $factura->enviar_email();
                         }
                     } else {
@@ -511,18 +543,18 @@ class FacturaController extends Controller
             if ($cliente_busqueda) {
                 $cliente = $cliente_busqueda;
             }
-
-            
         }
 
         //AHORA VALIDAMOS SI NO ENCONTRO UN CLIENTE IGUAL LO ASIGNAMOS A UN CLIENTE GENERAL DESCONOCIDO
         if ($cliente->id_tercero == null) {
             $iden     = $post->factura->cliente->identificacion ? $post->factura->cliente->identificacion : "000000000";
             $nombre   = $post->factura->cliente->nombre ? $post->factura->cliente->nombre : "Desconocido";
+            $apellido   = $post->factura->cliente->apellido ? $post->factura->cliente->apellido : "";
             $telefono = $post->factura->cliente->telefono ? $post->factura->cliente->telefono : null;
-            $email    = $post->factura->cliente->email ? $post->factura->cliente->email : "desconocido@gmail.com";
+            $email    = $post->factura->cliente->email ? $post->factura->cliente->email : "";
 
             $cliente->nombres                        = $nombre;
+            $cliente->apellidos                      = $apellido;
             $cliente->id_dominio_tipo_tercero        = 3;
             $cliente->id_dominio_tipo_identificacion = 5;
             $cliente->identificacion                 = $iden;
@@ -550,11 +582,7 @@ class FacturaController extends Controller
                 }
             }
         }
-
         return $cliente;
-        
-    
-
     }
 
     public function descontar_inventario_detalles($detalles, $id_factura)

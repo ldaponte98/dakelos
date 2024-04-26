@@ -2,32 +2,6 @@
     $licencia = \App\Licencia::find(session('id_licencia'));
 @endphp
 @extends('layout.main')
-@section('menu')
-    <div class="fab-container">
-        <div class="fab fab-icon-holder">
-            <i class="fa fa-bars"></i>
-        </div>
-        <ul class="fab-options">
-            <li onclick="location.href = '{{ route('factura/facturador') }}'">
-                <span class="fab-label">Nueva Venta Rapida</span>
-                <div class="fab-icon-holder">
-                    <i class="ti-shopping-cart-full"></i>
-                </div>
-            </li> 
-
-            @foreach ($canales as $canal)
-                @if ($canal->id_dominio != App\Dominio::get('Mesa'))
-                    <li onclick="location.href = '{{ route('factura/facturador') }}?canal={{ $canal->id_dominio }}'">
-                        <span class="fab-label">Nueva pedido por {{ $canal->nombre }}</span>
-                        <div class="fab-icon-holder">
-                            <i class="ti-shopping-cart-full"></i>
-                        </div>
-                    </li>
-                @endif
-            @endforeach           
-        </ul>
-    </div>
-@endsection
 @section('content')
 <link rel="stylesheet" href="{{ asset('scroll-tabs/jquery.scrolling-tabs.css') }}" />
 <link rel="stylesheet" href="{{ asset('scroll-tabs/st-demo.css') }}" />
@@ -77,6 +51,10 @@
     .chosen-container{
         width: 107% !important;
     }
+    .text-canales{
+        text-align: right;
+    }
+    
 </style>
 <div class="row">
     <div class="col-sm-12">
@@ -110,11 +88,14 @@
                              aria-labelledby="nav-canal-{{ $item->id_dominio }}-tab">
 
                              <div class="row">
-                                 <div class="col-sm-12">
-                                    <b><i>Ultima actualización: {{ date('Y-m-d H:i') }}</i></b> <span class="badge badge-primary ml-1"> <a href="" title="Refrescar tiempos" class="ti-reload text-white"></a> </span>
-                                 </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 text-canales">
+                                    <button onclick="location.href = '{{ route('factura/facturador') }}?canal={{ $item->id_dominio }}'" class="btn btn-primary">+ Nueva venta {{ $item->nombre }}</button>
+                                </div>
                              </div><br>
                             <div class="row">
+                                
                                 @if ($item->id_dominio == App\Dominio::get('Mesa'))
                                     <!-- PANEL TABLES -->
                                     @if (count($mesas) > 0)
@@ -160,16 +141,15 @@
                                             </div>
                                         </div>
                                         @endforeach
-                                     @else
-                                     <div class="col-sm-12">
-                                         <center>
-                                            <img width="350" height="350" src="{{ asset('plantilla/images/empty_product.svg') }}">
-                                            <h3>No hay mesas registradas en el sistema</h3>
-                                         </center>
-                                     </div> 
-                                     @endif
-
                                     @else
+                                        <div class="col-sm-12">
+                                            <center>
+                                                <img width="350" height="350" src="{{ asset('plantilla/images/empty_product.svg') }}">
+                                                <h3>No hay mesas registradas en el sistema</h3>
+                                            </center>
+                                        </div> 
+                                    @endif
+                                @else
                                     <!-- PANEL DELIVERY CHANNEL -->
                                     @php
                                         $cont = 0;

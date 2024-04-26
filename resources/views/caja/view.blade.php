@@ -36,6 +36,7 @@
                                 <th><center><b>Cliente</b></center></th>
                                 <th><center><b>Fecha</b></center></th>
                                 <th><center><b>Tipo</b></center></th>
+                                <th><center><b>Cruce</b></center></th>
                                 <th><center><b>Canal</b></center></th>
                                 <th><center><b>Usu registro</b></center></th>
                                 <th><center><b>Valor</b></center></th>
@@ -52,6 +53,29 @@
                                 <td><center><a href="{{ route('tercero/view', $factura->id_tercero) }}">{{ $factura->tercero->nombre_completo() }}</a></center></td>
                                 <td><center> {{ date('Y-m-d H:i' ,strtotime($factura->fecha)) }} </center></td>
                                 <td><center> {{ $factura->tipo->nombre }} </center></td>
+                                <td><center> 
+                                    @if ($factura->id_dominio_tipo_factura == \App\Dominio::get('Recibo De Caja'))
+                                        @php
+                                            $facturas_donde_han_usado_ahorro = $factura->facturas_donde_han_usado_ahorro();
+                                            $cont = 0;
+                                        @endphp
+                                        @if (count($facturas_donde_han_usado_ahorro) == 0)
+                                            <span>No</span>
+                                        @else
+                                            @foreach ($facturas_donde_han_usado_ahorro as $item)
+                                                @if ($cont > 0)
+                                                    <br>
+                                                @endif
+                                                <a href="">{{ $item->numero }} </a>
+                                                @php
+                                                    $cont++;
+                                                @endphp
+                                            @endforeach
+                                        @endif
+                                    @else
+                                        {{ $factura->cruce != null ? $factura->cruce->numero : ''}} 
+                                    @endif
+                                </center></td>
                                 <td><center>{{ $factura->canal->nombre }} </center></td>
                                 <td><center> {{ $factura->usuario_registra->tercero->nombre_completo() }} </center></td>
                                 <td><center>${{ number_format($factura->valor_original, 0, '.', '.') }}</center></td>

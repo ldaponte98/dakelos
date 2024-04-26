@@ -13,6 +13,7 @@
                                 <th>Valor pendiente</th>
                                 <th>Estado</th>
                                 <th></th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -30,6 +31,11 @@
                                     <td>
                                         <center>
                                             <a target="_blank" href="{{ route('factura/imprimir', $factura->id_factura) }}">Ver detalles</a>
+                                        </center>
+                                    </td>
+                                    <td>
+                                        <center>
+                                            <a target="_blank" href="{{ route('reportes/documentos-asociados-factura', $factura->id_factura) }}">Abonos</a>
                                         </center>
                                     </td>
                                 </tr>

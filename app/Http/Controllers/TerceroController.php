@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Tercero;
+use App\Factura;
+use App\Dominio;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -87,5 +89,34 @@ class TerceroController extends Controller
     public function listar()
     {
         return Tercero::all()->where('id_licencia', session('id_licencia'));
+    }
+
+    public function validar_ahorros_para_uso(Request $request)
+    {
+        $post = $request->all();
+        if($post){
+            $post = (object) $post;
+            $identificacion = $post->identificacion;
+            $tercero = Tercero::where('id_licencia', session('id_licencia'))
+                              ->where('identificacion', $identificacion)
+                              ->first();
+            if($tercero == null) return $this->responseApi(true, "Número de identificación no valido");
+            $ahorros = Factura::where('estado', 1)
+                              ->where('id_tercero', $tercero->id_tercero)
+                              ->where('id_dominio_tipo_factura', Dominio::get("Recibo de caja"))
+                              ->where('valor', '>', 0)
+                              ->get();
+            $response = [];
+            foreach ($ahorros as $documento) {
+                $response[] = (object) [
+                    'id_documento' => $documento->id_factura,
+                    'numero' => $documento->numero,
+                    'saldo' => $documento->valor,
+                    '_saldo' => "$" . number_format($documento->valor, 0, '.', '.')
+                ];
+            }
+            return $this->responseApi(false, "OK", $response);
+        }   
+        return $this->responseApi(true, "Data no valida");
     }
 }

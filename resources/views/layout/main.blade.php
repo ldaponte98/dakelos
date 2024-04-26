@@ -75,7 +75,30 @@
     <script src="{{ asset('blockUI.js') }}"></script>
     <script src="{{ asset('js-general.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ asset('css-general.css') }}">
-
+    <style>
+        .btn-primary{
+            background-color: {{ $licencia->color_botones }};
+            border-color: {{ $licencia->color_botones }};
+        }
+        .btn-primary:hover{
+            opacity: 0.95;
+            transition: 0ms;
+            background-color: {{ $licencia->color_botones }};
+            border-color: {{ $licencia->color_botones }};
+            color: {{ $licencia->color_bletras }};
+        }
+        .btn-primary:active{
+            transition: 0ms;
+            background-color: {{ $licencia->color_botones }};
+            border-color: {{ $licencia->color_botones }};
+            color: {{ $licencia->color_bletras }};
+        }
+        .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
+            color: {{ $licencia->color_bletras }};
+            background-color: {{ $licencia->color_botones }};
+            border-color: {{ $licencia->color_botones }};
+        }
+    </style>
 </head>
 
 <body onclick="$('.dropdown-menu-util').fadeOut()">
@@ -183,7 +206,7 @@
                         </a>
 
                         <div class="user-menu dropdown-menu">
-                            <a class="nav-link" href="{{ route('tercero/editar', $usuario->id_tercero) }}"><i class="fa fa-user"></i>Configuracion de cuenta</a>
+                            <a class="nav-link" href="{{ route('tercero/editar', $usuario->id_tercero) }}"><i class="fa fa-user"></i>{{ $usuario->tercero->nombre_completo() }}</a>
 
                             <a class="nav-link" href="{{ route('logout') }}"><i class="fa fa-power-off"></i>Cerrar sesion</a>
                         </div>
@@ -217,11 +240,14 @@
     <script src="{{ asset('plantilla/assets/js/lib/chosen/chosen.jquery.min.js') }}"></script>
 
     <script>
+        function globalRefreshSelect() {
+            let selects = $(".standardSelect").trigger('chosen:updated');
+        }
         jQuery(document).ready(function() {
             ValidarPedidosNuevos()
             jQuery(".standardSelect").chosen({
                 disable_search_threshold: 10,
-                no_results_text: "Oops, nothing found!",
+                no_results_text: "No se encontraron resultados",
                 width: "100%"
             });
             $(".select2").select2({ width: "100%" })
