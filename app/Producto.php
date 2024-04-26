@@ -125,7 +125,7 @@ class Producto extends Model
 
     public function notificar_alerta_inventario()
     {
-        $subject = "Zorax - Aviso de inventario";
+        $subject = "Aviso de inventario";
 
         $emails = explode(",", $this->licencia->emails_reportes);
 
@@ -136,7 +136,7 @@ class Producto extends Model
             );
             try {
                 Mail::send('email.alerta_inventario', $data, function ($msj) use ($subject, $for) {
-                    $msj->from(config('global.email_zorax'), "Zorax - Sistema de ventas");
+                    $msj->from(config('global.email_app'), $this->licencia->nombre);
                     $msj->subject($subject);
                     $msj->to($for);
                 });
@@ -144,7 +144,6 @@ class Producto extends Model
             } catch (Exception $e) {
                 $mensaje = "Error al enviar notificacion de inventario: " . $e->getMessage();
             }
-
             Log::write("Envio email de aviso de inventario", "Se envia email a [$for] con respuesta [$mensaje]");
         }
     }

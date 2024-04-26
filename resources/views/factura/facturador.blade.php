@@ -20,8 +20,14 @@
                     <i class="ti-shopping-cart"></i>
                 </div>
             </li>
+            <li onclick="Imprimir('factura-formal')" id="permiso-imprimir-factura-formal">
+                <span class="fab-label">Imprimir factura formal</span>
+                <div class="fab-icon-holder">
+                    <i class="ti-printer"></i>
+                </div>
+            </li>
             <li onclick="Imprimir('factura')" id="permiso-imprimir-factura">
-                <span class="fab-label">Imprimir factura</span>
+                <span class="fab-label">Imprimir factura tirilla</span>
                 <div class="fab-icon-holder">
                     <i class="ti-printer"></i>
                 </div>
@@ -250,7 +256,7 @@
                     <br>
                     <div class="form-group d-flex">
                         <label class="lb-flex">Formas de pago</label>
-                        <select onchange="validarCredito()" id="factura-formas-pago"
+                        <select onchange="validarFormasPagoEscogidas()" id="factura-formas-pago"
                             data-placeholder="Escoje una o mas..." multiple class="standardSelect form-control">
                             <option value="" label="default"></option>
                             @foreach ($formas_pago as $item)
@@ -258,6 +264,24 @@
                                     {{ $item->nombre }}</option>
                             @endforeach
                         </select>
+                    </div>
+                    <div class="" id="div-division-formas-pago">
+                    </div>
+                    <div style="display: none;" id="div-ahorros">
+                        <div class="form-group d-flex" >
+                            <label class="lb-flex">Ahorros</label>
+                            <select onchange="validarAhorrosEscogidos()" id="factura-ahorros"
+                                data-placeholder="Escoje uno o más..." multiple class="standardSelect form-control">
+                                
+                            </select>
+                        </div>
+                    </div>
+                    <div class="" id="div-division-ahorros">
+                    </div>
+                    
+                    <div class="form-group d-flex">
+                        <label class="lb-flex">Total formas pago</label>
+                        <input type="text" id="factura-total-formas-pago" disabled placeholder="0" class="form-control">
                     </div>
                     <div class="form-group d-flex">
                         <label class="lb-flex">Subtotal</label>
@@ -305,6 +329,11 @@
                     </div>
 
                     <div class="form-group">
+                        <input class="pointer mr-1" type="checkbox" id="enviar-email" name="enviar-email" @if((isset($factura->enviar_email) && $factura->enviar_email == 1) || $factura == null) checked @endif class="form-check-input">
+                        <label for="enviar-email" class="font-italic">Enviar factura a cliente vía correo electrónico.</label>
+                    </div>
+
+                    <div class="form-group">
                         <i class="fa fa-exclamation-circle pointer"
                             title="Este campo sera visible en la factura"></i><label class="ml-1">Descripción</label>
                         <textarea id="factura-descripciones" class="form-control" rows="1"></textarea>
@@ -325,7 +354,7 @@
 
         <!-- MODAL DE EDICION DE INFO DE CLIENTE -->
         <div class="modal fade" id="modal-cliente" role="dialog" aria-labelledby="smallmodalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-dialog modal-md" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="smallmodalLabel">Información del cliente</h5>
@@ -335,24 +364,29 @@
                     </div>
                     <div data-spy="scroll" class="modal-body">
                         <div class="form-group">
-                            <label>Identificación del cliente</label>
+                            <label>Identificación</label>
                             <input onkeyup="buscarPersona(this.value)" onchange="buscarPersona(this.value)" type="text" id="modal-cliente-identificacion" class="form-control">
                         </div>
                         <div class="form-group">
-                            <label>Nombre del cliente</label>
+                            <label>Nombre</label>
                             <input type="text" id="modal-cliente-nombre" class="form-control">
                         </div>
                         <div class="form-group">
-                            <label>Telefono del cliente</label>
+                            <label>Apellido</label>
+                            <input type="text" id="modal-cliente-apellido" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Telefono</label>
                             <input type="text" id="modal-cliente-telefono" class="form-control">
                         </div>
                         <div class="form-group">
-                            <label>Correo del cliente</label>
+                            <label>Correo electrónico</label>
                             <input type="text" id="modal-cliente-correo" class="form-control">
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-secondary" onclick="ResetInfoCliente()">Resetear</button>
                         <button type="button" class="btn btn-primary" onclick="GuardarInfoCliente()">Guardar</button>
                     </div>
                 </div>
@@ -392,14 +426,20 @@
             LlenarProductos()
             ValidarPermisosFactura()
             LLenarDatosFactura()
+            LLenarFormasPago()
             //$("#div-busqueda-productos").fadeIn()
         })
 
+        toastr.options.positionClass = 'toast-bottom-right';
+        var id_credito = {{ \App\Dominio::get("Credito (Saldo pendiente)") }}
         var productos = []
+        var formas_pago = []
+        var ahorros_actuales = []
         var factura = {
             id_factura: null,
             cliente: {
                 identificacion: null,
+                apellido: null,
                 nombre: null,
                 telefono: null,
                 email: null
@@ -412,12 +452,16 @@
             direccion: "",
             detalles: [],
             formas_pago: null,
+            division_formas_pago: [],
+            division_ahorros: [],
             servicio_voluntario: 0,
             descuento: 0,
+            subtotal: 0,
             total: 0,
             finalizada: 0,
             id_licencia: {{ $licencia->id_licencia }},
-            minutos_duracion: {{ $licencia->minutos_duracion_promedio ? $licencia->minutos_duracion_promedio : 0 }}
+            minutos_duracion: {{ $licencia->minutos_duracion_promedio ? $licencia->minutos_duracion_promedio : 0 }},
+            enviar_email: true
         }
 
         function buscarPersona(caracter) {
@@ -427,7 +471,8 @@
                     if(res.length == 1){
                         const data = res[0]
                         $("#modal-cliente-identificacion").val(data.identificacion)
-                        $("#modal-cliente-nombre").val(data.nombres + " " + data.apellidos)
+                        $("#modal-cliente-nombre").val(data.nombres)
+                        $("#modal-cliente-apellido").val(data.apellidos)
                         $("#modal-cliente-telefono").val(data.telefono)
                         $("#modal-cliente-correo").val(data.email)
                     }
@@ -437,17 +482,143 @@
             }
         }
 
-        function validarCredito() {
+        function validarAhorrosEscogidos() {
+            let seleccionados = $("#factura-ahorros").val()
+            let list = []
+            if (seleccionados != null){
+                seleccionados.forEach((_id) => {
+                    let ahorro = ahorros_actuales.find(p => p.id_documento == _id)
+                    if(ahorro){
+                        let division = this.factura.division_ahorros.find(p => p.id_documento == _id)
+                        if(division == null){
+                            let index = list.length
+                            list.push({
+                                id_documento: _id,
+                                titulo: `${ahorro.numero} Saldo: ${ahorro._saldo}`,
+                                valor: calcularValorDefaultNuevaFormaPago(ahorro.saldo),
+                                saldo: ahorro.saldo,
+                                index: index
+                            })
+                        }else{
+                            division.index = list.length
+                            list.push(division)
+                        }
+                    }
+                })
+            }
+
+            let view = ""
+            list.forEach((item) => {
+                view += `<div class="form-group d-flex">
+                            <label class="lb-flex"><b>¿Cuanto por ${item.titulo}?</b></label>
+                            <input id="ahorro-${item.id_documento}" type="number" class="form-control" value="${item.valor}" onkeyup="setearValorAhorro(this.value, ${item.saldo},${item.index}, 'ahorro-${item.id_documento}')">
+                        </div>`
+            }) 
+            $("#div-division-ahorros").html(view)
+            this.factura.division_ahorros = list
+            ActualizarVistaPedido()
+        }
+
+        function validarFormasPagoEscogidas() {
+            this.validarSiEsCredito()
+            this.validarDivisionFormasPago()
+            this.ActualizarVistaPedido()
+        }
+
+        function validarSiEsCredito() {
             let formasPago = $("#factura-formas-pago").val()
             let esCredito = false
             if (formasPago != null) {
                 formasPago.forEach((item) => {
-                    if (item == 55) esCredito = true
+                    if (item == id_credito) esCredito = true
                 })
             }
             if (esCredito) $("#div-credito").fadeIn()
             if (!esCredito) $("#div-credito").fadeOut()
             this.factura.esCredito = esCredito
+            if(esCredito){
+                $("#factura-formas-pago").val([id_credito])
+                globalRefreshSelect()
+            }            
+        }
+
+        function validarDivisionFormasPago() {
+            let formasPago = $("#factura-formas-pago").val()
+            let list = []
+            if (formasPago != null && !this.factura.esCredito) {
+                formasPago.forEach((_id) => {
+                    let formaPago = formas_pago.find(p => p.id == _id)
+                    if(formaPago){
+                        let division = this.factura.division_formas_pago.find(p => p.id == _id)
+                        if(division == null){
+                            let index = list.length
+                            list.push({
+                                id: _id,
+                                nombre: formaPago.nombre,
+                                valor: calcularValorDefaultNuevaFormaPago(),
+                                index: index
+                            })
+                        }else{
+                            division.index = list.length
+                            list.push(division)
+                        }
+                    }
+                })
+            }
+
+            if(this.factura.esCredito){
+                list.push({
+                    id: id_credito,
+                    nombre: "Credito (Saldo pendiente)",
+                    valor: calcularValorDefaultNuevaFormaPago(),
+                    index: 0
+                })
+                $("#div-division-formas-pago").html("")
+            }else{
+                let view = ""
+                list.forEach((item) => {
+                    view += `<div class="form-group d-flex">
+                                <label class="lb-flex"><b>¿Cuanto por ${item.nombre}?</b></label>
+                                <input type="number" class="form-control" value="${item.valor}" onkeyup="setearValorFormaPago(this.value, ${item.index})">
+                            </div>`
+                }) 
+                $("#div-division-formas-pago").html(view)
+            }
+            this.factura.division_formas_pago = list
+        }
+
+        function setearValorFormaPago(valor, index) {
+            this.factura.division_formas_pago[index].valor = valor == "" || valor == null ? 0 : parseFloat(valor)
+            ActualizarVistaPedido()
+        }
+
+        function setearValorAhorro(valor, saldo, index, id_element) {
+            let newValor = valor == "" || valor == null ? 0 : parseFloat(valor)
+            if(valor <= saldo){
+                this.factura.division_ahorros[index].valor = newValor
+            }else{
+                let current = $(`#${id_element}`).val()
+                if(current == "" || current == null) current = 0
+                let number = current.toString().substring(0, current.toString().length - 1)
+                $(`#${id_element}`).val(parseFloat(number))
+                this.factura.division_ahorros[index].valor = parseFloat(number)
+            }   
+            ActualizarVistaPedido()         
+        }
+
+        function calcularValorDefaultNuevaFormaPago(max = null) {
+            let total = this.factura.subtotal
+            if(total == 0) return 0;
+            let sumatoria = 0
+            this.factura.division_formas_pago.forEach((item) => {
+                sumatoria += item.valor
+            })
+            this.factura.division_ahorros.forEach((item) => {
+                sumatoria += item.valor
+            })
+            let valor = total - sumatoria
+            if(max != null && valor > max) valor = max
+            return valor < 0 ? 0 : valor
         }
 
         function LlenarProductos() {
@@ -521,23 +692,57 @@
             if (this.factura.cliente.identificacion) $("#modal-cliente-identificacion").val(this.factura.cliente
                 .identificacion)
             if (this.factura.cliente.nombre) $("#modal-cliente-nombre").val(this.factura.cliente.nombre)
+            if (this.factura.cliente.apellido) $("#modal-cliente-apellido").val(this.factura.cliente.apellido)
             if (this.factura.cliente.telefono) $("#modal-cliente-telefono").val(this.factura.cliente.telefono)
             if (this.factura.cliente.email) $("#modal-cliente-correo").val(this.factura.cliente.email)
         }
 
         function GuardarInfoCliente() {
+            if($("#modal-cliente-identificacion").val().trim() == ""){
+                toastr.error("La identificacion del cliente es obligatoria", "Error")
+                return;
+            }
+            if($("#modal-cliente-nombre").val().trim() == ""){
+                toastr.error("El nombre del cliente es obligatorio", "Error")
+                return;
+            }
+            if($("#modal-cliente-apellido").val().trim() == ""){
+                toastr.error("El apellido del cliente es obligatorio", "Error")
+                return;
+            }
+
             $("#modal-cliente").modal("hide")
-            if ($("#modal-cliente-nombre").val().trim() != "")
+            if ($("#modal-cliente-nombre").val().trim() != ""){
                 this.factura.cliente.identificacion = $("#modal-cliente-identificacion").val()
+            }
             this.factura.cliente.nombre = $("#modal-cliente-nombre").val()
+            this.factura.cliente.apellido = $("#modal-cliente-apellido").val()
             this.factura.cliente.telefono = $("#modal-cliente-telefono").val()
             this.factura.cliente.email = $("#modal-cliente-correo").val()
+            if(this.factura.cliente.identificacion != null){
+                consultarAhorros()
+            }else{
+                $("#div-ahorros").fadeOut()
+                $("#div-division-ahorros").html("")
+                this.factura.division_ahorros = []
+            }
+            this.ActualizarVistaPedido()
+        }
 
+        function ResetInfoCliente() {
+            $("#modal-cliente").modal("hide")
+            this.factura.cliente.identificacion = null
+            this.factura.cliente.nombre = null
+            this.factura.cliente.apellido = null
+            this.factura.cliente.telefono = null
+            this.factura.cliente.email = null
+            $("#div-ahorros").fadeOut()
+            this.factura.division_ahorros = []
             this.ActualizarVistaPedido()
         }
 
         function ActualizarVistaPedido() {
-            $("#cliente-nombre").html(this.factura.cliente.nombre == null ? "Cliente" : this.factura.cliente.nombre)
+            $("#cliente-nombre").html(this.factura.cliente.nombre == null || this.factura.cliente.nombre == "" ? "Cliente" : this.factura.cliente.nombre + " " + this.factura.cliente.apellido)
             let tabla = ""
             let sub_total = 0
             if (this.factura.detalles.length == 0) {
@@ -577,6 +782,7 @@
             //ACTUALIZAMOS CAMPOS DE TOTALES
             let total = 0
             $("#factura-subtotal").val("$" + format(sub_total))
+            this.factura.subtotal = sub_total
             total += sub_total
             let servicio = $("#factura-servicio-voluntario").val()
             if ($.isNumeric(servicio)) total += parseFloat(servicio)
@@ -591,6 +797,61 @@
             $("#factura-total").val("$" + format(total))
             $("#factura-duracion").val(this.factura.minutos_duracion)
             this.factura.total = parseFloat(total)
+
+            //TOTAL DE LAS FORFMAS DE PAGO
+            if(this.factura.esCredito){
+                this.factura.division_ahorros = []
+                $("#div-ahorros").fadeOut()
+                $("#div-division-ahorros").html("")
+            } 
+            $("#factura-total-formas-pago").val("$" + format(getTotalFormasPago()))
+        }
+
+        function getTotalFormasPago() {
+            let sumatoria = 0
+            this.factura.division_formas_pago.forEach((item) => {
+                sumatoria += item.valor
+            })
+            this.factura.division_ahorros.forEach((item) => {
+                sumatoria += item.valor
+            })
+            return sumatoria
+        }
+
+        
+        function consultarAhorros() {
+            this.ahorros_actuales = []
+            let url = "{{ route('tercero/validar_ahorros_para_uso') }}"
+            var _token = ""
+            $("[name='_token']").each(function() {
+                _token = this.value
+            })
+            let request = {
+                '_token': _token,
+                'identificacion': this.factura.cliente.identificacion
+            }
+            $.post(url, request, (response) => {
+                if (!response.error) {
+                    let view = `<option value="" label="default"></option>`
+                    if(response.data.length == 0) this.factura.ahorros = []
+                    this.ahorros_actuales = response.data
+                    response.data.forEach((item) => {
+                        view += `<option value="${item.id_documento}">${item.numero} Saldo: ${item._saldo}</option>`
+                    })
+                    $("#factura-ahorros").html(view)
+                    $("#div-ahorros").fadeIn()
+                    globalRefreshSelect()
+                } else {
+                    this.factura.ahorros = []
+                    toastr.error(response.mensaje, "Error")
+                }
+            })
+            .fail((error) => {
+                $("#div-ahorros").fadeOut()
+                this.factura.ahorros = []
+                console.log(error)
+                toastr.error("Ha ocurrido un error consultando los posibles ahorros del cliente, por favor intentelo nuevamente", "Error")
+            })
         }
 
         function EstablecerCantidad(id_producto) {
@@ -681,6 +942,7 @@
             if (this.factura.finalizada == 1) {
                 $("#permiso-guardar").fadeOut()
                 $("#permiso-guardar-finalizar").fadeOut()
+                $("#permiso-imprimir-factura-formal").fadeIn()
                 $("#permiso-imprimir-factura").fadeIn()
                 $("#permiso-imprimir-comanda").fadeIn()
                 $("#permiso-anular").fadeIn()
@@ -691,10 +953,12 @@
                 $("#permiso-guardar-finalizar").fadeIn()
 
                 if (this.factura.id_factura != null) {
+                    $("#permiso-imprimir-factura-formal").fadeIn()
                     $("#permiso-imprimir-factura").fadeIn()
                     $("#permiso-imprimir-comanda").fadeIn()
                     $("#permiso-anular").fadeIn()
                 } else {
+                    $("#permiso-imprimir-factura-formal").fadeOut()
                     $("#permiso-imprimir-factura").fadeOut()
                     $("#permiso-imprimir-comanda").fadeOut()
                     $("#permiso-anular").fadeOut()
@@ -715,7 +979,7 @@
             this.factura.direccion = $("#factura-direccion-domicilio").val()
             this.factura.formas_pago = $("#factura-formas-pago").val()
             this.factura.forma_pago_abono_inicial = $("#factura-forma-pago-abono").val()
-
+            this.factura.enviar_email = $("#enviar-email").prop("checked")
             if (!ValidarCampos()) return false;
 
             if (this.factura.id_dominio_canal == {{ App\Dominio::get('Mesa') }}) this.factura.direccion = "";
@@ -732,58 +996,59 @@
                 'factura': this.factura
             }
 
-
             $.post(url, request, (response) => {
-                    Loading(false)
-                    if (!response.error) {
-                        this.factura.id_factura = response.id_factura
-                        toastr.success(response.mensaje, "Proceso exitoso")
-                        this.ValidarPermisosFactura()
-                        if (imprimir_comanda) this.Imprimir('comanda')
-                        if (imprimir_factura) this.Imprimir('factura')
-                    } else {
-                        toastr.error(response.mensaje, "Error")
-                    }
-                    console.log(response)
-                })
-                .fail((error) => {
-                    Loading(false)
-                    console.log(error)
-                    toastr.error("Ha ocurrido un error, por favor intentelo nuevamente", "Error")
-                })
-            console.log("bien")
+                Loading(false)
+                if (!response.error) {
+                    this.factura.id_factura = response.id_factura
+                    toastr.success(response.mensaje, "Proceso exitoso")
+                    this.ValidarPermisosFactura()
+                    if (imprimir_comanda) this.Imprimir('comanda')
+                    if (imprimir_factura) this.Imprimir('factura')
+                } else {
+                    toastr.error(response.mensaje, "Error")
+                }
+                console.log(response)
+            })
+            .fail((error) => {
+                Loading(false)
+                console.log(error)
+                toastr.error("Ha ocurrido un error, por favor intentelo nuevamente", "Error")
+            })
         }
 
         function ValidarCampos() {
             if (this.factura.detalles.length == 0) {
-                toastr.error("Es necesario escoger por lo menos un producto para el pedido", "Error")
+                toastr.error("Es necesario escoger por lo menos un producto para el factura", "Error")
                 return false;
             }
 
-            if (this.factura.formas_pago == null) {
-                toastr.error("Es necesario escoger por lo menos una forma de pago para el pedido", "Error")
+            if (this.factura.division_formas_pago.length == 0 && this.factura.division_ahorros.length == 0) {
+                toastr.error("Es necesario escoger por lo menos una forma de pago para la factura", "Error")
                 return false;
             }
 
             if (this.factura.id_dominio_canal == null) {
-                toastr.error("Es necesario escoger el canal de venta para el pedido", "Error")
+                toastr.error("Es necesario escoger el canal de venta para la factura", "Error")
                 return false;
             }
 
             if (this.factura.id_dominio_canal == {{ App\Dominio::get('Mesa') }} && this.factura.id_mesa == null) {
-                toastr.error("Es necesario escoger el numero de mesa para el pedido", "Error")
+                toastr.error("Es necesario escoger el numero de mesa para la factura", "Error")
                 return false;
             }
 
             //Validamos forma de pago credito
-            let search = this.factura.formas_pago.find(item => item ==
+            if(this.factura.formas_pago != null){
+                let search = this.factura.formas_pago.find(item => item ==
                 '{{ App\Dominio::get('Credito (Saldo pendiente)') }}')
-            if (search != null && this.factura.formas_pago.length > 1) {
-                toastr.error(
-                    "Para establecer una forma de pago a credito no deben haber mas formas de pago asociadas a la factura",
-                    "Error")
-                return false;
+                if (search != null && this.factura.formas_pago.length > 1) {
+                    toastr.error(
+                        "Para establecer una forma de pago a credito no deben haber mas formas de pago asociadas a la factura",
+                        "Error")
+                    return false;
+                }
             }
+            
 
             @if ($factura and $factura->id_dominio_tipo_factura == App\Dominio::get('Factura a credito (Saldo pendiente)'))
                 if (search == null) {
@@ -807,6 +1072,16 @@
                     "Error")
                 return false;
             }
+
+            if(!this.factura.esCredito){
+                let sumatoria = getTotalFormasPago()
+                if(sumatoria != this.factura.total){
+                    toastr.error(
+                    "Los valores definidos en las formas de pago no coinciden con el total de la factura",
+                    "Error")
+                    return false;
+                }
+            }
             return true;
         }
 
@@ -815,6 +1090,8 @@
             if (tipo == 'factura') url = "{{ config('global.url_base') . '/ticket/imprimir/factura/' }}" + this.factura
                 .id_factura
             if (tipo == 'comanda') url = "{{ config('global.url_base') . '/ticket/imprimir/comanda/' }}" + this.factura
+                .id_factura
+            if(tipo == 'factura-formal') url = "{{ config('global.url_base') . '/factura/imprimir/' }}" + this.factura
                 .id_factura
 
             if (url != "") {
@@ -863,6 +1140,7 @@
                 Loading(true, "Datos de la factura...")
                 this.factura.id_factura = {{ $factura->id_factura }}
                 this.factura.cliente.nombre = "{{ $factura->tercero->nombres }}"
+                this.factura.cliente.apellido = "{{ $factura->tercero->apellidos }}"
                 this.factura.cliente.identificacion = "{{ $factura->tercero->identificacion }}"
                 this.factura.cliente.telefono = "{{ $factura->tercero->telefono }}"
                 this.factura.cliente.email = "{{ $factura->tercero->email }}"
@@ -918,6 +1196,16 @@
                 $('#select-canal').prop('disabled', true)
                 this.ValidarCanal(this.factura.id_dominio_canal)
             @endif
+        }
+
+        function LLenarFormasPago() {
+            @foreach ($formas_pago as $item)
+                formas_pago.push({
+                    id: {{ $item->id_dominio }},
+                    nombre: "{{ $item->nombre }}"
+                })
+
+            @endforeach
         }
     </script>
     <script src="{{ asset('scroll-tabs/jquery.scrolling-tabs.js') }}"></script>

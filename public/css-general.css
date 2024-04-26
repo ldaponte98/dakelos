@@ -280,4 +280,10 @@
         overflow: scroll !important;
         overflow-y: hidden !important;
     }
+    .navbar-brand{
+        text-align: left !important;
+    }
+    .text-canales{
+        text-align: center !important;
+    }
 }

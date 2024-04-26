@@ -33,6 +33,8 @@ Route::any('tercero/crear', 'TerceroController@crear')->name('tercero/crear');
 Route::any('tercero/editar/{id_tercero}', 'TerceroController@crear')->name('tercero/editar');
 Route::any('tercero/view/{id_tercero}', 'TerceroController@view')->name('tercero/view');
 Route::any('tercero/buscar/{caracteres}', 'TerceroController@buscar')->name('tercero/buscar');
+Route::any('tercero/buscar/{caracteres}', 'TerceroController@buscar')->name('tercero/buscar');
+Route::post('tercero/validar_ahorros_para_uso', 'TerceroController@validar_ahorros_para_uso')->name('tercero/validar_ahorros_para_uso');
 
 Route::any('factura/crear', 'FacturaController@crear')->name('factura/crear');
 Route::post('factura/anular', 'FacturaController@anular')->name('factura/anular');

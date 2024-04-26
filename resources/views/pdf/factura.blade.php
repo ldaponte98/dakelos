@@ -218,8 +218,13 @@
 	<tr>
 		<td class="text-center" colspan="7" style="border-bottom: none; border-top: none; border-bottom: none; font-size:6px; text-align: center;">{{$factura->licencia->politica_datos}}
 		<td colspan="3" style="border-bottom: none; background-color: #BFBFBF;"><b>IVA: </b>${{ number_format($total_iva, 0, '.','.') }}</td>
-
 	</tr>
+	@if ($factura->abono_inicial > 0)
+		<tr>
+			<td colspan="7" style="border-bottom: none;  border-top: none;">&nbsp;</td>
+			<td colspan="3" style="border-bottom: none; background-color: #BFBFBF;"><b>ABONO INICAL: </b>${{ number_format($factura->abono_inicial, 0, '.','.') }}</td>
+		</tr>
+	@endif
 	@if ($factura->descuento > 0)
 		<tr>
 			<td colspan="7" style="border-bottom: none;  border-top: none;">&nbsp;</td>
@@ -232,17 +237,24 @@
 			<small style="font-size:11px;"><b>Formas de pago</b></small><br>
 			<small style="font-size:11px;">
 				@php
+					$formas_pago_recibos_caja = $factura->formas_pago_recibos_caja();
 					$cont = 0;
 				@endphp
 				@foreach ($factura->formas_pago as $item)
-					{{ $cont > 0 ? ", " . $item->tipo->nombre : $item->tipo->nombre }}
+					{{ $cont > 0 ? ", " . $item->tipo->nombre . "[$".number_format($item->valor ,0, '.', '.')."]" : $item->tipo->nombre . "[$".number_format($item->valor ,0, '.', '.')."]" }}
+					@php
+						$cont++;
+					@endphp
+				@endforeach
+				@foreach ($formas_pago_recibos_caja as $item)
+					{{ $cont > 0 ? ", Recibo de caja " . $item->factura->numero . " [$".number_format($item->valor ,0, '.', '.')."]" : "Recibo de caja - " . $item->factura->numero . " [$".number_format($item->valor ,0, '.', '.')."]" }}
 					@php
 						$cont++;
 					@endphp
 				@endforeach
 			</small>
 		</td>
-		<td colspan="3" style="border-bottom: none; background-color: #BFBFBF;"><b>TOTAL: </b>${{ number_format($factura->valor, 0, '.','.') }}</td>
+		<td colspan="3" style="border-bottom: none; background-color: #BFBFBF;"><b>{{ $factura->id_dominio_tipo_factura == \App\Dominio::get('Factura a credito (Saldo pendiente)') ? "PENDIENTE" : "TOTAL" }}: </b>${{ number_format($factura->valor, 0, '.','.') }}</td>
 	</tr>
 	<tr>		
 	<td colspan="10"><b>Descripciones: </b><br>{{ $factura->descripciones}}</td>
