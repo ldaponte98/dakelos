@@ -330,7 +330,7 @@
 
                     <div class="form-group">
                         <input class="pointer mr-1" type="checkbox" id="enviar-email" name="enviar-email" @if((isset($factura->enviar_email) && $factura->enviar_email == 1) || $factura == null) checked @endif class="form-check-input">
-                        <label for="enviar-email" class="font-italic">Enviar factura a cliente vía correo electrónico.</label>
+                        <label for="enviar-email" class="font-italic" style="font-size: 0.8rem">Enviar factura a cliente vía correo electrónico.</label>
                     </div>
 
                     <div class="form-group">
