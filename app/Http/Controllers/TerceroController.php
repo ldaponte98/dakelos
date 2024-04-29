@@ -96,10 +96,21 @@ class TerceroController extends Controller
         $post = $request->all();
         if($post){
             $post = (object) $post;
-            $identificacion = $post->identificacion;
-            $tercero = Tercero::where('id_licencia', session('id_licencia'))
+            $tercero = null;
+            if(isset($post->id_tercero)){
+                $id_tercero = $post->id_tercero;
+                $tercero = Tercero::where('id_licencia', session('id_licencia'))
+                              ->where('id_tercero', $id_tercero)
+                              ->first();
+            }
+
+            if(isset($post->identificacion)){
+                $identificacion = $post->identificacion;
+                $tercero = Tercero::where('id_licencia', session('id_licencia'))
                               ->where('identificacion', $identificacion)
                               ->first();
+            }
+            
             if($tercero == null) return $this->responseApi(true, "Número de identificación no valido");
             $ahorros = Factura::where('estado', 1)
                               ->where('id_tercero', $tercero->id_tercero)

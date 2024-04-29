@@ -63,6 +63,11 @@ class Factura extends Model
         return $this->hasMany(FormaPago::class, 'id_factura');
     }
 
+    public function pago_con_ahorros()
+    {
+        return $this->hasMany(FacturaPagoReciboCaja::class, 'id_factura');
+    }
+
     public function get_estado()
     {
         switch ($this->estado) {
@@ -130,7 +135,7 @@ class Factura extends Model
         $result = FacturaPagoReciboCaja::where('id_factura_recibo_caja', $this->id_factura)->get();
         $total = 0;
         foreach ($result as $value) {
-            $total += $value->valor;
+            if($value->factura->finalizada == 1) $total += $value->valor;
         }
         return $total;
     }

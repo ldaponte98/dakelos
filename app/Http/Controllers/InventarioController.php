@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Caja;
 use App\Dominio;
 use App\Factura;
+use App\FormaPago;
 use App\Inventario;
 use App\InventarioDetalle;
 use App\Licencia;
@@ -101,7 +102,7 @@ class InventarioController extends Controller
                         $id_tercero = isset($post->id_tercero_proveedor) && $post->id_tercero_proveedor != "" && $post->id_tercero_proveedor != null ? 
                             $post->id_tercero_proveedor : 
                             $licencia->id_tercero_responsable;
-                        $facturacion = $this->facturar_entrada_inventario($id_tercero, $total, $detalles, $inventario);
+                        $facturacion = $this->facturar_entrada_inventario($id_tercero, $total, $detalles, $inventario, $post);
                         if (!$facturacion->error) {
                             $inventario->id_factura = $facturacion->id_factura;
                             $inventario->save();
@@ -141,7 +142,7 @@ class InventarioController extends Controller
         return view('inventario.stock_actual', compact('tipos'));
     }
 
-    public function facturar_entrada_inventario($id_tercero, $valor = 0, $detalles = [], $inventario)
+    public function facturar_entrada_inventario($id_tercero, $valor = 0, $detalles = [], $inventario, $post)
     {
         $error      = true;
         $message    = "";
@@ -190,6 +191,15 @@ class InventarioController extends Controller
                 if ($factura->save()) {
                     $resolucion->consecutivo_comprobante_egreso += 1;
                     $resolucion->save();
+
+                    if($inventario->tipo_pago == "Inmediato"){
+                        $forma_pago = new FormaPago;
+                        $forma_pago->id_factura = $factura->id_factura;
+                        $forma_pago->id_dominio_forma_pago = $post->id_dominio_forma_pago_inmediato;
+                        $forma_pago->valor = $factura->valor * -1;
+                        $forma_pago->save();
+                    }
+
                     DB::commit();
                     $id_factura = $factura->id_factura;
                     $error      = false;

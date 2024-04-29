@@ -16,6 +16,14 @@ class CajaController extends Controller
     {
         $post    = $request->all();
         $errores = [];
+        $id_usuario             = session('id_usuario');
+        $caja = Caja::where('id_usuario', $id_usuario)
+                    ->where('estado', 1)
+                    ->where('fecha_cierre', null)
+                    ->first();  
+        if($caja != null) {
+            return redirect()->route('caja/view', $caja->id_caja);
+        }
         if ($post) {
             $post                 = (object) $post;
             $caja                 = new Caja;

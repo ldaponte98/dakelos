@@ -1,5 +1,6 @@
 @php
     $licencia = \App\Licencia::find(session('id_licencia'));
+    $permiso_cambiar_valor_unitario = \App\Permiso::validar(7);
 @endphp
 @extends('layout.main')
 @section('menu')
@@ -52,6 +53,9 @@
     <link rel="stylesheet" href="{{ asset('scroll-tabs/st-demo.css') }}" />
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <style type="text/css">
+        .vr-unit{
+            font-size: 11px !important;
+        }
         .d-flex {
             align-items: center;
         }
@@ -238,6 +242,11 @@
                                     <th>
                                         <center><b>Cantidad</b></center>
                                     </th>
+                                    @if ($permiso_cambiar_valor_unitario)
+                                    <th>
+                                        <center><b>Vr unitario</b></center>
+                                    </th>
+                                    @endif
                                     <th>
                                         <center><b>Total</b></center>
                                     </th>
@@ -383,6 +392,10 @@
                             <label>Correo electrónico</label>
                             <input type="text" id="modal-cliente-correo" class="form-control">
                         </div>
+                        <div class="form-group">
+                            <label>Direción</label>
+                            <input type="text" id="modal-cliente-direccion" class="form-control">
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -442,7 +455,8 @@
                 apellido: null,
                 nombre: null,
                 telefono: null,
-                email: null
+                email: null,
+                direccion: null
             },
             id_dominio_canal: null,
             id_mesa: null,
@@ -475,6 +489,7 @@
                         $("#modal-cliente-apellido").val(data.apellidos)
                         $("#modal-cliente-telefono").val(data.telefono)
                         $("#modal-cliente-correo").val(data.email)
+                        $("#modal-cliente-direccion").val(data.direccion)
                     }
                 }).fail((error) => {
 
@@ -521,7 +536,7 @@
 
         function validarFormasPagoEscogidas() {
             this.validarSiEsCredito()
-            this.validarDivisionFormasPago()
+            this.ValidarDivisionFormasPago()
             this.ActualizarVistaPedido()
         }
 
@@ -542,12 +557,13 @@
             }            
         }
 
-        function validarDivisionFormasPago() {
+        function ValidarDivisionFormasPago() {
             let formasPago = $("#factura-formas-pago").val()
             let list = []
+            let self = this
             if (formasPago != null && !this.factura.esCredito) {
                 formasPago.forEach((_id) => {
-                    let formaPago = formas_pago.find(p => p.id == _id)
+                    let formaPago = self.formas_pago.find(p => p.id == _id)
                     if(formaPago){
                         let division = this.factura.division_formas_pago.find(p => p.id == _id)
                         if(division == null){
@@ -695,6 +711,7 @@
             if (this.factura.cliente.apellido) $("#modal-cliente-apellido").val(this.factura.cliente.apellido)
             if (this.factura.cliente.telefono) $("#modal-cliente-telefono").val(this.factura.cliente.telefono)
             if (this.factura.cliente.email) $("#modal-cliente-correo").val(this.factura.cliente.email)
+            if (this.factura.cliente.direccion) $("#modal-cliente-direccion").val(this.factura.cliente.direccion)
         }
 
         function GuardarInfoCliente() {
@@ -719,6 +736,11 @@
             this.factura.cliente.apellido = $("#modal-cliente-apellido").val()
             this.factura.cliente.telefono = $("#modal-cliente-telefono").val()
             this.factura.cliente.email = $("#modal-cliente-correo").val()
+            this.factura.cliente.direccion = $("#modal-cliente-direccion").val()
+
+            if($("#factura-direccion-domicilio").val() == null || $("#factura-direccion-domicilio").val() == ""){
+                $("#factura-direccion-domicilio").val(this.factura.cliente.direccion)
+            }
             if(this.factura.cliente.identificacion != null){
                 consultarAhorros()
             }else{
@@ -736,6 +758,7 @@
             this.factura.cliente.apellido = null
             this.factura.cliente.telefono = null
             this.factura.cliente.email = null
+            this.factura.cliente.direccion = null
             $("#div-ahorros").fadeOut()
             this.factura.division_ahorros = []
             this.ActualizarVistaPedido()
@@ -752,21 +775,42 @@
             } else {
                 this.factura.detalles.forEach((item) => {
                     let valor_producto = item.cantidad * item.precio_venta;
+                    let extra = ""
+                    @if ($permiso_cambiar_valor_unitario)
+                        extra += `<td>
+                                <center>
+                                    <div class="dropdown for-notification">
+                                        <button class="vr-unit btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true">
+                                            $${format(item.precio_venta)}
+                                        </button>
+                                        <div class="dropdown-menu box-quantity">
+                                            <div class="input-group dropdowncontent" >
+                                                <input onkeyup="if(event.keyCode == 13) EstablecerValorUnitario(${item.id_producto})" type="text" id="valor-item-${item.id_producto}" value="${item.precio_venta}" class="form-control">
+                                                <div class="input-group-btn"><span onclick="EstablecerValorUnitario(${item.id_producto})" class="btn btn-success"><i class="fa fa-check"></i></span></div>
+                                            </div>  
+                                        </div>
+                                    </div>
+                                </center>
+                            </td>`
+                    @endif
                     tabla += `<tr>
                             <td><center>${item.nombre}</center></td>
-                            <td><center>
-                            <div class="dropdown for-notification">
-                                <button class="btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true">
-                                    ${item.cantidad} <small>${item.presentacion}</small>
-                                </button>
-                                <div class="dropdown-menu box-quantity">
-                                    <div class="input-group dropdowncontent" >
-                                        <input onkeyup="if(event.keyCode == 13) EstablecerCantidad(${item.id_producto})" type="text" id="cantidad-item-${item.id_producto}" value="${item.cantidad}" class="form-control">
-                                        <div class="input-group-btn"><span onclick="EstablecerCantidad(${item.id_producto})" class="btn btn-success"><i class="fa fa-check"></i></span></div>
-                                    </div>  
-                                </div>
-                            </div>
-                            </center></td>
+                            <td>
+                                <center>
+                                    <div class="dropdown for-notification">
+                                        <button class="btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true">
+                                            ${item.cantidad} <small>${item.presentacion}</small>
+                                        </button>
+                                        <div class="dropdown-menu box-quantity">
+                                            <div class="input-group dropdowncontent" >
+                                                <input onkeyup="if(event.keyCode == 13) EstablecerCantidad(${item.id_producto})" type="text" id="cantidad-item-${item.id_producto}" value="${item.cantidad}" class="form-control">
+                                                <div class="input-group-btn"><span onclick="EstablecerCantidad(${item.id_producto})" class="btn btn-success"><i class="fa fa-check"></i></span></div>
+                                            </div>  
+                                        </div>
+                                    </div>
+                                </center>
+                            </td>
+                            ${extra}
                             <td><center>$${format(valor_producto)}</center></td>
                             <td>
                                 <span onclick='EliminarProducto(${item.id_producto})'>
@@ -817,9 +861,8 @@
             })
             return sumatoria
         }
-
         
-        function consultarAhorros() {
+        function consultarAhorros(defaults = null) {
             this.ahorros_actuales = []
             let url = "{{ route('tercero/validar_ahorros_para_uso') }}"
             var _token = ""
@@ -836,11 +879,20 @@
                     if(response.data.length == 0) this.factura.ahorros = []
                     this.ahorros_actuales = response.data
                     response.data.forEach((item) => {
-                        view += `<option value="${item.id_documento}">${item.numero} Saldo: ${item._saldo}</option>`
+                        let isSelected = false
+                        if(defaults != null){
+                            isSelected = defaults.find(p => p == item.id_documento) != null
+                        }
+                        view += `<option ${isSelected ? 'selected' : ''} value="${item.id_documento}">${item.numero} Saldo: ${item._saldo}</option>`
                     })
-                    $("#factura-ahorros").html(view)
-                    $("#div-ahorros").fadeIn()
-                    globalRefreshSelect()
+                    if(response.data.length == 0){
+                        $("#div-ahorros").fadeOut()
+                    }else{
+                        $("#factura-ahorros").html(view)
+                        $("#div-ahorros").fadeIn()
+                        globalRefreshSelect()
+                    }
+                    this.validarAhorrosEscogidos()
                 } else {
                     this.factura.ahorros = []
                     toastr.error(response.mensaje, "Error")
@@ -860,6 +912,23 @@
                 let busqueda = this.factura.detalles.find(item => item.id_producto == id_producto)
                 if (busqueda) {
                     busqueda.cantidad = parseFloat(cantidad);
+                    let pos = 0;
+                    this.factura.detalles.forEach((item) => {
+                        if (item.id_producto == busqueda.id_producto) this.factura.detalles.splice(pos, 1, busqueda)
+                        pos++
+                    })
+                    this.ActualizarVistaPedido()
+                }
+            }
+        }
+
+        function EstablecerValorUnitario(id_producto) {
+            let valor = $(`#valor-item-${id_producto}`).val()
+            console.log({valor: valor})
+            if ($.isNumeric(valor)) {
+                let busqueda = this.factura.detalles.find(item => item.id_producto == id_producto)
+                if (busqueda) {
+                    busqueda.precio_venta = parseFloat(valor);
                     let pos = 0;
                     this.factura.detalles.forEach((item) => {
                         if (item.id_producto == busqueda.id_producto) this.factura.detalles.splice(pos, 1, busqueda)
@@ -1144,6 +1213,7 @@
                 this.factura.cliente.identificacion = "{{ $factura->tercero->identificacion }}"
                 this.factura.cliente.telefono = "{{ $factura->tercero->telefono }}"
                 this.factura.cliente.email = "{{ $factura->tercero->email }}"
+                this.factura.cliente.direccion = "{{ $factura->tercero->direccion }}"
                 this.factura.descuento = {{ $factura->descuento }}
                 this.factura.domicilio = {{ $factura->domicilio }}
                 this.factura.servicio_voluntario = {{ $factura->servicio_voluntario }}
@@ -1204,8 +1274,37 @@
                     id: {{ $item->id_dominio }},
                     nombre: "{{ $item->nombre }}"
                 })
-
             @endforeach
+
+            @if ($factura)
+                let index = 0
+                @foreach ($factura->formas_pago as $item)
+                    this.factura.division_formas_pago.push({
+                        id: "{{ $item->tipo->id_dominio }}",
+                        nombre: "{{ $item->tipo->nombre }}",
+                        valor: {{ $item->valor }},
+                        index: index
+                    })
+                    index++
+                @endforeach
+                this.ValidarDivisionFormasPago()
+                index = 0
+                @foreach ($factura->pago_con_ahorros as $item)
+                    this.factura.division_ahorros.push({
+                        id_documento: "{{ $item->id_factura_recibo_caja }}",
+                        titulo: "{{ $item->recibo_caja->numero }} Saldo: ${{ number_format($item->recibo_caja->valor, 0, '.', '.') }}",
+                        valor: {{ $item->valor }},
+                        saldo: {{ $item->recibo_caja->valor }},
+                        index: index
+                    })
+                    index++
+                @endforeach
+                if(this.factura.division_ahorros.length > 0){
+                    consultarAhorros(this.factura.division_ahorros.map(item => item.id_documento))
+                }
+                
+            @endif
+            this.ActualizarVistaPedido()
         }
     </script>
     <script src="{{ asset('scroll-tabs/jquery.scrolling-tabs.js') }}"></script>

@@ -177,6 +177,15 @@
                 <hr>
                 <div class="row">
                     <div class="col-sm-6">
+                        <h4><span class="red"><b>-</b></span> <b>Abono de egresos a credito</b></h4>
+                    </div>
+                    <div class="col-sm-6 text-right" >
+                        <h4>${{ number_format($caja->get_abonos_egresos_a_credito(), 0, '.', '.') }}</h4>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-6">
                         <h4><span class="red"><b>&nbsp;</b></span> <b>Egresos</b></h4>
                     </div>
                     <div class="col-sm-6 text-right" >
@@ -192,19 +201,11 @@
                         <h4>${{ number_format($caja->get_egresos_a_credito(), 0, '.', '.') }}</h4>
                     </div>
                 </div>
+                
                 <hr>
                 <div class="row">
                     <div class="col-sm-6">
-                        <h4><span class="red"><b>-</b></span> <b>Abono de egresos a credito</b></h4>
-                    </div>
-                    <div class="col-sm-6 text-right" >
-                        <h4>${{ number_format($caja->get_abonos_egresos_a_credito(), 0, '.', '.') }}</h4>
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h4><span class="red"><b>-</b></span> <b>Egresos cobro inmediato</b></h4>
+                        <h4><span class="red"><b>&nbsp;</b></span> <b>Egresos cobro inmediato</b></h4>
                     </div>
                     <div class="col-sm-6 text-right" >
                         <h4>${{ number_format($caja->get_egresos_inmediatos(), 0, '.', '.') }}</h4>

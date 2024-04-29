@@ -61,7 +61,7 @@
                                                                             ->where('id_licencia', session('id_licencia'));
                                             @endphp
                                             <label for="cc-payment" class="control-label mb-1"><b>Proveedor</b></label>
-                                            <select name="id_tercero_proveedor" id="id_tercero_proveedor" data-placeholder="Consulta aqui por nombre o identificacion..." class="form-control select2">
+                                            <select onchange="validarFormaPagoInmediato()" name="id_tercero_proveedor" id="id_tercero_proveedor" data-placeholder="Consulta aqui por nombre o identificacion..." class="form-control select2">
                                                 <option value="" label="default"></option>
                                                 @foreach($items as $item)
                                                 <option value="{{ $item->id_tercero }}">{{ $item->nombre_completo() }}</option>
@@ -71,12 +71,35 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-4 div-tipo-pago">
                                         <div class="form-group" style="">
                                             <label for="cc-payment" class="control-label mb-1"><b>*Tipo de pago</b></label><br>
                                             <select class="form-control" name="tipo_pago" id="tipo_pago" onchange="validar_credito(this.value)">
                                                 <option value="Inmediato">Inmediato</option>
                                                 <option value="Credito">Credito (Saldo pendiente)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4 div-forma-pago-inmediato">
+                                        <div class="form-group">
+                                            <label for="forma-pago-inmediato" class="control-label mb-1"><b>*Forma de pago</b></label>
+                                            <select onchange="validarFormaPagoInmediato()" id="forma-pago-inmediato" name="id_dominio_forma_pago_inmediato" data-placeholder="Escoje una..."
+                                                class="standardSelect form-control">
+                                                <option value="" label="default"></option>
+                                                <option value="ahorro">Recibo de caja (Ahorro)</option>
+                                                @foreach ($formas_pago as $item)
+                                                    @if ($item->id_dominio != \App\Dominio::get("Credito (Saldo pendiente)"))
+                                                        <option value="{{ $item->id_dominio }}">{{ $item->nombre }}</option>
+                                                    @endif
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4 div-ahorros hide">
+                                        <div class="form-group">
+                                            <label for="forma-pago-inmediato" class="control-label mb-1"><b>*Ahorro</b></label>
+                                            <select id="factura-ahorros" name="ahorros" multiple data-placeholder="Escoje uno o mas..."
+                                                class="standardSelect form-control">
                                             </select>
                                         </div>
                                     </div>
@@ -89,9 +112,10 @@
                                     <div class="col-sm-4 div-credito hide">
                                         <div class="form-group">
                                             <label for="cc-payment" class="control-label mb-1"><b>Forma de pago del abono inicial</b></label>
-                                            <select id="credito-forma-pago-abono" name="id_dominio_forma_pago_abono" data-placeholder="Escoje una..."
+                                            <select onchange="validarFormaPagoAbonoInicial()" id="credito-forma-pago-abono" name="id_dominio_forma_pago_abono" data-placeholder="Escoje una..."
                                                 class="standardSelect form-control">
                                                 <option value="" label="default"></option>
+                                                <option value="ahorro">Recibo de caja (Ahorro)</option>
                                                 @foreach ($formas_pago as $item)
                                                     @if ($item->id_dominio != \App\Dominio::get("Credito (Saldo pendiente)"))
                                                         <option value="{{ $item->id_dominio }}">{{ $item->nombre }}</option>
@@ -193,17 +217,76 @@
 </div>
 
 <script>
+    toastr.options.positionClass = 'toast-bottom-right';
     var productos = []
     var detalles = []
-
+    
     function validar_credito(option) {
         if(option == "Credito"){
             $(".div-credito").fadeIn()
+            $(".div-forma-pago-inmediato").fadeOut()
         }else{
             $(".div-credito").fadeOut()
             $("#credito-abono").val("")
+            $(".div-forma-pago-inmediato").fadeIn()
         }
     }
+
+    function validarFormaPagoInmediato() {
+        let id_proveedor = $("#id_tercero_proveedor").val()
+        let forma_pago = $("#forma-pago-inmediato").val()
+        if(forma_pago == "ahorro"){
+            if(id_proveedor == null || id_proveedor == ""){
+                $(".div-ahorros").fadeOut()
+                $("#factura-ahorros").val(null)
+                globalRefreshSelect()
+                toastr.error("No se pueden consultar los ahorros disponibles porque debe seleccionar un proveedor para la consulta.", "Error")
+                return false
+            }
+            consultarAhorros(id_proveedor)
+        }else{
+            $(".div-ahorros").fadeOut()
+            $("#factura-ahorros").val(null)
+            globalRefreshSelect()
+        }
+    }
+
+    function consultarAhorros(id_tercero) {
+            let url = "{{ route('tercero/validar_ahorros_para_uso') }}"
+            var _token = ""
+            $("[name='_token']").each(function() {
+                _token = this.value
+            })
+            let request = {
+                '_token': _token,
+                'id_tercero': id_tercero
+            }
+            $.post(url, request, (response) => {
+                if (!response.error) {
+                    let view = `<option value="" label="default"></option>`
+                    response.data.forEach((item) => {
+                        view += `<option value="${item.id_documento}">${item.numero} Saldo: ${item._saldo}</option>`
+                    })
+                    if(response.data.length == 0){
+                        $(".div-ahorros").fadeOut()
+                        $("#factura-ahorros").val(null)
+                    }else{
+                        $("#factura-ahorros").html(view)
+                        $(".div-ahorros").fadeIn()
+                    }
+                    globalRefreshSelect()
+                } else {
+                    toastr.error(response.mensaje, "Error")
+                }
+            })
+            .fail((error) => {
+                $("#factura-ahorros").val(null)
+                globalRefreshSelect()
+                $(".div-ahorros").fadeOut()
+                console.log(error)
+                toastr.error("Ha ocurrido un error consultando los posibles ahorros del cliente, por favor intentelo nuevamente", "Error")
+            })
+        }
 
     function llenar_productos(){
         @foreach ($productos as $item)
@@ -231,6 +314,7 @@
             })
         @endforeach
     }
+
     function validar_presentacion(id_producto) {
         let producto = this.productos.find(item => item.id == id_producto)
         if (producto) $("#presentacion").html(producto.presentacion)
@@ -239,9 +323,11 @@
 
     function validar_tipo(tipo) {
         if (tipo == 40) { //ENTRADA
+            $(".div-tipo-pago").fadeIn()
             $("#id_tercero_proveedor").prop("disabled", false)
             $("#alert-info").fadeIn()
         }else{
+            $(".div-tipo-pago").fadeOut()
             $("#id_tercero_proveedor").prop("disabled", true)
             $("#alert-info").fadeOut()
         }
@@ -270,10 +356,6 @@
             toastr.error("Debe establecer un precio del producto valido", "Error")
             return;
         }
-
-        
-
-
         let producto = this.productos.find(item => item.id == id_producto)
         let detalle = {
             'id' : id_producto,
@@ -346,7 +428,6 @@
         $("#table-detalles tbody").html(tabla)
     }
 
-
     function guardar() {
         if (validarFormulario()) {
             let json_detalles = JSON.stringify(this.detalles)
@@ -367,6 +448,11 @@
             toastr.error("Para realizar una entrada de inventario a crédito con abono inicial debe definir la forma de pago de dicho abono.", "Error")
             return false
         }
+        if($("#id_dominio_forma_pago_inmediato").val() != "Credito"  && ($("#forma-pago-inmediato").val() == null || $("#forma-pago-inmediato").val() == "")){
+            toastr.error("La forma de pago para pago inmediato es obligatoria.", "Error")
+            return false
+        }
+        
         if (this.detalles.length == 0) {
             toastr.error("Debe agregar por lo menos un producto al movimiento de inventario", "Error")
             return false

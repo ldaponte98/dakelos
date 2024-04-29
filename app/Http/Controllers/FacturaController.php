@@ -19,6 +19,7 @@ use App\Tercero;
 use App\FacturaPagoReciboCaja;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Exception;
 
 class FacturaController extends Controller
 {
@@ -366,150 +367,161 @@ class FacturaController extends Controller
                     }
                 }
             }
+            try {
+                
+            DB::beginTransaction();
+                if ($caja or $menu_digital) {
+                    //primero buscamos el consecutivo de la resolucion para la factura
+                    $resolucion = ResolucionFactura::where('id_licencia', $id_licencia)->first();
+                    
+                    if ($resolucion) {
+                        $factura          = $post->factura->id_factura == null ? new Factura : Factura::find($post->factura->id_factura);
+                        $texto_resolucion = $resolucion->prefijo_factura . "-" . ($resolucion->consecutivo_factura + 1);
+                        $factura->numero  = $post->factura->id_factura == null ? $texto_resolucion : $factura->numero;
 
-            if ($caja or $menu_digital) {
-                //primero buscamos el consecutivo de la resolucion para la factura
-                $resolucion = ResolucionFactura::where('id_licencia', $id_licencia)->first();
-                DB::beginTransaction();
-                if ($resolucion) {
-                    $factura          = $post->factura->id_factura == null ? new Factura : Factura::find($post->factura->id_factura);
-                    $texto_resolucion = $resolucion->prefijo_factura . "-" . ($resolucion->consecutivo_factura + 1);
-                    $factura->numero  = $post->factura->id_factura == null ? $texto_resolucion : $factura->numero;
+                        $cliente                          = $this->guardar_cliente_factura($post);
+                        $factura->id_tercero              = $cliente->id_tercero;
+                        $factura->id_caja                 = $menu_digital ? null : $caja->id_caja;
+                        $factura->valor                   = $post->factura->total;
+                        $factura->valor_original          = $post->factura->total;
+                        $factura->descuento               = $post->factura->descuento;
+                        $factura->id_dominio_tipo_factura = 16;
+                        $factura->servicio_voluntario     = $post->factura->servicio_voluntario;
+                        $factura->descripciones           = $post->factura->descripciones;
+                        $factura->observaciones           = $post->factura->observaciones;
+                        $factura->id_usuario_registra     = $id_usuario;
+                        $factura->id_licencia             = $id_licencia;
+                        $factura->domicilio               = 0;
+                        $factura->id_mesa                 = null;
+                        $factura->finalizada              = $post->factura->finalizada;
+                        $factura->id_dominio_canal        = $post->factura->id_dominio_canal;
+                        $factura->direccion               = $post->factura->direccion;
+                        $factura->menu_digital            = isset($post->factura->menu_digital) ? $post->factura->menu_digital : 0;
+                        $factura->pagada                  = 1;
+                        $factura->enviar_email            = $post->factura->enviar_email ? 1 : 0;
 
-                    $cliente                          = $this->guardar_cliente_factura($post);
-                    $factura->id_tercero              = $cliente->id_tercero;
-                    $factura->id_caja                 = $menu_digital ? null : $caja->id_caja;
-                    $factura->valor                   = $post->factura->total;
-                    $factura->valor_original          = $post->factura->total;
-                    $factura->descuento               = $post->factura->descuento;
-                    $factura->id_dominio_tipo_factura = 16;
-                    $factura->servicio_voluntario     = $post->factura->servicio_voluntario;
-                    $factura->descripciones           = $post->factura->descripciones;
-                    $factura->observaciones           = $post->factura->observaciones;
-                    $factura->id_usuario_registra     = $id_usuario;
-                    $factura->id_licencia             = $id_licencia;
-                    $factura->domicilio               = 0;
-                    $factura->id_mesa                 = null;
-                    $factura->finalizada              = $post->factura->finalizada;
-                    $factura->id_dominio_canal        = $post->factura->id_dominio_canal;
-                    $factura->direccion               = $post->factura->direccion;
-                    $factura->menu_digital            = isset($post->factura->menu_digital) ? $post->factura->menu_digital : 0;
-                    $factura->pagada                  = 1;
-                    $factura->enviar_email            = $post->factura->enviar_email ? 1 : 0;
-
-                    if ($post->factura->id_dominio_canal == Dominio::get('Mesa')) {
-                        $factura->id_mesa = $post->factura->id_mesa;
-                    }
-                    if ($post->factura->id_dominio_canal == Dominio::get('Domicilio') || isset($post->factura->domicilio)) {
-                        $factura->domicilio = $post->factura->domicilio;
-                    }
-
-                    if ($factura->save()) {
-
-                        //ahora registramos los detalles de la factura
-                        DB::statement('delete from factura_detalle where id_factura = ' . $factura->id_factura);
-                        foreach ($post->factura->detalles as $producto) {
-                            $producto                       = (object) $producto;
-                            $detalle                        = new FacturaDetalle;
-                            $detalle->id_factura            = $factura->id_factura;
-                            $detalle->id_producto           = $producto->id_producto;
-                            $detalle->cantidad              = $producto->cantidad;
-                            $detalle->nombre_producto       = $producto->nombre;
-                            $detalle->precio_producto       = $producto->precio_venta;
-                            $detalle->presentacion_producto = $producto->presentacion;
-                            $detalle->save();
+                        if ($post->factura->id_dominio_canal == Dominio::get('Mesa')) {
+                            $factura->id_mesa = $post->factura->id_mesa;
+                        }
+                        if ($post->factura->id_dominio_canal == Dominio::get('Domicilio') || isset($post->factura->domicilio)) {
+                            $factura->domicilio = $post->factura->domicilio;
                         }
 
-                        //Ahora registramos las formas de pago
-                        DB::statement('delete from forma_pago where id_factura = ' . $factura->id_factura);
-                        if (isset($post->factura->division_formas_pago)) {
-                            foreach ($post->factura->division_formas_pago as $division_fp) {
-                                $division_fp                       = (object) $division_fp;
-                                $forma_pago                        = new FormaPago;
-                                $forma_pago->id_factura            = $factura->id_factura;
-                                $forma_pago->id_dominio_forma_pago = $division_fp->id;
-                                $valor                             = $division_fp->valor;
-                                
-                                if($forma_pago->id_dominio_forma_pago == Dominio::get('Credito (Saldo pendiente)')){
-                                    $abono = isset($post->factura->abono) ? $post->factura->abono : 0;
-                                    $valor = $factura->valor_original - $abono;
-                                    if(isset($post->factura->abono) && $post->factura->abono > 0){
-                                        $forma_pago_abono                        = new FormaPago;
-                                        $forma_pago_abono->id_factura            = $factura->id_factura;
-                                        $forma_pago_abono->id_dominio_forma_pago = isset($post->factura->forma_pago_abono_inicial) ? $post->factura->forma_pago_abono_inicial : null;
-                                        $forma_pago_abono->valor                 = $abono;
-                                        $forma_pago_abono->save();
+                        if ($factura->save()) {
+
+                            //ahora registramos los detalles de la factura
+                            DB::statement('delete from factura_detalle where id_factura = ' . $factura->id_factura);
+                            foreach ($post->factura->detalles as $producto) {
+                                $producto                       = (object) $producto;
+                                $detalle                        = new FacturaDetalle;
+                                $detalle->id_factura            = $factura->id_factura;
+                                $detalle->id_producto           = $producto->id_producto;
+                                $detalle->cantidad              = $producto->cantidad;
+                                $detalle->nombre_producto       = $producto->nombre;
+                                $detalle->precio_producto       = $producto->precio_venta;
+                                $detalle->presentacion_producto = $producto->presentacion;
+                                $detalle->save();
+                            }
+
+                            //Ahora registramos las formas de pago
+                            DB::statement('delete from forma_pago where id_factura = ' . $factura->id_factura);
+                            if (isset($post->factura->division_formas_pago)) {
+                                foreach ($post->factura->division_formas_pago as $division_fp) {
+                                    $division_fp                       = (object) $division_fp;
+                                    $forma_pago                        = new FormaPago;
+                                    $forma_pago->id_factura            = $factura->id_factura;
+                                    $forma_pago->id_dominio_forma_pago = $division_fp->id;
+                                    $valor                             = $division_fp->valor;
+                                    
+                                    if($forma_pago->id_dominio_forma_pago == Dominio::get('Credito (Saldo pendiente)')){
+                                        $abono = isset($post->factura->abono) ? $post->factura->abono : 0;
+                                        $valor = $factura->valor_original - $abono;
+                                        if(isset($post->factura->abono) && $post->factura->abono > 0){
+                                            $forma_pago_abono                        = new FormaPago;
+                                            $forma_pago_abono->id_factura            = $factura->id_factura;
+                                            $forma_pago_abono->id_dominio_forma_pago = isset($post->factura->forma_pago_abono_inicial) ? $post->factura->forma_pago_abono_inicial : null;
+                                            $forma_pago_abono->valor                 = $abono;
+                                            $forma_pago_abono->save();
+                                        }
+                                    }
+                                    $forma_pago->valor = $valor;
+                                    $forma_pago->save();
+
+                                    if ($forma_pago->id_dominio_forma_pago == Dominio::get('Credito (Saldo pendiente)')) {
+                                        $texto_resolucion                             = $resolucion->prefijo_credito . "-" . ($resolucion->consecutivo_credito + 1);
+                                        $factura->numero                              = $post->factura->id_factura == null ? $texto_resolucion : $factura->numero;
+                                        $factura->id_dominio_tipo_factura             = Dominio::get('Factura a credito (Saldo pendiente)');
+                                        $factura->abono_inicial                       = isset($post->factura->abono) ? $post->factura->abono : 0;
+                                        $factura->id_dominio_forma_pago_abono_inicial = isset($post->factura->forma_pago_abono_inicial) ? $post->factura->forma_pago_abono_inicial : null;
+                                        $factura->save();
                                     }
                                 }
-                                $forma_pago->valor = $valor;
-                                $forma_pago->save();
+                            }
 
-                                if ($forma_pago->id_dominio_forma_pago == Dominio::get('Credito (Saldo pendiente)')) {
-                                    $texto_resolucion                             = $resolucion->prefijo_credito . "-" . ($resolucion->consecutivo_credito + 1);
-                                    $factura->numero                              = $post->factura->id_factura == null ? $texto_resolucion : $factura->numero;
-                                    $factura->id_dominio_tipo_factura             = Dominio::get('Factura a credito (Saldo pendiente)');
-                                    $factura->abono_inicial                       = isset($post->factura->abono) ? $post->factura->abono : 0;
-                                    $factura->id_dominio_forma_pago_abono_inicial = isset($post->factura->forma_pago_abono_inicial) ? $post->factura->forma_pago_abono_inicial : null;
-                                    $factura->save();
+                            //Ahora registramos las formas de pago q son con ahorros o recibos de caja
+                            DB::statement('delete from factura_pago_recibo_caja where id_factura = ' . $factura->id_factura);
+                            if (isset($post->factura->division_ahorros)) {
+                                foreach ($post->factura->division_ahorros as $division_ahorro) {
+                                    $division_ahorro = (object) $division_ahorro;
+                                    if($factura->finalizada == 1){
+                                        $recibo_caja = Factura::find($division_ahorro->id_documento);
+                                        $recibo_caja->valor -= $division_ahorro->valor;
+                                        if($recibo_caja->valor < 0){
+                                            DB::rollBack();
+                                            throw new Exception("Error al descontar el valor del ahorro " . $recibo_caja->numero . ", el valor a descontar sobrepasa el cupo del ahorro.");
+                                        }
+                                        $recibo_caja->save();
+                                    }
+                                    $forma_pago                         = new FacturaPagoReciboCaja;
+                                    $forma_pago->id_factura             = $factura->id_factura;
+                                    $forma_pago->id_factura_recibo_caja = $division_ahorro->id_documento;
+                                    $forma_pago->valor                  = $division_ahorro->valor;
+                                    $forma_pago->save();
                                 }
                             }
-                        }
 
-                        if (isset($post->factura->division_ahorros)) {
-                            foreach ($post->factura->division_ahorros as $division_ahorro) {
-                                $division_ahorro = (object) $division_ahorro;
-                                $recibo_caja = Factura::find($division_ahorro->id_documento);
-                                $recibo_caja->valor -= $division_ahorro->valor;
-                                $recibo_caja->id_factura_cruce = $factura->id_factura;
-                                $recibo_caja->save();
-                                
-                                $forma_pago                         = new FacturaPagoReciboCaja;
-                                $forma_pago->id_factura             = $factura->id_factura;
-                                $forma_pago->id_factura_recibo_caja = $division_ahorro->id_documento;
-                                $forma_pago->valor                  = $division_ahorro->valor;
-                                $forma_pago->save();
-                            }
-                        }
+                            if ($post->factura->id_factura == null) {
+                                //ahora aumentamos el consecutivo de la resolucion
+                                if ($factura->id_dominio_tipo_factura == Dominio::get('Factura a credito (Saldo pendiente)')) {
+                                    $resolucion->consecutivo_credito += 1;
+                                }
+                                if ($factura->id_dominio_tipo_factura == 16) {
+                                    //FACTURA DE VENTA
+                                    $resolucion->consecutivo_factura += 1;
+                                }
 
-                        if ($post->factura->id_factura == null) {
-                            //ahora aumentamos el consecutivo de la resolucion
-                            if ($factura->id_dominio_tipo_factura == Dominio::get('Factura a credito (Saldo pendiente)')) {
-                                $resolucion->consecutivo_credito += 1;
-                            }
-                            if ($factura->id_dominio_tipo_factura == 16) {
-                                //FACTURA DE VENTA
-                                $resolucion->consecutivo_factura += 1;
+                                $resolucion->save();
                             }
 
-                            $resolucion->save();
-                        }
+                            if ($factura->finalizada == 1) {
+                                $this->descontar_inventario_detalles($post->factura->detalles, $factura->id_factura);
+                            }
 
-                        if ($factura->finalizada == 1) {
-                            $this->descontar_inventario_detalles($post->factura->detalles, $factura->id_factura);
-                        }
+                            $id_factura = $factura->id_factura;
+                            $mensaje    = "Factura registrada exitosamente";
+                            $error      = false;
+                            DB::commit();
 
-                        $id_factura = $factura->id_factura;
-                        $mensaje    = "Factura registrada exitosamente";
-                        $error      = false;
-                        DB::commit();
-
-                        if ($factura->finalizada == 1 && $factura->enviar_email == 1) {
-                            $factura->enviar_email();
+                            if ($factura->finalizada == 1 && $factura->enviar_email == 1) {
+                                $factura->enviar_email();
+                            }
+                        } else {
+                            DB::rollBack();
+                            $mensaje = "Error al registrar la factura";
+                            $errors  = $factura->errors;
                         }
                     } else {
                         DB::rollBack();
-                        $mensaje = "Error al registrar la factura";
-                        $errors  = $factura->errors;
+                        $mensaje = "No tiene resolucion activa";
                     }
                 } else {
                     DB::rollBack();
-                    $mensaje = "No tiene resolucion activa";
+                    $mensaje = "No cuenta con caja abierta para facturar";
                 }
-            } else {
-                DB::rollBack();
-                $mensaje = "No cuenta con caja abierta para facturar";
+            } catch (Exception $e) {
+                $mensaje = $e->getMessage();
+                $error = true;
             }
-
             return response()->json([
                 'error'      => $error,
                 'mensaje'    => $mensaje,
@@ -552,6 +564,7 @@ class FacturaController extends Controller
             $apellido   = $post->factura->cliente->apellido ? $post->factura->cliente->apellido : "";
             $telefono = $post->factura->cliente->telefono ? $post->factura->cliente->telefono : null;
             $email    = $post->factura->cliente->email ? $post->factura->cliente->email : "";
+            $direccion    = $post->factura->cliente->direccion ? $post->factura->cliente->direccion : "";
 
             $cliente->nombres                        = $nombre;
             $cliente->apellidos                      = $apellido;
@@ -559,6 +572,7 @@ class FacturaController extends Controller
             $cliente->id_dominio_tipo_identificacion = 5;
             $cliente->identificacion                 = $iden;
             $cliente->email                          = $email;
+            $cliente->direccion                      = $direccion;
             $cliente->id_dominio_sexo                = 13;
             $cliente->telefono                       = $telefono;
             $cliente->id_licencia                    = $id_licencia;
@@ -635,6 +649,16 @@ class FacturaController extends Controller
         }
     }
 
+    public function restituir_saldo_recibos_caja($id_factura)
+    {
+        $factura = Factura::find($id_factura);
+        foreach ($factura->pago_con_ahorros as $pago_recibo_caja) {
+            $recibo_caja = $pago_recibo_caja->recibo_caja;
+            $recibo_caja->valor += $pago_recibo_caja->valor;
+            $recibo_caja->save();
+        }
+    }
+
     public function anular(Request $request)
     {
         $post    = $request->all();
@@ -652,6 +676,7 @@ class FacturaController extends Controller
                         if (Permiso::validar($id_perfil, $id_permiso)) {
                             //DEVOLVEMOS A UN PRODUCTO LA CANTIDAD VENDIDA
                             $this->ingresar_inventario_detalles($factura->id_factura);
+                            $this->restituir_saldo_recibos_caja($factura->id_factura);
                             $factura->estado           = 0;
                             $factura->id_usuario_anula = $id_usuario;
                             $factura->motivo_anulacion = $post->motivo;

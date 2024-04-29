@@ -139,13 +139,7 @@
                         </div>
                         @if (\App\Permiso::validar(4))
                             @php
-                                $productos = \App\Producto::where('id_licencia', session('id_licencia'))
-                                                          ->where('alerta', 1)
-                                                          ->where('estado', 1)
-                                                          ->where('cantidad_actual', '<=', 'cantidad_minimo_alerta')
-                                                          ->orderBy('updated_at', 'desc')
-                                                          ->get();
-                                
+                                $productos = \App\Producto::en_alerta();
                             @endphp
                             <div class="dropdown for-notification">
                                 <button class="btn dropdown-toggle" type="button" id="notification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

@@ -18,7 +18,9 @@ class Caja extends Model
     public function get_total()
     {
         $facturas = Factura::where('estado', 1)
-                    ->where('id_caja', $this->id_caja)->get();
+                    ->where('id_caja', $this->id_caja)
+                    ->where('finalizada', 1)
+                    ->get();
         $total = $this->valor_inicial;
         foreach ($facturas as $factura) {
             if($factura->id_dominio_tipo_factura <> 17 && 
@@ -45,6 +47,7 @@ class Caja extends Model
         return Factura::where('estado', 1)
             ->where('id_caja', $this->id_caja)
             ->where('id_dominio_tipo_factura', '<>', 17)
+            ->where('finalizada', 1)
             ->sum('descuento');
     }
 
@@ -53,6 +56,7 @@ class Caja extends Model
         return Factura::where('estado', 1)
             ->where('id_caja', $this->id_caja)
             ->where('id_dominio_tipo_factura', 53)
+            ->where('finalizada', 1)
             ->sum('valor_original');
     }
 
@@ -94,6 +98,7 @@ class Caja extends Model
             ->where('id_caja', $this->id_caja)
             ->where('id_dominio_tipo_factura', '<>', 17)
             ->where('id_dominio_canal', $id_dominio_canal)
+            ->where('finalizada', 1)
             ->sum('valor_original');
     }
 
@@ -106,6 +111,7 @@ class Caja extends Model
             ->where('f.id_caja', $this->id_caja)
             ->where('f.id_dominio_tipo_factura', '<>', 17)
             ->where('fp.id_dominio_forma_pago', $id_dominio_forma_pago)
+            ->where('f.finalizada', 1)
             ->sum('fp.valor');
     }
 }

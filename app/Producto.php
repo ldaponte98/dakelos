@@ -123,6 +123,7 @@ class Producto extends Model
         }
     }
 
+    
     public function notificar_alerta_inventario()
     {
         $subject = "Aviso de inventario";
@@ -146,5 +147,19 @@ class Producto extends Model
             }
             Log::write("Envio email de aviso de inventario", "Se envia email a [$for] con respuesta [$mensaje]");
         }
+    }
+
+    public static function en_alerta()
+    {
+        $productos = \App\Producto::where('id_licencia', session('id_licencia'))
+                        ->where('alerta', 1)
+                        ->where('estado', 1)
+                        ->orderBy('updated_at', 'desc')
+                        ->get();
+        $result = [];
+        foreach ($productos as $producto) {
+            if($producto->cantidad_actual <= $producto->cantidad_minimo_alerta) $result[] = $producto;
+        }
+        return $result;
     }
 }

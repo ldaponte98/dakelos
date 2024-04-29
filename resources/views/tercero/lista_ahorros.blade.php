@@ -22,7 +22,6 @@
                             @if ($factura->id_dominio_tipo_factura == \App\Dominio::get('Recibo de caja'))
                                 @php
                                     $facturas_donde_han_usado_ahorro = $factura->facturas_donde_han_usado_ahorro();
-                                    $cont = 0;
                                 @endphp
                                 <tr>
                                     <td class="serial">{{ $cont }}</td>
