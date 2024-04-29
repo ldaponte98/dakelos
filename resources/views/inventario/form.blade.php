@@ -267,12 +267,11 @@
                     response.data.forEach((item) => {
                         view += `<option value="${item.id_documento}">${item.numero} Saldo: ${item._saldo}</option>`
                     })
+                    $(".div-ahorros").fadeIn()
                     if(response.data.length == 0){
-                        $(".div-ahorros").fadeOut()
                         $("#factura-ahorros").val(null)
                     }else{
                         $("#factura-ahorros").html(view)
-                        $(".div-ahorros").fadeIn()
                     }
                     globalRefreshSelect()
                 } else {
@@ -450,6 +449,11 @@
         }
         if($("#id_dominio_forma_pago_inmediato").val() != "Credito"  && ($("#forma-pago-inmediato").val() == null || $("#forma-pago-inmediato").val() == "")){
             toastr.error("La forma de pago para pago inmediato es obligatoria.", "Error")
+            return false
+        }
+
+        if($("#forma-pago-inmediato").val() == "ahorro" && $("#factura-ahorros").val() == null){
+            toastr.error("Debe seleccionar un recibo de caja(ahorro) valido.", "Error")
             return false
         }
         
