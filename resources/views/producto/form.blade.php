@@ -157,7 +157,7 @@
                                              <div class="form-group">
                                                 <label for="cc-payment" class="control-label mb-1"><b>*Cantidad actual</b></label>
                                                 <div class="input-group mb-3">
-                                                    <input name="cantidad_actual" type="number" class="form-control" aria-required="true" aria-invalid="false" value="{{ $producto->cantidad_actual }}" >
+                                                    <input @if($producto->id_producto != null) disabled @endif name="cantidad_actual" type="number" class="form-control" aria-required="true" aria-invalid="false" value="{{ $producto->cantidad_actual }}" >
                                                     <div class="input-group-prepend">
                                                         <label class="input-group-text" for="cantidad_actual" id="presentacion_cantidad_actual">Unidades</label>
                                                     </div>

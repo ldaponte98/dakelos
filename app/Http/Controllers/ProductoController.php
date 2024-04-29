@@ -47,7 +47,9 @@ class ProductoController extends Controller
         $errors = [];
         if ($post) {
             $post = (object) $post;
-            $producto->fill($request->except(['_token', 'imagen']));
+            $except = ['_token', 'imagen'];
+            if($id_producto != null) $except[] = "cantidad_actual"; 
+            $producto->fill($request->except($except));
             $producto->id_usuario_registra = session('id_usuario');
             $producto_nombre               = Producto::where('nombre', $post->nombre)
                 ->where('id_licencia', session('id_licencia'))

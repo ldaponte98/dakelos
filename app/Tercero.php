@@ -113,7 +113,6 @@ class Tercero extends Model
                              ->where('id_dominio_tipo_factura', Dominio::get("Recibo de caja"))
                              ->where('id_tercero', $this->id_tercero)
                              ->where('valor', '>' , 0)
-                             ->where('id_factura_cruce', null)
                              ->where('id_licencia', session('id_licencia'));
         $total = 0;
         foreach ($facturas as $factura) {
