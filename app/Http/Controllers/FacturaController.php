@@ -398,7 +398,7 @@ class FacturaController extends Controller
                         $factura->direccion               = $post->factura->direccion;
                         $factura->menu_digital            = isset($post->factura->menu_digital) ? $post->factura->menu_digital : 0;
                         $factura->pagada                  = 1;
-                        $factura->enviar_email            = $post->factura->enviar_email ? 1 : 0;
+                        $factura->enviar_email            = isset($post->factura->enviar_email) ? 1 : 0;
 
                         if ($post->factura->id_dominio_canal == Dominio::get('Mesa')) {
                             $factura->id_mesa = $post->factura->id_mesa;
