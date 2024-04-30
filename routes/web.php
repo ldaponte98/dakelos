@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('sitio.login');
 });
+Route::get('/test', function () {
+    return view('app.test');
+});
 Route::get('login', function () {
     return view('sitio.login');
 })->name('login');
