@@ -68,22 +68,6 @@
                     <input class="input100" type="password" autocomplete="off" name="clave" placeholder="Ingresa tu contraseña">
                     <span class="focus-input100"></span>
                 </div>
-                <!--
-     <div class="flex-sb-m w-full p-b-30">
-      <div class="contact100-form-checkbox">
-       <input class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me">
-       <label class="label-checkbox100" for="ckb1">
-        Remember me
-       </label>
-      </div>
-
-      <div>
-       <a href="#" class="txt1">
-        Forgot Password?
-       </a>
-      </div>
-     </div>
-     -->
                 <div class="container-login100-form-btn">
                     <button class="login100-form-btn" style="background-color: #003063">
                         Ingresar
@@ -112,7 +96,25 @@
     <script src="{{ asset('plantilla/login/vendor/countdowntime/countdowntime.js') }}"></script>
     <!--===============================================================================================-->
     <script src="{{ asset('plantilla/login/js/main.js') }}"></script>
-
+    <style>
+        @media (max-width: 600px) {
+            .container-login100{
+                min-height: auto;
+                align-items: normal;
+                padding-top: 50px;
+            }
+            .limiter{
+                min-height: 100vh;
+                background-color: #ebeeef;
+            }
+            .container-login100-form-btn {
+                justify-content: center;
+            }
+            .login100-form {
+                padding: 43px 15px 30px 15px;
+            }
+        }
+    </style>
 </body>
 
 </html>

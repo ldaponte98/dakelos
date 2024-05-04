@@ -204,7 +204,7 @@
     
                             <div class="user-menu dropdown-menu">
                                 <a class="nav-link" href="{{ route('tercero/editar', $usuario->id_tercero) }}"><i class="fa fa-user"></i>{{ $usuario->tercero->nombre_completo() }}</a>
-                                <hr>
+                                <hr style="margin: 5px 0px 5px;">
                                 <a class="nav-link" href="{{ route('logout') }}"><i class="fa fa-power-off"></i>Cerrar sesion</a>
                             </div>
                         </div>
