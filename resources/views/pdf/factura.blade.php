@@ -231,8 +231,12 @@
             $cont = 1;
             $total_iva = 0;
             $subtotal = 0;
+            $detalles = $factura->detalles;
+            if(strtoupper($factura->tipo->nombre) == "COMPROBANTE DE EGRESO"){
+                
+            }
         @endphp
-        @foreach ($factura->detalles as $detalle)
+        @foreach ($detalles as $detalle)
             @php
                 $valor_producto = $detalle->precio_producto;
                 $valor_iva = 0;
@@ -319,7 +323,7 @@
                         @endphp
                     @endforeach
                     @foreach ($formas_pago_recibos_caja as $item)
-                        {{ $cont > 0 ? ', Recibo de caja ' . $item->factura->numero . " [$" . number_format($item->valor, 0, '.', '.') . ']' : 'Recibo de caja - ' . $item->factura->numero . " [$" . number_format($item->valor, 0, '.', '.') . ']' }}
+                        {{ $cont > 0 ? ', Recibo de caja ' . $item->recibo_caja->numero . " [$" . number_format($item->valor, 0, '.', '.') . ']' : 'Recibo de caja - ' . $item->recibo_caja->numero . " [$" . number_format($item->valor, 0, '.', '.') . ']' }}
                         @php
                             $cont++;
                         @endphp

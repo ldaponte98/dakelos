@@ -57,7 +57,7 @@
                                     @if ($factura->id_dominio_tipo_factura == \App\Dominio::get('Recibo De Caja'))
                                         @php
                                             $facturas_donde_han_usado_ahorro = $factura->facturas_donde_han_usado_ahorro();
-                                            $cont = 0;
+                                            
                                         @endphp
                                         @if (count($facturas_donde_han_usado_ahorro) == 0)
                                             <span>No</span>
