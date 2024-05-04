@@ -117,95 +117,98 @@
         <header id="header" class="header">
             <div class="top-left">
                 <div class="navbar-header">
-                    
                     <a class="navbar-brand" style="text-align: center; margin-right: 0px;" href=""><img height="40" width="auto" src="{{ $licencia->get_imagen() }}" alt="{{ $licencia->nombre }}"></a>
                     <a class="navbar-brand hidden" href="" ><img src="{{ $licencia->get_imagen_small() }}" alt="{{ $licencia->nombre }}"></a>
                     <a id="menuToggle" class="menutoggle" style="width: 0px;"><i class="fa fa-bars"></i></a>
-                    
                 </div>
             </div>
             <div class="top-right">
                 <div class="header-menu">
-                    <div class="header-left">
-                        <button class="search-trigger" onclick="$('#caracteres').focus()"><i class="fa fa-search"></i></button>
-                        <div class="form-inline">
-                            <form class="search-form">
-                                <input id="caracteres" class="form-control mr-sm-2" type="text" placeholder="Buscar tercero..." onkeyup="buscar(this.value)" aria-label="Search">
-                                <button class="search-close" type="submit"><i class="fa fa-close"></i></button>
-                                 <div class="dropdown-menu dropdown-menu-util" id="div_busqueda">
+                    <div class="navbar-movil d-none">
+                        <a id="menuToggleMovil" class="menutoggle menutoggle" style="width: 0px;"><i class="fa fa-bars"></i></a>
+                    </div>
+
+                    <div class="header-options">
+                        <div class="header-left">
+                            <button class="search-trigger" onclick="$('#caracteres').focus()"><i class="fa fa-search"></i></button>
+                            <div class="form-inline">
+                                <form class="search-form">
+                                    <input id="caracteres" class="form-control mr-sm-2" type="text" placeholder="Buscar tercero..." onkeyup="buscar(this.value)" aria-label="Search">
+                                    <button class="search-close" type="submit"><i class="fa fa-close"></i></button>
+                                     <div class="dropdown-menu dropdown-menu-util" id="div_busqueda">
+                                    </div>
+                                </form>
+                                
+                            </div>
+                            @if (\App\Permiso::validar(4))
+                                @php
+                                    $productos = \App\Producto::en_alerta();
+                                @endphp
+                                <div class="dropdown for-notification">
+                                    <button class="btn dropdown-toggle" type="button" id="notification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-bell"></i>
+                                        @if (count($productos) > 0)
+                                            <span class="count bg-danger">{{ count($productos) }}</span>
+                                        @endif
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="notification">
+                                        @if (count($productos) > 0)
+                                            @foreach ($productos as $item)
+                                                <a class="dropdown-item media" href="{{ route('inventario/stock_actual') }}">
+                                                    <i class="red fa fa-warning"></i>
+                                                    <p>El producto <b>{{ $item->nombre }}</b> esta por agotarse con <b>{{ $item->cantidad_actual }} {{ $item->presentacion->nombre }}</b> disponibles</p>
+                                                </a>
+                                            @endforeach
+                                            
+                                        @else
+                                            <p>No tienes notificaciones</p>
+                                        @endif
+                                    </div>
                                 </div>
-                            </form>
+                            @endif
                             
-                        </div>
-                        @if (\App\Permiso::validar(4))
+                            <div class="dropdown for-notification">
+                                <a class="btn btn-secondary dropdown-toggle" href="{{ route('factura/facturador') }}" alt="Facturar">
+                                    <i class="fa fa-plus-square"></i>
+                                   <!-- <span class="count bg-danger">3</span> -->
+                                </a>
+                            </div>
                             @php
-                                $productos = \App\Producto::en_alerta();
-                            @endphp
-                            <div class="dropdown for-notification">
-                                <button class="btn dropdown-toggle" type="button" id="notification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="fa fa-bell"></i>
-                                    @if (count($productos) > 0)
-                                        <span class="count bg-danger">{{ count($productos) }}</span>
-                                    @endif
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="notification">
-                                    @if (count($productos) > 0)
-                                        @foreach ($productos as $item)
-                                            <a class="dropdown-item media" href="{{ route('inventario/stock_actual') }}">
-                                                <i class="red fa fa-warning"></i>
-                                                <p>El producto <b>{{ $item->nombre }}</b> esta por agotarse con <b>{{ $item->cantidad_actual }} {{ $item->presentacion->nombre }}</b> disponibles</p>
-                                            </a>
-                                        @endforeach
-                                        
-                                    @else
-                                        <p>No tienes notificaciones</p>
-                                    @endif
+                                $caja = \App\Caja::where('id_usuario', session('id_usuario'))
+                                                 ->where('estado', 1)
+                                                 ->where('fecha_cierre', null)
+                                                 ->first();
+                                $url_caja = route('caja/apertura');
+                                $texto_caja = "Abrir caja";
+                                if($caja) {
+                                    $url_caja = route('caja/view', $caja->id_caja);
+                                    $texto_caja = "$".number_format($caja->get_total());
+                                }
+                            @endphp   
+                            @if (\App\Permiso::validar(2))
+                                <div class="dropdown for-notification">
+                                    <a href="{{ $url_caja }}" class="btn btn-secondary dropdown-toggle open-box" type="button" id="caja" aria-expanded="false">
+                                        <i class="fa fa-money"></i> <b>{{ $texto_caja }}</b>                               
+                                    </a>
+                                    <a href="{{ $url_caja }}" class="btn btn-secondary dropdown-toggle open-box-movil" type="button" id="caja" aria-expanded="false">
+                                        <i class="fa fa-money"></i> <b style="font-size: 10px;">{{ $texto_caja }}</b>                              
+                                    </a>
                                 </div>
-                            </div>
-                        @endif
-                        
-                        <div class="dropdown for-notification">
-                            <a class="btn btn-secondary dropdown-toggle" href="{{ route('factura/facturador') }}" alt="Facturar">
-                                <i class="fa fa-plus-square"></i>
-                               <!-- <span class="count bg-danger">3</span> -->
+                            @endif
+                        </div>
+    
+                        <div class="user-area dropdown float-right">
+                            <a href="#" class="dropdown-toggle active" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <img class="user-avatar rounded-circle" height="40" width="46" src="{{ $usuario->tercero->get_imagen() }}" alt="{{ $usuario->tercero->nombre_completo() }}">
                             </a>
-                        </div>
-                        @php
-                            $caja = \App\Caja::where('id_usuario', session('id_usuario'))
-                                             ->where('estado', 1)
-                                             ->where('fecha_cierre', null)
-                                             ->first();
-                            $url_caja = route('caja/apertura');
-                            $texto_caja = "Abrir caja";
-                            if($caja) {
-                                $url_caja = route('caja/view', $caja->id_caja);
-                                $texto_caja = "$".number_format($caja->get_total());
-                            }
-                        @endphp   
-                        @if (\App\Permiso::validar(2))
-                            <div class="dropdown for-notification">
-                                <a href="{{ $url_caja }}" class="btn btn-secondary dropdown-toggle open-box" type="button" id="caja" aria-expanded="false">
-                                    <i class="fa fa-money"></i> <b>{{ $texto_caja }}</b>                               
-                                </a>
-                                <a href="{{ $url_caja }}" class="btn btn-secondary dropdown-toggle open-box-movil" type="button" id="caja" aria-expanded="false">
-                                    <i class="fa fa-money"></i> <b style="font-size: 10px;">{{ $texto_caja }}</b>                              
-                                </a>
+    
+                            <div class="user-menu dropdown-menu">
+                                <a class="nav-link" href="{{ route('tercero/editar', $usuario->id_tercero) }}"><i class="fa fa-user"></i>{{ $usuario->tercero->nombre_completo() }}</a>
+                                <hr>
+                                <a class="nav-link" href="{{ route('logout') }}"><i class="fa fa-power-off"></i>Cerrar sesion</a>
                             </div>
-                        @endif
-                    </div>
-
-                    <div class="user-area dropdown float-right">
-                        <a href="#" class="dropdown-toggle active" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img class="user-avatar rounded-circle" height="40" width="46" src="{{ $usuario->tercero->get_imagen() }}" alt="{{ $usuario->tercero->nombre_completo() }}">
-                        </a>
-
-                        <div class="user-menu dropdown-menu">
-                            <a class="nav-link" href="{{ route('tercero/editar', $usuario->id_tercero) }}"><i class="fa fa-user"></i>{{ $usuario->tercero->nombre_completo() }}</a>
-
-                            <a class="nav-link" href="{{ route('logout') }}"><i class="fa fa-power-off"></i>Cerrar sesion</a>
                         </div>
                     </div>
-
                 </div>
             </div>
         </header>
