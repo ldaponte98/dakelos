@@ -64,7 +64,9 @@
                                             <select onchange="validarFormaPagoInmediato()" name="id_tercero_proveedor" id="id_tercero_proveedor" data-placeholder="Consulta aqui por nombre o identificacion..." class="form-control select2">
                                                 <option value="" label="default"></option>
                                                 @foreach($items as $item)
-                                                <option value="{{ $item->id_tercero }}">{{ $item->nombre_completo() }}</option>
+                                                <option @if ($inventario->id_tercero_proveedor == $item->id_tercero)
+                                                    selected
+                                                @endif value="{{ $item->id_tercero }}">{{ $item->nombre_completo() }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -86,10 +88,11 @@
                                             <select onchange="validarFormaPagoInmediato()" id="forma-pago-inmediato" name="id_dominio_forma_pago_inmediato" data-placeholder="Escoje una..."
                                                 class="standardSelect form-control">
                                                 <option value="" label="default"></option>
-                                                <option value="ahorro">Recibo de caja (Ahorro)</option>
                                                 @foreach ($formas_pago as $item)
                                                     @if ($item->id_dominio != \App\Dominio::get("Credito (Saldo pendiente)"))
-                                                        <option value="{{ $item->id_dominio }}">{{ $item->nombre }}</option>
+                                                        <option @if ($id_dominio_forma_pago_inmediato == $item->id_dominio)
+                                                            selected
+                                                        @endif value="{{ $item->id_dominio }}">{{ $item->nombre }}</option>
                                                     @endif
                                                 @endforeach
                                             </select>
@@ -98,7 +101,7 @@
                                     <div class="col-sm-4 div-ahorros hide">
                                         <div class="form-group">
                                             <label for="forma-pago-inmediato" class="control-label mb-1"><b>*Ahorro</b></label>
-                                            <select id="factura-ahorros" name="ahorros" multiple data-placeholder="Escoje uno o mas..."
+                                            <select id="factura-ahorros" name="ahorros[]" multiple data-placeholder="Escoje uno o mas..."
                                                 class="standardSelect form-control">
                                             </select>
                                         </div>
@@ -115,7 +118,6 @@
                                             <select onchange="validarFormaPagoAbonoInicial()" id="credito-forma-pago-abono" name="id_dominio_forma_pago_abono" data-placeholder="Escoje una..."
                                                 class="standardSelect form-control">
                                                 <option value="" label="default"></option>
-                                                <option value="ahorro">Recibo de caja (Ahorro)</option>
                                                 @foreach ($formas_pago as $item)
                                                     @if ($item->id_dominio != \App\Dominio::get("Credito (Saldo pendiente)"))
                                                         <option value="{{ $item->id_dominio }}">{{ $item->nombre }}</option>
@@ -220,8 +222,20 @@
     toastr.options.positionClass = 'toast-bottom-right';
     var productos = []
     var detalles = []
+    var prevAhorros = []
+    @if ($id_dominio_forma_pago_inmediato == "ahorro")
+        validarFormaPagoInmediato()
+        @if (count($ahorros))
+            @foreach ($ahorros as $id_ahorro)
+                prevAhorros.push("{{$id_ahorro}}")
+            @endforeach
+        @endif
+    @endif
     
     function validar_credito(option) {
+        $(".div-ahorros").fadeOut()
+        $("#forma-pago-inmediato").val(null)
+        globalRefreshSelect()
         if(option == "Credito"){
             $(".div-credito").fadeIn()
             $(".div-forma-pago-inmediato").fadeOut()
@@ -261,11 +275,13 @@
                 '_token': _token,
                 'id_tercero': id_tercero
             }
+            
             $.post(url, request, (response) => {
                 if (!response.error) {
                     let view = `<option value="" label="default"></option>`
                     response.data.forEach((item) => {
-                        view += `<option value="${item.id_documento}">${item.numero} Saldo: ${item._saldo}</option>`
+                        let selected = prevAhorros.find(id => id == item.id_documento) != null ? 'selected' : ''
+                        view += `<option ${selected} value="${item.id_documento}">${item.numero} Saldo: ${item._saldo}</option>`
                     })
                     $(".div-ahorros").fadeIn()
                     if(response.data.length == 0){
@@ -287,7 +303,8 @@
             })
         }
 
-    function llenar_productos(){
+    
+        function llenar_productos(){
         @foreach ($productos as $item)
             productos.push({
                 'id' : {{ $item->id_producto }},
@@ -301,17 +318,18 @@
     }
 
     function llenar_detalles(){
-        @foreach ($inventario->detalles as $item)
+        @foreach ($detalles as $item)
             detalles.push({
-                'id' : {{ $item->id_producto }},
-                'nombre': '{{ $item->nombre_producto }}',
-                'existencia': '{{ $item->producto->cantidad_actual }}',
-                'precio': '{{ $item->precio_compra }}',
-                'presentacion' : '{{ ucfirst(strtolower($item->producto->presentacion->nombre)) }}',
-                'imagen' : '{{ $item->get_imagen() }}',
+                'id' : {{ $item->id }},
+                'nombre': '{{ $item->nombre }}',
+                'existencia': '{{ $item->existencia }}',
+                'precio': '{{ $item->precio }}',
+                'presentacion' : '{{ $item->presentacion }}',
+                'imagen' : '{{ $item->imagen }}',
                 'cantidad' : {{ $item->cantidad }}
             })
         @endforeach
+        actualizar_productos()
     }
 
     function validar_presentacion(id_producto) {
@@ -447,7 +465,7 @@
             toastr.error("Para realizar una entrada de inventario a crédito con abono inicial debe definir la forma de pago de dicho abono.", "Error")
             return false
         }
-        if($("#id_dominio_forma_pago_inmediato").val() != "Credito"  && ($("#forma-pago-inmediato").val() == null || $("#forma-pago-inmediato").val() == "")){
+        if($("#tipo_pago").val() != "Credito"  && ($("#forma-pago-inmediato").val() == null || $("#forma-pago-inmediato").val() == "")){
             toastr.error("La forma de pago para pago inmediato es obligatoria.", "Error")
             return false
         }

@@ -76,11 +76,19 @@ class Caja extends Model
 
     public function get_egresos_inmediatos()
     {
-        return Factura::where('estado', 1)
+        $facturas = Factura::where('estado', 1)
             ->where('id_caja', $this->id_caja)
             ->where('id_dominio_tipo_factura', 53)
             ->where('credito_comprobante_egreso', 0)
-            ->sum('valor_original');
+            ->get();
+        $total = 0;
+        foreach ($facturas as $factura) {
+            $total += $factura->valor_original;
+            $total_ahorro = FacturaPagoReciboCaja::where('id_factura', $factura->id_factura)
+                                                       ->sum('valor');            
+            $total -= $total_ahorro;
+        }
+        return $total;          
     }
 
     public function get_abonos_egresos_a_credito()

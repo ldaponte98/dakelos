@@ -129,6 +129,7 @@ class Tercero extends Model
                              ->where('id_tercero', $this->id_tercero)
                              ->where('valor', '>' , 0)
                              ->where('id_factura_cruce', null)
+                             ->where('credito_comprobante_egreso', 1)
                              ->where('id_licencia', session('id_licencia'));
         $total = 0;
         foreach ($facturas as $factura) {
