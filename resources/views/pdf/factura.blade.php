@@ -216,13 +216,11 @@
             <td style="background-color: #BFBFBF">
                 <center><b>CANT</b></center>
             </td>
-            <td style="background-color: #BFBFBF" colspan="2">
+            <td style="background-color: #BFBFBF" colspan="3">
                 <center><b>Vr. UNIT</b></center>
             </td>
             {{-- <td style="background-color: #BFBFBF"><center><b>IVA</b></center></td> --}}
-            <td style="background-color: #BFBFBF">
-                <center><b>DESC</b></center>
-            </td>
+            
             <td style="background-color: #BFBFBF" colspan="3">
                 <center><b>Vr. TOTAL</b></center>
             </td>
@@ -256,10 +254,9 @@
                 <td>
                     <center>{{ $detalle->cantidad }} {{ $detalle->presentacion_producto }}</center>
                 </td>
-                <td colspan="2">${{ number_format($valor_producto, 0, '.', '.') }}</td>
+                <td colspan="3">${{ number_format($valor_producto, 0, '.', '.') }}</td>
                 {{-- <td style="text-align: right; padding-right: 5px;">${{ number_format($valor_iva, 0, '.','.') }}</td> --}}
-                <td style="text-align: right; padding-right: 5px;">
-                    ${{ number_format($detalle->descuento_producto, 0, '.', '.') }}</td>
+                
                 <td style="text-align: right; padding-right: 5px;" colspan="3">
                     ${{ number_format($valor_producto * $detalle->cantidad + $valor_iva - $detalle->descuento_producto, 0, '.', '.') }}
                 </td>
