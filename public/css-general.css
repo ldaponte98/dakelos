@@ -322,4 +322,13 @@
     .text-canales{
         text-align: center !important;
     }
+    #left-panel{
+        display: none;
+    }
+    .scrtabs-tabs-fixed-container{
+        min-width: 250px !important;
+    }
+    .table{
+        width: min-content !important;
+    }
 }

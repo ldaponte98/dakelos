@@ -74,7 +74,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
     <script src="{{ asset('blockUI.js') }}"></script>
     <script src="{{ asset('js-general.js') }}"></script>
-    <link rel="stylesheet" type="text/css" href="{{ asset('css-general.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css-general.css') }}?v=1">
     <style>
         .btn-primary{
             background-color: {{ $licencia->color_botones }};
@@ -221,11 +221,8 @@
         <footer class="site-footer">
             <div class="footer-inner bg-white">
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-12 text-center">
                         Dakelos - Sistema de facturación 
-                    </div>
-                    <div class="col-sm-6 text-right">
-                        Designed by <a href="ldaponte98@gmail.com">Dakelos</a>
                     </div>
                 </div>
             </div>
