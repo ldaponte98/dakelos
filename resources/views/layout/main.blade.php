@@ -74,7 +74,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
     <script src="{{ asset('blockUI.js') }}"></script>
     <script src="{{ asset('js-general.js') }}"></script>
-    <link rel="stylesheet" type="text/css" href="{{ asset('css-general.css') }}?v=1">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css-general.css') }}?v=2">
     <style>
         .btn-primary{
             background-color: {{ $licencia->color_botones }};
