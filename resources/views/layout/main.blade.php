@@ -1,5 +1,10 @@
 @php
  $usuario = \App\Usuario::find(session('id_usuario'));
+ if($usuario == null){
+    $redirect = route('/');
+    echo "<script>location.href='$redirect'</script>";
+    die;
+ }
  $licencia = $usuario->tercero->licencia;
 @endphp
 
