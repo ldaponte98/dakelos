@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
  */
 Route::get('/', function () {
     return view('sitio.login');
-});
+})->name('/');
 Route::get('/test', function () {
     return view('app.test');
 });
