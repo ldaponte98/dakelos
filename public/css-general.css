@@ -291,10 +291,11 @@
         justify-content: unset;
     }
     .open-box-movil {
-        display: visible;
+        display: block;
+        margin-bottom: 0px;
     }
     .open-box{
-      display: none;
+        display: none;
     }
     .header-menu {
         display: -webkit-box;
@@ -326,9 +327,13 @@
         display: none;
     }
     .scrtabs-tabs-fixed-container{
-        min-width: 250px !important;
+        min-width: 260px !important;
     }
     .table{
         width: min-content !important;
+    }
+    .actions-caja button,a{
+        width: -webkit-fill-available;
+        margin-bottom: 5px;
     }
 }

@@ -2,13 +2,13 @@
 @section('content')
 <div class="row">
     <div class="col-sm-12">
-        <center>
+        <div class="text-center actions-caja">
             @if ($caja->fecha_cierre == null and $caja->id_usuario == session('id_usuario'))
                 <button class="btn btn-primary" onclick="CerrarCaja()">Cerrar caja</button>
                 <a href="{{ route('caja/documento/nuevo') }}" class="btn btn-primary">Crear documento</a>
             @endif
             <button class="btn btn-primary" onclick="VerDetalles()">Ver detalles</button>
-        </center>
+        </div>
     </div>
 </div><br>
 <div class="row" id="div-detalles" style="display: none;">
