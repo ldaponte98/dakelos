@@ -328,4 +328,7 @@
     .scrtabs-tabs-fixed-container{
         min-width: 250px !important;
     }
+    .table{
+        width: min-content !important;
+    }
 }

@@ -151,7 +151,7 @@
                                 <div class="row">
                                     @if (count($item->productos()) > 0)
                                         @foreach ($item->productos() as $producto)
-                                            <div class="col-sm-3">
+                                            <div class="col-md-3 col-lg-3 col-sm-6">
                                                 <div class="card pointer"
                                                     onclick="AgregarProducto({{ $producto->id_producto }})">
                                                     <div class="card-body">
@@ -214,151 +214,156 @@
                             class="form-control">
                     </div>
                 </div>
-            </div>
-            <div class="card">
-                <div class="card-header">
-                    <i></i><strong class="card-title pl-2">Factura de venta</strong>
+
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <i></i><strong class="card-title pl-2">Factura de venta</strong>
+                        </div>
+                        <div class="card-body">
+                            <div class="mx-auto d-block text-center">
+                                <img id="cliente-imagen" class="rounded-circle mx-auto d-block" width="90" height="90"
+                                    src="{{ asset('plantilla/images/app/user.jpg') }}" alt="Imagen del usuario">
+                                <h5 class="text-sm-center mt-2 mb-1"><b id="cliente-nombre">Cliente</b> <a
+                                        style="cursor: pointer;" onclick="ModalCliente()"><i class="fa fa-edit"></i></a>
+                                </h5>
+                                <div class="location text-sm-center"><i class="fa fa-map-marker"></i> {{ $licencia->ciudad }}
+                                </div>
+                            </div>
+                            <hr>
+                            <strong class="card-title">Productos adquiridos</strong>
+                            <br>
+                            <div class="table-responsive table-stats order-table ov-h mt-2">
+                                <table class="table" id="table-detalles">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                <center><b>Producto</b></center>
+                                            </th>
+                                            <th>
+                                                <center><b>Cantidad</b></center>
+                                            </th>
+                                            @if ($permiso_cambiar_valor_unitario)
+                                            <th>
+                                                <center><b>Vr unitario</b></center>
+                                            </th>
+                                            @endif
+                                            <th>
+                                                <center><b>Total</b></center>
+                                            </th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="4">
+                                                <center><i>No hay productos seleccionados</i></center>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <br>
+                            <div class="form-group d-flex">
+                                <label class="lb-flex">Formas de pago</label>
+                                <select onchange="validarFormasPagoEscogidas()" id="factura-formas-pago"
+                                    data-placeholder="Escoje una o mas..." multiple class="standardSelect form-control">
+                                    <option value="" label="default"></option>
+                                    @foreach ($formas_pago as $item)
+                                        <option @if (in_array($item->id_dominio, $formas_pago_selected)) selected @endif value="{{ $item->id_dominio }}">
+                                            {{ $item->nombre }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="" id="div-division-formas-pago">
+                            </div>
+                            <div style="display: none;" id="div-ahorros">
+                                <div class="form-group d-flex" >
+                                    <label class="lb-flex">Ahorros</label>
+                                    <select onchange="validarAhorrosEscogidos()" id="factura-ahorros"
+                                        data-placeholder="Escoje uno o más..." multiple class="standardSelect form-control">
+                                        
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="" id="div-division-ahorros">
+                            </div>
+                            <div class="form-group d-flex">
+                                <label class="lb-flex">Total formas pago</label>
+                                <input type="text" id="factura-total-formas-pago" disabled placeholder="0" class="form-control">
+                            </div>
+                            <div class="form-group d-flex">
+                                <label class="lb-flex">Subtotal</label>
+                                <input type="text" id="factura-subtotal" disabled placeholder="0" class="form-control">
+                            </div>
+                            <div class="form-group d-flex hide" id="div-domicilio">
+                                <label class="lb-flex"><span class="green"><b>+</b></span> Domicilio ($)</label>
+                                <input onkeyup="ValidarDescuentoServicio()" type="number" id="factura-domicilio"
+                                    placeholder="0" class="form-control">
+                            </div>
+                            <div id="div-credito" style="display: none;">
+                                <div class="form-group d-flex">
+                                    <label class="lb-flex"><span class="red"><b>-</b></span> Abono inicial ($)</label>
+                                    <input onkeyup="ValidarDescuentoServicio()" type="number" id="factura-abono-inicial"
+                                        placeholder="0" class="form-control">
+                                </div>
+                                <div class="form-group d-flex">
+                                    <label class="lb-flex">Forma de pago del abono inicial</label>
+                                    <select id="factura-forma-pago-abono" data-placeholder="Escoje una..."
+                                        class="standardSelect form-control">
+                                        <option value="" label="default"></option>
+                                        @foreach ($formas_pago as $item)
+                                            @if ($item->id_dominio != 55)
+                                                <option @if ($factura != null and $item->id_dominio == $factura->id_dominio_forma_pago_abono_inicial) selected @endif
+                                                    value="{{ $item->id_dominio }}">{{ $item->nombre }}</option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+        
+                            <!--<div class="form-group d-flex">
+                            <label class="lb-flex"><span class="green"><b>+</b></span> Servicio Voluntario ($)</label>
+                            <input onkeyup="ValidarDescuentoServicio()" type="number" id="factura-servicio-voluntario" placeholder="0" class="form-control">
+                            </div>-->
+                            <div class="form-group d-flex">
+                                <label class="lb-flex"><span class="red"><b>-</b></span> Descuento ($)</label>
+                                <input onkeyup="ValidarDescuentoServicio()" type="number" id="factura-descuento"
+                                    placeholder="0" class="form-control">
+                            </div>
+        
+                            <div class="form-group d-flex">
+                                <label class="lb-flex"><b>Total</b></label>
+                                <input type="text" id="factura-total" disabled placeholder="0" class="form-control">
+                            </div>
+        
+                            <div class="form-group">
+                                <input class="pointer mr-1" type="checkbox" id="enviar-email" name="enviar-email" @if((isset($factura->enviar_email) && $factura->enviar_email == 1) || $factura == null) checked @endif class="form-check-input">
+                                <label for="enviar-email" class="font-italic" style="font-size: 0.8rem">Enviar factura a cliente vía correo electrónico.</label>
+                            </div>
+        
+                            <div class="form-group">
+                                <i class="fa fa-exclamation-circle pointer"
+                                    title="Este campo sera visible en la factura"></i><label class="ml-1">Descripción</label>
+                                <textarea id="factura-descripciones" class="form-control" rows="1"></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <i title="Este campo no se mostrará en la factura del cliente" class="fa fa-exclamation-circle pointer"></i><label class="ml-1">Observaciones internas</label>
+                                <textarea id="factura-observaciones" class="form-control" rows="1"></textarea>
+                            </div>
+                            <!--<div class="form-group d-flex">
+                                <label class="lb-flex"><b>Duración estimada (minutos)</b></label>
+                                <input type="number" id="factura-duracion" style="width: 30%;" placeholder="0"
+                                    class="form-control">
+                            </div>-->
+                            <hr>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div class="mx-auto d-block">
-                        <img id="cliente-imagen" class="rounded-circle mx-auto d-block" width="90" height="90"
-                            src="{{ asset('plantilla/images/app/user.jpg') }}" alt="Imagen del usuario">
-                        <h5 class="text-sm-center mt-2 mb-1"><b id="cliente-nombre">Cliente</b> <a
-                                style="cursor: pointer;" onclick="ModalCliente()"><i class="fa fa-edit"></i></a>
-                        </h5>
-                        <div class="location text-sm-center"><i class="fa fa-map-marker"></i> {{ $licencia->ciudad }}
-                        </div>
-                    </div>
-                    <hr>
-                    <strong class="card-title">Productos adquiridos</strong>
-                    <br>
-                    <div class="table-stats order-table ov-h mt-2">
-                        <table class="table" id="table-detalles">
-                            <thead>
-                                <tr>
-                                    <th>
-                                        <center><b>Producto</b></center>
-                                    </th>
-                                    <th>
-                                        <center><b>Cantidad</b></center>
-                                    </th>
-                                    @if ($permiso_cambiar_valor_unitario)
-                                    <th>
-                                        <center><b>Vr unitario</b></center>
-                                    </th>
-                                    @endif
-                                    <th>
-                                        <center><b>Total</b></center>
-                                    </th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td colspan="4">
-                                        <center><i>No hay productos seleccionados</i></center>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <br>
-                    <div class="form-group d-flex">
-                        <label class="lb-flex">Formas de pago</label>
-                        <select onchange="validarFormasPagoEscogidas()" id="factura-formas-pago"
-                            data-placeholder="Escoje una o mas..." multiple class="standardSelect form-control">
-                            <option value="" label="default"></option>
-                            @foreach ($formas_pago as $item)
-                                <option @if (in_array($item->id_dominio, $formas_pago_selected)) selected @endif value="{{ $item->id_dominio }}">
-                                    {{ $item->nombre }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="" id="div-division-formas-pago">
-                    </div>
-                    <div style="display: none;" id="div-ahorros">
-                        <div class="form-group d-flex" >
-                            <label class="lb-flex">Ahorros</label>
-                            <select onchange="validarAhorrosEscogidos()" id="factura-ahorros"
-                                data-placeholder="Escoje uno o más..." multiple class="standardSelect form-control">
-                                
-                            </select>
-                        </div>
-                    </div>
-                    <div class="" id="div-division-ahorros">
-                    </div>
-                    
-                    <div class="form-group d-flex">
-                        <label class="lb-flex">Total formas pago</label>
-                        <input type="text" id="factura-total-formas-pago" disabled placeholder="0" class="form-control">
-                    </div>
-                    <div class="form-group d-flex">
-                        <label class="lb-flex">Subtotal</label>
-                        <input type="text" id="factura-subtotal" disabled placeholder="0" class="form-control">
-                    </div>
-                    <div class="form-group d-flex hide" id="div-domicilio">
-                        <label class="lb-flex"><span class="green"><b>+</b></span> Domicilio ($)</label>
-                        <input onkeyup="ValidarDescuentoServicio()" type="number" id="factura-domicilio"
-                            placeholder="0" class="form-control">
-                    </div>
-                    <div id="div-credito" style="display: none;">
-                        <div class="form-group d-flex">
-                            <label class="lb-flex"><span class="red"><b>-</b></span> Abono inicial ($)</label>
-                            <input onkeyup="ValidarDescuentoServicio()" type="number" id="factura-abono-inicial"
-                                placeholder="0" class="form-control">
-                        </div>
-                        <div class="form-group d-flex">
-                            <label class="lb-flex">Forma de pago del abono inicial</label>
-                            <select id="factura-forma-pago-abono" data-placeholder="Escoje una..."
-                                class="standardSelect form-control">
-                                <option value="" label="default"></option>
-                                @foreach ($formas_pago as $item)
-                                    @if ($item->id_dominio != 55)
-                                        <option @if ($factura != null and $item->id_dominio == $factura->id_dominio_forma_pago_abono_inicial) selected @endif
-                                            value="{{ $item->id_dominio }}">{{ $item->nombre }}</option>
-                                    @endif
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-
-                    <!--<div class="form-group d-flex">
-                    <label class="lb-flex"><span class="green"><b>+</b></span> Servicio Voluntario ($)</label>
-                    <input onkeyup="ValidarDescuentoServicio()" type="number" id="factura-servicio-voluntario" placeholder="0" class="form-control">
-                    </div>-->
-                    <div class="form-group d-flex">
-                        <label class="lb-flex"><span class="red"><b>-</b></span> Descuento ($)</label>
-                        <input onkeyup="ValidarDescuentoServicio()" type="number" id="factura-descuento"
-                            placeholder="0" class="form-control">
-                    </div>
-
-                    <div class="form-group d-flex">
-                        <label class="lb-flex"><b>Total</b></label>
-                        <input type="text" id="factura-total" disabled placeholder="0" class="form-control">
-                    </div>
-
-                    <div class="form-group">
-                        <input class="pointer mr-1" type="checkbox" id="enviar-email" name="enviar-email" @if((isset($factura->enviar_email) && $factura->enviar_email == 1) || $factura == null) checked @endif class="form-check-input">
-                        <label for="enviar-email" class="font-italic" style="font-size: 0.8rem">Enviar factura a cliente vía correo electrónico.</label>
-                    </div>
-
-                    <div class="form-group">
-                        <i class="fa fa-exclamation-circle pointer"
-                            title="Este campo sera visible en la factura"></i><label class="ml-1">Descripción</label>
-                        <textarea id="factura-descripciones" class="form-control" rows="1"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <i title="Este campo no se mostrará en la factura del cliente" class="fa fa-exclamation-circle pointer"></i><label class="ml-1">Observaciones internas</label>
-                        <textarea id="factura-observaciones" class="form-control" rows="1"></textarea>
-                    </div>
-                    <!--<div class="form-group d-flex">
-                        <label class="lb-flex"><b>Duración estimada (minutos)</b></label>
-                        <input type="number" id="factura-duracion" style="width: 30%;" placeholder="0"
-                            class="form-control">
-                    </div>-->
-                    <hr>
-                </div>
             </div>
+            
         </div>
 
         <!-- MODAL DE EDICION DE INFO DE CLIENTE -->
