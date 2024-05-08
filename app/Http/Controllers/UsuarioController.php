@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Perfil;
 use App\Tercero;
 use App\Usuario;
+use App\Permiso;
 use Illuminate\Http\Request;
 
 class UsuarioController extends Controller
@@ -53,7 +54,10 @@ class UsuarioController extends Controller
 
     public function index()
     {
-        return redirect()->route('canales_servicio');
+        if(Permiso::validar(2)){
+            return redirect()->route('canales_servicio');
+        }
+        return view("sitio.panel");
     }
 
     public function administrar($value = '')
