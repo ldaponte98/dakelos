@@ -129,10 +129,8 @@
     	<label></label>
         <p class="u-small-text u-text u-text-variant u-text-1">
         	<b>{{ $licencia->nombre }}</b><br>
-        	Desarrollado por Zorax
         </p>
       </div>
   	</footer>
-    
   </body>
 </html>

@@ -149,7 +149,7 @@
                                 @php
                                     $productos = \App\Producto::en_alerta();
                                 @endphp
-                                <div class="dropdown for-notification">
+                                <div class="dropdown for-notification icon-noti">
                                     <button class="btn dropdown-toggle" type="button" id="notification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i class="fa fa-bell"></i>
                                         @if (count($productos) > 0)
