@@ -59,9 +59,11 @@ class UsuarioController extends Controller
     public function administrar($value = '')
     {
         $usuarios = Usuario::join('tercero as t', 't.id_tercero', '=', 'usuario.id_tercero')
-            ->where('t.id_licencia', session('id_licencia'))
-            ->where('usuario.id_perfil', '<>', 1)
-            ->get();
+            ->where('t.id_licencia', session('id_licencia'));
+        if(session('id_perfil') != 1){
+            $usuarios = $usuarios->where('usuario.id_perfil', '<>', 1);
+        }    
+        $usuarios = $usuarios->get();
 
         return view('usuario.administrar', compact(['usuarios']));
     }
