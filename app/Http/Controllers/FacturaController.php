@@ -232,6 +232,9 @@ class FacturaController extends Controller
 
     public function canales_servicio()
     {
+        if(!Permiso::validar(2)){
+            return redirect()->route('index');
+        }
         $fecha   = date('Y-m-d');
         $canales = Dominio::get_canales(session('id_licencia'));
 
