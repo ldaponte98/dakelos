@@ -79,7 +79,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
     <script src="{{ asset('blockUI.js') }}"></script>
     <script src="{{ asset('js-general.js') }}"></script>
-    <link rel="stylesheet" type="text/css" href="{{ asset('css-general.css') }}?v=2">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css-general.css') }}?v=3">
     <style>
         .btn-primary{
             background-color: {{ $licencia->color_botones }};
@@ -149,7 +149,7 @@
                                 @php
                                     $productos = \App\Producto::en_alerta();
                                 @endphp
-                                <div class="dropdown for-notification">
+                                <div class="dropdown for-notification icon-noti">
                                     <button class="btn dropdown-toggle" type="button" id="notification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i class="fa fa-bell"></i>
                                         @if (count($productos) > 0)

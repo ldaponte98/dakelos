@@ -368,8 +368,7 @@ class FacturaController extends Controller
                 }
             }
             try {
-                
-            DB::beginTransaction();
+                DB::beginTransaction();
                 if ($caja or $menu_digital) {
                     //primero buscamos el consecutivo de la resolucion para la factura
                     $resolucion = ResolucionFactura::where('id_licencia', $id_licencia)->first();
@@ -500,11 +499,10 @@ class FacturaController extends Controller
                             $id_factura = $factura->id_factura;
                             $mensaje    = "Factura registrada exitosamente";
                             $error      = false;
-                            DB::commit();
-
                             if ($factura->finalizada == 1 && $factura->enviar_email == 1) {
                                 $factura->enviar_email();
                             }
+                            DB::commit();
                         } else {
                             DB::rollBack();
                             $mensaje = "Error al registrar la factura";

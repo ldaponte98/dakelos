@@ -44,7 +44,7 @@
                     <div class="col-lg-12">
                         {{ Form::open(array('method' => 'post')) }}
                         <div class="row">
-                            <div class="col-sm-4">
+                            <div class="col-sm-6">
                                 <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <label class="input-group-text" for="fechas">Fechas</label>
@@ -52,7 +52,7 @@
                                     <input required name="fechas" id="fechas" type="text" class="form-control" placeholder="Todas" autocomplete="off" value="{{ $fechas }}">
                                 </div>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-4">
                                 <div class="input-group mb-3 " style="display: -webkit-inline-box;">
                                 <div class="input-group-prepend">
                                     <label class="input-group-text" for="canales">Canales</label>
@@ -71,18 +71,17 @@
                                 </div>
                             </div>
 
-                            <div class="col-sm-3">
+                            <div class="col-sm-3 hide">
                                 <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <label class="input-group-text" for="search_tercero">Tercero</label>
                                 </div>
                                     <input name="search_tercero" id="search_tercero" type="text" class="form-control" placeholder="Identificación del tercero" autocomplete="off" value="{{ $search_tercero }}">
                                 </div>
-                            </div>
-
-                            <div class="col-sm-2">
+                            </div>  
+                            <div class="col-sm-2 text-center">
                                 <button type="submit" class="btn btn-info"><i class="fa fa-search"></i> Consultar</button>
-                            </div>                            
+                            </div>                                                   
                         </div>
                         {{ Form::close() }}
                     </div>
@@ -136,15 +135,13 @@
                                             
                                         </center></td>
                                         <td>
-                                            <center>
-                                                <a href="{{ route('factura/imprimir', $factura->id_factura) }}" class="badge badge-info" target="_blank"> <i class="ti-printer icon" title="Imprimir factura formal"></i></a>
-                                                <a target="_blank" href="{{ route('reportes/documentos-asociados-factura', $factura->id_factura) }}"  class="badge badge-warning text-white pointer" > <i class="ti-server icon" title="Ver abonos"></i></a>
+                                            <div class="d-flex gap-btn">
                                                 @if ($permiso_pagar and $factura->estado == 1 and !$estaPagada)
                                                     <a onclick="ModalPagar({{ $factura->id_factura }}, {{ $factura->valor }})" class="badge badge-success text-white pointer" > <i class="ti-money icon" title="Pagar factura"></i></a>
                                                 @endif
-
-                                                
-                                            </center>
+                                                <a target="_blank" href="{{ route('reportes/documentos-asociados-factura', $factura->id_factura) }}"  class="badge badge-warning text-white pointer" > <i class="ti-server icon" title="Ver abonos"></i></a>
+                                                <a href="{{ route('factura/imprimir', $factura->id_factura) }}" class="badge badge-info" target="_blank"> <i class="ti-printer icon" title="Imprimir factura formal"></i></a>
+                                            </div>
                                         </td>
                                         @php 
                                             $total += $factura->valor_original; 

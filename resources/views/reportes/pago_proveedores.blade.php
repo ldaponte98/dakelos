@@ -44,7 +44,7 @@
                     <div class="col-lg-12">
                         {{ Form::open(array('method' => 'post')) }}
                         <div class="row">
-                            <div class="col-sm-4">
+                            <div class="col-sm-6">
                                 <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <label class="input-group-text" for="fechas">Fechas</label>
@@ -66,7 +66,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-sm-2">
+                            <div class="col-sm-2 text-center">
                                 <button type="submit" class="btn btn-info"><i class="fa fa-search"></i> Consultar</button>
                             </div>                            
                         </div>
@@ -117,13 +117,13 @@
                                                 
                                             </center></td>
                                             <td>
-                                                <center>
-                                                    <a target="_blank" href="{{ route('factura/imprimir', $factura->id_factura) }}" class="badge badge-info" target="_blank"> <i class="ti-printer icon" title="Imprimir factura formal"></i></a>
-                                                    <a target="_blank" href="{{ route('reportes/documentos-asociados-factura', $factura->id_factura) }}"  class="badge badge-warning text-white pointer" > <i class="ti-server icon" title="Ver abonos"></i></a>
+                                                <div class="d-flex gap-btn">
                                                     @if ($permiso_pagar and $factura->estado == 1 and !$estaPagada)
                                                         <a onclick="ModalPagar({{ $factura->id_factura }}, {{ $factura->valor }})" class="badge badge-success text-white pointer" > <i class="ti-money icon" title="Pagar o abonar"></i></a>
                                                     @endif
-                                                </center>
+                                                    <a target="_blank" href="{{ route('reportes/documentos-asociados-factura', $factura->id_factura) }}"  class="badge badge-warning text-white pointer" > <i class="ti-server icon" title="Ver abonos"></i></a>
+                                                    <a target="_blank" href="{{ route('factura/imprimir', $factura->id_factura) }}" class="badge badge-info" target="_blank"> <i class="ti-printer icon" title="Imprimir factura formal"></i></a>
+                                                </div>
                                             </td>
                                         </tr>
                                         @php $cont++; @endphp

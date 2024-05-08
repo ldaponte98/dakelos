@@ -130,7 +130,7 @@ class InventarioController extends Controller
             DB::rollBack();
             $errors[] = $e->getMessage();
         }
-        return view('inventario.form', compact(['inventario', 'detalles', 'formas_pago', 'errors', 'id_dominio_forma_pago_inmediato', 'ahorros']));
+        return view('inventario.form', compact(['inventario', 'detalles', 'formas_pago', 'errors', 'id_dominio_forma_pago_inmediato']));
     }
 
     public function vista($id_inventario)

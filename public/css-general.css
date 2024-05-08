@@ -254,10 +254,19 @@
 .d-none{
     display: none;
 }
+.gap-btn{
+    gap: 5px;
+}
 @media (max-width: 600px) {
     .header-options{
         text-align: end;
         width: -webkit-fill-available;
+    }
+    .icon-noti{
+        display: none !important;
+    }
+    .header-menu .dropdown .dropdown-toggle {
+        line-height: 0px !important;
     }
     .user-area .user-avatar {
         margin-top: 6px;
