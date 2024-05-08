@@ -81,8 +81,13 @@ class UsuarioController extends Controller
         }
 
         $empleados = Tercero::all()->where('id_licencia', session('id_licencia'))
-            ->where('id_dominio_tipo_tercero', 2); //empleado
-        $perfiles = Perfil::all()->where('id_perfil', '<>', 1);
+            ->whereIn('id_dominio_tipo_tercero', [2, 18]); //empleado y empresas
+
+        if(session('id_perfil') != 1){
+            $perfiles = Perfil::all()->where('id_perfil', '<>', 1);
+        }else{
+            $perfiles = Perfil::all();
+        }
         $errors   = [];
         if ($post) {
             $post = (object) $post;
