@@ -94,7 +94,6 @@ class UsuarioController extends Controller
             $usuario->fill($request->except(['_token']));
             $usuario_nombre = Usuario::join('tercero as t', 't.id_tercero', '=', 'usuario.id_tercero')
                 ->where('usuario.usuario', $post->usuario)
-                ->where('t.id_licencia', session('id_licencia'))
                 ->where('usuario.id_usuario', '<>', $id_usuario)
                 ->first();
             if (!$usuario_nombre) {
