@@ -24,6 +24,9 @@ class Licencia extends Model
 
     public function get_imagen()
     {
+        if ($this->imagen_url != null and $this->imagen_url != '') {
+            return $this->imagen_url;
+        }
         if ($this->imagen != null and $this->imagen != '') {
             return asset('imagenes/licencia/' . $this->imagen);
         } else {
