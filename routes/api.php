@@ -19,3 +19,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::get('tercero/listar', 'TerceroController@listar');
+Route::get('productos/listar', 'ProductoController@listar');
