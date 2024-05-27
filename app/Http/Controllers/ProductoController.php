@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Dominio;
 use App\Producto;
+use App\Categoria;
 use App\ProductoCategoria;
 use App\ProductoIngrediente;
 use Illuminate\Http\Request;
@@ -140,5 +141,7 @@ class ProductoController extends Controller
         }
         echo "Acceso denegado";
     }
+
+    
 
 }

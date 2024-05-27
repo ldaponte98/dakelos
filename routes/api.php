@@ -18,4 +18,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::group(['prefix' => 'app'], function(){
+    Route::get('validar-app/{app_name}', 'AppController@validar_app_name');
+    Route::get('productos/{app_name}', 'AppController@productos');
+});
+
 Route::get('tercero/listar', 'TerceroController@listar');

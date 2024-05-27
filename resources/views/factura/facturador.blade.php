@@ -9,12 +9,12 @@
             <i class="fa fa-bars"></i>
         </div>
         <ul class="fab-options">
-            <li onclick="Guardar(0)" id="permiso-guardar">
+            <!--<li onclick="Guardar(0)" id="permiso-guardar">
                 <span class="fab-label">Guardar</span>
                 <div class="fab-icon-holder">
                     <i class="ti-save"></i>
                 </div>
-            </li>
+            </li>-->
             <li onclick="Guardar(1)" id="permiso-guardar-finalizar">
                 <span class="fab-label">Guardar y finalizar</span>
                 <div class="fab-icon-holder">
