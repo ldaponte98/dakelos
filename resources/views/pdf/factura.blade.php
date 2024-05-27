@@ -210,7 +210,7 @@
             <td style="background-color: #BFBFBF">
                 <center><b>ITEM</b></center>
             </td>
-            <td style="background-color: #BFBFBF" colspan="2">
+            <td style="background-color: #BFBFBF" colspan="3">
                 <center><b>DESCRIPCIÓN</b></center>
             </td>
             <td style="background-color: #BFBFBF">
@@ -242,11 +242,11 @@
                 $subtotal += $valor_producto * $detalle->cantidad - $detalle->descuento_producto;
             @endphp
             <tr>
-                <td>
+                <td colspan="2">
                     <center>{{ $cont }}</center>
                 </td>
-                <td colspan="2">{{ $detalle->nombre_producto }}</td>
-                <td>
+                <td colspan="3">{{ $detalle->nombre_producto }}</td>
+                <td colspan="2">
                     <center>{{ $detalle->cantidad }} {{ $detalle->presentacion_producto }}</center>
                 </td>
                 <td style="text-align: right; padding-right: 5px;" colspan="3">
@@ -256,7 +256,7 @@
             @php $cont++; @endphp
         @endforeach
         <tr>
-            <td colspan="7" style="border-bottom: none; font-size:6px; text-align: center;">
+            <td colspan="7" style="border-bottom: none; font-size:12px; text-align: center;">
                 <b>{{ $factura->licencia->politica_garantia }}</b></td>
             <td colspan="3" style="background-color: #BFBFBF; "><b>SUBTOTAL:
                 </b>${{ number_format($subtotal, 0, '.', '.') }}</td>
