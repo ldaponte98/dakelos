@@ -59,7 +59,8 @@ class AppController extends Controller
             $item = (object) [
                 'id' => $categoria->id_categoria,
                 'nombre' => $categoria->nombre,
-                'path_imagens' => env('APP_URL') . "/imagenes/producto",
+                'path_imagens_producto' => env('APP_URL') . "/imagenes/producto/",
+                'path_imagens_licencia' => env('APP_URL') . "/imagenes/licencia/",
                 'productos' => []
             ];
             foreach ($relacion_productos as $relacion) {
