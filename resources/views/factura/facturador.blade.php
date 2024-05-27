@@ -1222,11 +1222,11 @@
                 this.factura.descuento = {{ $factura->descuento }}
                 this.factura.domicilio = {{ $factura->domicilio }}
                 this.factura.servicio_voluntario = {{ $factura->servicio_voluntario }}
-                this.factura.direccion = "{{ $factura->direccion }}"
+                this.factura.direccion = `{{ $factura->direccion }}`
                 this.factura.minutos_duracion = "{{ $factura->minutos_duracion }}"
                 this.factura.finalizada = {{ $factura->finalizada }}
-                this.factura.descripciones = "{{ $factura->descripciones }}"
-                this.factura.observaciones = "{{ $factura->observaciones }}"
+                this.factura.descripciones = `{{ $factura->descripciones }}`
+                this.factura.observaciones = `{{ $factura->observaciones }}`
                 $("#factura-observaciones").val(this.factura.observaciones)
                 $("#factura-descripciones").val(this.factura.descripciones)
                 $("#factura-direccion-domicilio").val(this.factura.direccion)
