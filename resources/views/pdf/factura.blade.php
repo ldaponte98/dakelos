@@ -207,13 +207,13 @@
             </td>
         </tr>
         <tr>
-            <td style="background-color: #BFBFBF">
+            <td colspan="2" style="background-color: #BFBFBF">
                 <center><b>ITEM</b></center>
             </td>
             <td style="background-color: #BFBFBF" colspan="3">
                 <center><b>DESCRIPCIÓN</b></center>
             </td>
-            <td style="background-color: #BFBFBF">
+            <td colspan="2" style="background-color: #BFBFBF">
                 <center><b>CANT</b></center>
             </td>
             <td style="background-color: #BFBFBF" colspan="3">
@@ -256,7 +256,7 @@
             @php $cont++; @endphp
         @endforeach
         <tr>
-            <td colspan="7" style="border-bottom: none; font-size:12px; text-align: center;">
+            <td colspan="7" style="border-bottom: none; font-size:10px; text-align: center;">
                 <b>{{ $factura->licencia->politica_garantia }}</b></td>
             <td colspan="3" style="background-color: #BFBFBF; "><b>SUBTOTAL:
                 </b>${{ number_format($subtotal, 0, '.', '.') }}</td>
@@ -277,7 +277,7 @@
         @endif
         <tr>
             <td class="text-center" colspan="7"
-                style="border-bottom: none; border-top: none; border-bottom: none; font-size:6px; text-align: center;">
+                style="border-bottom: none; border-top: none; border-bottom: none; font-size:10px; text-align: center;">
                 {{ $factura->licencia->politica_datos }}
             <td colspan="3" style="border-bottom: none; background-color: #BFBFBF;"><b>IVA:
                 </b>${{ number_format($total_iva, 0, '.', '.') }}</td>
