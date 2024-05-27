@@ -142,23 +142,6 @@ class ProductoController extends Controller
         echo "Acceso denegado";
     }
 
-    public function listar()
-    {
-        $categorias = Categoria::where('estado', 1)->get();
-        $response = [];
-        foreach ($categorias as $categoria) {
-            $item = (object) [
-                'id' => $categoria->id_categoria,
-                'nombre' => $categoria->nombre,
-                'productos' => DB::table('producto')
-                ->select('id_producto', 'nombre', 'descripcion', 'imagen', 'precio_venta')
-                // ->where('id_licencia', $id_licencia)
-                ->where('estado', 1)
-                ->get()
-            ];
-            $response[] = $item;
-        }
-        return $response;
-    }
+    
 
 }
