@@ -257,7 +257,7 @@
         @endforeach
         <tr>
             <td colspan="7" style="border-bottom: none; font-size:10px; text-align: center;">
-                <b>{{ $factura->licencia->politica_garantia }}</b></td>
+                &nbsp;</td>
             <td colspan="3" style="background-color: #BFBFBF; "><b>SUBTOTAL:
                 </b>${{ number_format($subtotal, 0, '.', '.') }}</td>
         </tr>
@@ -278,7 +278,7 @@
         <tr>
             <td class="text-center" colspan="7"
                 style="border-bottom: none; border-top: none; border-bottom: none; font-size:10px; text-align: center;">
-                {{ $factura->licencia->politica_datos }}
+                &nbsp;
             <td colspan="3" style="border-bottom: none; background-color: #BFBFBF;"><b>IVA:
                 </b>${{ number_format($total_iva, 0, '.', '.') }}</td>
         </tr>
@@ -325,6 +325,14 @@
         </tr>
         <tr>
             <td colspan="10"><b>Descripciones: </b><br>{{ $factura->descripciones }}</td>
+        </tr>
+        <tr>
+            <td colspan="10"><br>
+                {{ $factura->licencia->politica_garantia }}
+                <br><br>
+                {{ $factura->licencia->politica_datos}}
+                <br>
+            </td>
         </tr>
         @if ($factura->id_dominio_tipo_factura == 17)
             <tr>
