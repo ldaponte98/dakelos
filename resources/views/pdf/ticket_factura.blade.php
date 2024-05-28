@@ -13,7 +13,7 @@
 <body>
 	@if ($factura->licencia->get_imagen_public())
 		<center>
-			<img src="{{ $factura->licencia->get_imagen_public() }}" width="90" height="65">
+			<img src="{{ $factura->licencia->get_imagen_public() }}" width="200" height="120">
 		</center>
 	@endif
 	<center>
@@ -101,9 +101,10 @@
 		</tr>		
 	</table>
 	<br>
-	<center><label style="font-size: 4px;" class="mx-5">{{$factura->licencia->politica_datos}}</label></center>
+	<label style="font-size: 0.6rem;">-{{$factura->licencia->politica_garantia}}</label>
+	<br><br>
+	<label style="font-size: 0.5rem;">-{{$factura->licencia->politica_datos}}</label>
 
-	<center><label><b style="font-size: 4px;">{{$factura->licencia->politica_garantia}}</b></labe>
 	
 		<br><br>
 	@if ($factura->estado == 0)

@@ -60,7 +60,7 @@
     <div class="col-sm-12">
         <div class="card card-items">
             <div class="card-header">
-                <i class="fa fa-cutlery"></i><strong class="card-title pl-2">Canales de servicio</strong>
+                <strong class="card-title pl-2">Canales de servicio</strong>
             </div>
             <div class="card-body">
                 <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
