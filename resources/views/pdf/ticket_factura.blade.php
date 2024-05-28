@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Factura #{{ $factura->numero }}</title>
+	<title>Constancia de garantia #{{ $factura->numero }}</title>
 	<style>
 		*{
 			font-family: Arial, Helvetica, sans-serif;
