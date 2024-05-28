@@ -830,6 +830,7 @@
 
             //ACTUALIZAMOS CAMPOS DE TOTALES
             let total = 0
+            sub_total = Math.round(sub_total)
             $("#factura-subtotal").val("$" + format(sub_total))
             this.factura.subtotal = sub_total
             total += sub_total
@@ -900,7 +901,6 @@
                     this.validarAhorrosEscogidos()
                 } else {
                     this.factura.ahorros = []
-                    toastr.error(response.mensaje, "Error")
                 }
             })
             .fail((error) => {
