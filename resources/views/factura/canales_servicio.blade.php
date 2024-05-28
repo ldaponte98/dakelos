@@ -62,7 +62,7 @@
             <div class="card-header">
                 <strong class="card-title pl-2">Canales de servicio</strong>
             </div>
-            <div class="card-body">
+            <div class="card-body"> 
                 <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                     @php $cont = 0; @endphp
                     @foreach ($canales as $item)
