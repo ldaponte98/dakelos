@@ -101,9 +101,9 @@
 		</tr>		
 	</table>
 	<br>
-	<label style="font-size: 0.6rem;">-{{$factura->licencia->politica_garantia}}</label>
+	<label style="font-size: 0.9rem;">{{$factura->licencia->politica_garantia}}</label>
 	<br><br>
-	<label style="font-size: 0.5rem;">-{{$factura->licencia->politica_datos}}</label>
+	<label style="font-size: 0.8rem;">{{$factura->licencia->politica_datos}}</label>
 
 	
 		<br><br>
