@@ -149,7 +149,7 @@ class Factura extends Model
         //ahora enviamos email con la factura al cliente
         $subject = $factura->tipo->nombre . ' ' . $factura->licencia->nombre;
         $for     = $tercero->email;
-        if($for != null && $for != ""){
+        if($for != null && $for != "" && $this->is_valid_email($for)){
             $data_email = array(
                 'factura'         => $factura,
                 'imagen_licencia' => $factura->licencia->get_imagen_email(),
@@ -172,5 +172,10 @@ class Factura extends Model
             }
         }
         return $error;
+    }
+
+    public function is_valid_email($str)
+    {
+        return (false !== strpos($str, "@") && false !== strpos($str, "."));
     }
 }
