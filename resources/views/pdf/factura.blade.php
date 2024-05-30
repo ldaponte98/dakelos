@@ -195,8 +195,10 @@
                 </b>{{ $factura->tercero->telefono ? $factura->tercero->telefono : 'No definido' }}</td>
         </tr>
         <tr>
-            <td colspan="10"><b>Direccion:
-                </b>{{ $factura->tercero->direccion ? $factura->tercero->direccion : 'No definida' }}</td>
+            <td colspan="5"><b>Direccion:
+            </b>{{ $factura->tercero->direccion ? $factura->tercero->direccion : 'No definida' }}</td>
+            <td colspan="5"><b>Email:
+                </b>{{ $factura->tercero->email ? $factura->tercero->email : 'No definido' }}</td>
         </tr>
         <tr>
             <td colspan="10" style="border-top: none;">&nbsp;</td>
