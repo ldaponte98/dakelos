@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Constancia de garantia #{{ $factura->numero }}</title>
+	<title>Factura #{{ $factura->numero }}</title>
 	<style>
 		*{
 			font-family: Arial, Helvetica, sans-serif;
@@ -33,7 +33,7 @@
 		@endif
 	</center>
 	<br><br>
-	<label><b>Factura #{{ $factura->numero }}</b></label><br><br>
+	<label><b>{{$resolucion->titulo_ticket !== null ? $resolucion->titulo_ticket : 'Factura' }} #{{ $factura->numero }}</b></label><br><br>
 	<label><b>Informacion del cliente</b></label><br>
 	<label><b>Nombre:</b>{{ $factura->tercero->nombre_completo() }}</label><br>
 	<label><b>Identificación:</b>{{ $factura->tercero->identificacion != "000000000" ? $factura->tercero->identificacion : "No definida" }}</label><br>
@@ -73,6 +73,7 @@
 	</table>
 	<br>
 	<label><b>Descripcion:</b>{{ $factura->descripciones != "" ? $factura->descripciones : "Ninguna" }}</label><br>
+
 	<br>
 	<table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
 		<tr>
