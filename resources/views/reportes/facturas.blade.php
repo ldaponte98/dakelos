@@ -139,6 +139,7 @@
                                         <th class="serial"><center><b>#</b></center></th>
                                         <th><center><b>Numero</b></center></th>
                                         <th><center><b>Cliente</b></center></th>
+                                        <th><center><b>Correo</b></center></th>
                                         <th><center><b>Fecha</b></center></th>
                                         <th><center><b>Tipo</b></center></th>
                                         <th><center><b>Canal</b></center></th>
@@ -155,6 +156,7 @@
                                         <td class="serial"><center>{{ $cont }}</center></td>
                                         <td><center>{{ $factura->numero }}</center></td>
                                         <td><center><a href="{{ route('tercero/view', $factura->id_tercero) }}">{{ $factura->tercero->nombre_completo() }}</a></center></td>
+                                        <td><center> {{ $factura->tercero->email }} </center></td>
                                         <td><center> {{ date('Y-m-d H:i' ,strtotime($factura->fecha)) }} </center></td>
                                         <td><center> {{ $factura->tipo->nombre }} </center></td>
                                         <td><center>{{ $factura->canal->nombre }} </center></td>
@@ -188,7 +190,7 @@
 
                                     @if (count($facturas) == 0)
                                         <tr>
-                                            <td colspan="8">
+                                            <td colspan="10">
                                                 <center>
                                                     <br>
                                                     <i>No hay registros para esta consulta</i>
@@ -209,7 +211,7 @@
 
 <table border="1" id="tabla_excel" style="display: none">
     <tr>
-        <td colspan='9' rowspan='2'>
+        <td colspan='10' rowspan='2'>
             <center>
                 <b>REPORTE DE FACTURAS</b>
             </center>
@@ -218,13 +220,14 @@
     <tr></tr>
      @if($fechas != "")
         <tr>
-            <td colspan='9'><center><b>Fechas: </b>{{ $fechas }}</center></td>            
+            <td colspan='10'><center><b>Fechas: </b>{{ $fechas }}</center></td>            
         </tr>
     @endif
     
     <tr>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Numero</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Cliente</b></td>
+        <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Correo</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Fecha</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Tipo</b></td>
         <td style="background-color: #094d96; color: #ffffff; width: 200px;"><b>Canal</b></td>
@@ -242,6 +245,7 @@
              <tr>
                 <td>{{ $factura->numero }}</td>
                 <td>{{ $factura->tercero->nombre_completo() }}</td>
+                <td>{{ $factura->tercero->email }}</td>
                 <td>{{ date('Y-m-d H:i' ,strtotime($factura->fecha)) }} </td>
                 <td>{{ $factura->tipo->nombre }} </td>
                 <td>{{ $factura->canal->nombre }} </td>
@@ -258,7 +262,7 @@
             @endphp
             @endforeach
             <tr>
-                <td colspan="8"><b>Total</b></td>
+                <td colspan="9"><b>Total</b></td>
                 <td colspan="1" style="text-align: right;"><b>{{ $total }}</b></td>
             </tr>
     </tbody>    
@@ -293,7 +297,7 @@
 <script type="text/javascript">
     var id_factura = null;
     function exportar_excel() {
-        tableToExcel('tabla_excel', 'Informe Facturas Zorax')
+        tableToExcel('tabla_excel', 'Informe de ventas')
     }
     $(document).ready(function() {
         $('#fechas').daterangepicker({

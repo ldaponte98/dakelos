@@ -11,6 +11,12 @@
                     <i class="ti-user"></i>
                 </div>
             </li>
+            <li onclick="exportar_excel()">
+                <span class="fab-label">Exportar a excel</span>
+                <div class="fab-icon-holder">
+                    <i class="ti-agenda"></i>
+                </div>
+            </li>
         </ul>
     </div>
 @endsection
@@ -38,7 +44,7 @@
                     <div class="col-lg-12">
                             <div class="card">
                                 <div class="table-stats order-table ov-h table-responsive">
-                                    <table class="table ">
+                                    <table class="table" id="table-terceros">
                                         <thead>
                                             <tr>
                                                 <th class="serial"><center><i class="fa fa-user"></i></center></th>
@@ -90,9 +96,9 @@
 
 
 <script type="text/javascript">
-        function exportar_excel() {
-            tableToExcel('tabla_excel', 'Reporte de terceros')
-       }
+    function exportar_excel() {
+        tableToExcel('table-terceros', 'Exportación de terceros')
+    }
      $(document).ready(function() {
               $('#fechas').daterangepicker({
                   timePicker: true,

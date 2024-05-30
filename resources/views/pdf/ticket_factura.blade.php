@@ -37,6 +37,7 @@
 	<label><b>Informacion del cliente</b></label><br>
 	<label><b>Nombre:</b>{{ $factura->tercero->nombre_completo() }}</label><br>
 	<label><b>Identificación:</b>{{ $factura->tercero->identificacion != "000000000" ? $factura->tercero->identificacion : "No definida" }}</label><br>
+	<label><b>Email:</b>{{ $factura->tercero->email != null ? $factura->tercero->email : "No definida" }}</label><br>
 	<label><b>Telefono:</b>{{ $factura->tercero->telefono ? $factura->tercero->telefono : "No definido" }}</label><br>
 
 	@if ($factura->canal->id_dominio == App\Dominio::get('Mesa'))
