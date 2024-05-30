@@ -169,13 +169,13 @@
                 <p>Tel. {{ $factura->licencia->telefonos }}</p>
 
             </td>
-            <td><br>
+            <td><br><br>
                 <center>{{ date('d', strtotime($factura->fecha)) }}</center>
             </td>
-            <td><br>
+            <td><br><br>
                 <center>{{ date('m', strtotime($factura->fecha)) }}</center>
             </td>
-            <td><br>
+            <td><br><br>
                 <center>{{ date('Y', strtotime($factura->fecha)) }}</center>
             </td>
         </tr>
