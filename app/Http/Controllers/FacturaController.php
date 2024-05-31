@@ -222,7 +222,7 @@ class FacturaController extends Controller
     public function imprimir_ticket_factura($id_factura)
     {
         $factura = Factura::find($id_factura);
-        $resolucion = ResolucionFactura::where('id_licencia', session('id_licencia'))->first();
+        $resolucion = ResolucionFactura::where('id_licencia', $factura->id_licencia)->first();
         $customPaper = array(0, 0, 225.80, 767.00);
         //return view('pdf.ticket_factura', compact('factura'));
         $pdf = \PDF::loadView('pdf.ticket_factura', compact(['factura', 'resolucion']))
