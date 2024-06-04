@@ -378,8 +378,10 @@
                     </div>
                     <div data-spy="scroll" class="modal-body">
                         <div class="form-group">
-                            <label>Identificación</label>
-                            <input onkeyup="buscarPersona(this.value)" onchange="buscarPersona(this.value)" type="text" id="modal-cliente-identificacion" class="form-control">
+                            <div class="d-flex" style="justify-content: space-between;">
+                                <label>Identificación</label> <div id="modal-search-loading" style="display: none;" class="loader"></div>
+                            </div>
+                            <input onkeyup="if(event.keyCode == 13) buscarPersona(this.value)" onchange="buscarPersona(this.value)" type="text" id="modal-cliente-identificacion" class="form-control">
                         </div>
                         <div class="form-group">
                             <label>Nombre</label>
@@ -398,7 +400,7 @@
                             <input type="text" id="modal-cliente-correo" class="form-control">
                         </div>
                         <div class="form-group">
-                            <label>Direción</label>
+                            <label>Dirección</label>
                             <input type="text" id="modal-cliente-direccion" class="form-control">
                         </div>
                     </div>
@@ -485,8 +487,10 @@
 
         function buscarPersona(caracter) {
             if(caracter.length > 6){
+                $("#modal-search-loading").css("display", "grid")
                 let url = "{{ config('global.url_base') }}/tercero/buscar/" + caracter
                 $.get(url, (res) => {
+                    $("#modal-search-loading").css("display", "none")
                     if(res.length == 1){
                         const data = res[0]
                         $("#modal-cliente-identificacion").val(data.identificacion)
@@ -497,7 +501,7 @@
                         $("#modal-cliente-direccion").val(data.direccion)
                     }
                 }).fail((error) => {
-
+                    $("#modal-search-loading").css("display", "grid")
                 })
             }
         }
