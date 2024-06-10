@@ -37,6 +37,7 @@ class ProductoController extends Controller
         $producto->descontado_ingredientes = 0;
         $producto->contenido               = 1;
         $producto->cantidad_actual         = 0;
+        $producto->visible_app             = 0;
         $producto->cantidad_minimo_alerta  = 0;
         $producto->alerta                  = 0;
         $categorias                        = [];
@@ -74,6 +75,12 @@ class ProductoController extends Controller
                 $producto->alerta = 1;
             } else {
                 $producto->alerta = 0;
+            }
+
+            if (isset($post->visible_app)) {
+                $producto->visible_app = 0;
+            } else {
+                $producto->visible_app = 1;
             }
 
             if (isset($post->categorias) or $producto->id_dominio_tipo_producto != 36) {

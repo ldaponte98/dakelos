@@ -131,6 +131,17 @@
                                         </div>
                                     </div>
                                 </div>
+                                
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group" style="margin-left: 18px;">
+                                            <label for="menu" class="form-check-label ">
+                                                <input onclick="validar_visible_app()" type="checkbox" id="menu" name="menu" @if($producto->visible_app == 1) checked @endif class="form-check-input"><i>Deseo que el sea visible en el menu digital.</i>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="form-group" style="margin-left: 18px;">
@@ -186,6 +197,8 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                
                                 <div class="row" id="div-alerta" @if($producto->alerta == 0) style="display: none;" @endif>
                                     <div class="col-sm-6">
                                         <div class="form-group">
@@ -404,6 +417,14 @@
             $("#div-alerta").fadeIn()
         }else{
             $("#div-alerta").fadeOut()
+        }
+    }
+
+    function validar_visible_app() {
+        if($("#menu").prop('checked') == true){
+            $("#div-menu").fadeIn()
+        }else{
+            $("#div-menu").fadeOut()
         }
     }
 
