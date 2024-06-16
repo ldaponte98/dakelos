@@ -13,7 +13,7 @@
 <body>
 	@if ($factura->licencia->get_imagen_public())
 		<center>
-			<img src="{{ $factura->licencia->get_imagen_public() }}" width="200" height="120">
+			<img src="{{ $factura->licencia->get_imagen_public() }}" width="200" height="140">
 		</center>
 	@endif
 	<center>
@@ -33,6 +33,7 @@
 		@endif
 	</center>
 	<br><br>
+	<label><b>Fecha:</b>{{ date('d', strtotime($factura->fecha)) }}-{{ date('m', strtotime($factura->fecha)) }}-{{ date('Y', strtotime($factura->fecha)) }}{{ date(' H:i:s', strtotime($factura->fecha)) }}</label><br>
 	<label><b>{{$resolucion->titulo_ticket !== null ? $resolucion->titulo_ticket : 'Factura' }} #{{ $factura->numero }}</b></label><br><br>
 	<label><b>Informacion del cliente</b></label><br>
 	<label><b>Nombre:</b>{{ $factura->tercero->nombre_completo() }}</label><br>
