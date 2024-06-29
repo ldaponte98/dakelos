@@ -1,6 +1,6 @@
 ﻿<!DOCTYPE html>
 @php
-    //$factura = \App\Factura::find(61);
+    $resolucion = \App\ResolucionFactura::where('id_licencia', $factura->id_licencia)->first();
 @endphp
 <html>
 
@@ -143,7 +143,7 @@
                 <center><label>NIT. {{ $factura->licencia->nit }}</label></center>
             </td>
             <td colspan="3" style="background-color: #BFBFBF; font-size:14px;">
-                <center><b>{{ strtoupper($factura->tipo->nombre) }}</b></center>
+                <center><b>{{ $resolucion->titulo_ticket !== null ? strtoupper($resolucion->titulo_ticket) :strtoupper($factura->tipo->nombre) }}</b></center>
             </td>
         </tr>
         <tr>
