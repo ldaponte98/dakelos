@@ -87,6 +87,11 @@ Route::any('reportes/facturas_pendientes_pagar', 'ReporteController@creditos_pen
 Route::any('reportes/pago-proveedores', 'ReporteController@pago_proveedores')->name('reportes/pago-proveedores');
 Route::any('reportes/documentos-asociados-factura/{id_factura}', 'ReporteController@documentos_asociados_factura')->name('reportes/documentos-asociados-factura');
 
+//AGENDA 
+Route::any('citas/administrar', 'AgendaController@administrar')->name('citas/administrar');
+
+
+
 Route::get('factura_email', function () {
     return view('email.factura');
 })->name('factura_email');
