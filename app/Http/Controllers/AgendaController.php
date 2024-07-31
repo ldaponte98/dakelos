@@ -8,6 +8,6 @@ class AgendaController extends Controller
 {
     public function administrar()
     {
-        return view('citas.administrar');
+        return view('citas.calendario.administrar');
     }
 }

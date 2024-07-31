@@ -88,7 +88,7 @@ Route::any('reportes/pago-proveedores', 'ReporteController@pago_proveedores')->n
 Route::any('reportes/documentos-asociados-factura/{id_factura}', 'ReporteController@documentos_asociados_factura')->name('reportes/documentos-asociados-factura');
 
 //AGENDA 
-Route::any('citas/administrar', 'AgendaController@administrar')->name('citas/administrar');
+Route::any('citas/calendario/administrar', 'AgendaController@administrar')->name('citas/calendario/administrar');
 
 
 

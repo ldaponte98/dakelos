@@ -15,7 +15,7 @@
                             </div>
                             <hr>
                             <div class="row d-flex justify-content-between align-items-center">
-                                <div class="col-8">
+                                <div class="col-md-8 col-sm-12">
                                     <div class="form-group">
                                         <label for="profesional" class="control-label"><b>*Profecional</b></label>
                                         @php
@@ -30,15 +30,15 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-4 d-flex justify-content-end">
+                                <div class="col-md-4 col-sm-12 d-flex justify-content-end mt-2">
                                     <button type="button" class="btn btn-primary" data-toggle="modal"
                                         data-target="#exampleModal">
                                         + Nueva
                                     </button>
                                 </div>
                             </div>
+                            {{ Form::close() }}
                         </div>
-
                         <!-- Modal -->
                         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
                             aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -54,13 +54,9 @@
                                         <div class="row">
                                             <div class="col-12">
                                                 <div class="form-group">
-                                                    <label for="profesional"
-                                                        class="control-label"><b>*Profecional</b></label>
+                                                    <label for="profesional" class="control-label"><b>*Profecional</b></label>
                                                     @php
-                                                        $profesionales = \App\Tercero::all()->where(
-                                                            'id_dominio_tipo_tercero',
-                                                            69,
-                                                        );
+                                                        $profesionales = \App\Tercero::all()->where('id_dominio_tipo_tercero', 69);
                                                     @endphp
                                                     <select name="profesional" class="form-control" required>
                                                         @foreach ($profesionales as $items)
@@ -86,23 +82,18 @@
                                                 </div>
                                             </div>
 
-                                            <h6 class="col-12 border-bottom my-4">Datos del paciente</h6>
+                                            <h6 class="col-12 border-bottom my-4 text-center"><b>Datos del paciente</b></h6>
                                             <br>
                                             <div class="col-12">
                                                 <div class="form-group">
-                                                    <label for="cc-payment" class="control-label mb-1"><b>*Tipo de
+                                                    <label for="id_dominio_tipo_identificacion" class="control-label mb-1"><b>*Tipo de
                                                             identificación</b></label>
                                                     @php
-                                                        $tipos_identificacion = \App\Dominio::all()->where(
-                                                            'id_padre',
-                                                            4,
-                                                        );
+                                                        $tipos_identificacion = \App\Dominio::all()->where('id_padre', 4);
                                                     @endphp
-                                                    <select name="id_dominio_tipo_identificacion" class="form-control"
-                                                        required>
+                                                    <select name="id_dominio_tipo_identificacion" class="form-control" required>
                                                         @foreach ($tipos_identificacion as $tipo)
-                                                            <option title="{{ $tipo->descripcion }}"
-                                                                value="{{ $tipo->id_dominio }}">{{ $tipo->nombre }}</option>
+                                                            <option title="{{$tipo->descripcion}}" value="{{ $tipo->id_dominio }}">{{ $tipo->nombre }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -164,10 +155,10 @@
 
                                             <div class="col-12">
                                                 <div class="form-group">
-                                                    <label for="cc-payment"
-                                                        class="control-label mb-1"><b>Observaciones</b></label>
-                                                    <textarea type="text" class="form-control"></textarea>
-                                                </div>
+                                                    <label for="observaciones"
+                                                        class="control-label"><b>Observaciones</b></label>
+                                                        <textarea class="w-100 form-control" type="text" id="observaciones" name="observaciones"></textarea>
+                                                    </div>
                                             </div>
 
 
@@ -180,11 +171,13 @@
                                     </div>
                                 </div>
                             </div>
-
-                            {{ Form::close() }}
                         </div>
                     </div>
                 </div>
+                <hr>
+                <div class="p-4" id='calendar'></div>
             </div>
         </div>
-    @endsection
+    </div>
+    {{ view('citas.calendario.script-calendario') }}
+@endsection
