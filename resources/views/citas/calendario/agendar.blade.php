@@ -6,7 +6,6 @@
                 <div class="card-header">
                     <strong class="card-title">Agendamiento de citas</strong>
                 </div>
-                <div class="card-body">
                     <div id="pay-invoice">
                         <div class="card-body">
                             <div class="card-title">
@@ -54,6 +53,7 @@
                                         </div>
                                         <div class="modal-body">
                                             <div class="row">
+                                                <input id="id_cita" name="id_cita" type="hidden">
                                                 <div class="col-12">
                                                     <div class="form-group">
                                                         <label for="profesional" class="control-label"><b>*Profesional</b></label>
@@ -187,7 +187,8 @@
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary"
                                                     data-dismiss="modal">Cerrar</button>
-                                                <button type="button" id="btn-submit" class="btn btn-primary">Guardar</button>
+                                                <button type="button" id="btn-guardar" class="btn btn-primary">Guardar</button>
+                                                <button style="display: none;" type="button" id="btn-cancelar" class="btn btn-danger">Cancelar cita</button>
                                             </div>
                                         </div>
                                     </div>
@@ -195,8 +196,7 @@
                             </form>
                         </div>
                     </div>
-                </div>
-                <hr>
+                
                 <div class="p-4" id='calendar'></div>
             </div>
         </div>

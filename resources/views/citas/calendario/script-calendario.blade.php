@@ -54,6 +54,7 @@
             dateClick: selectedDate,
             eventClick: selectedEvent,
             eventMouseLeave: hoverEvent,
+            displayEventTime: false,
             events: eventos,
             headerToolbar: {
                     left: 'prev,next today',
@@ -67,15 +68,22 @@
     }
 
     function selectedDate(info) {
+        let formulario = document.getElementById('form-citas');
+        formulario.reset();
+        $("#id_cita").val('')          
         $("#evento").modal("show");
+        if($("#id_cita").val() == ''){
+            $("#btn-cancelar").css("display", "none");
+        }else{
+            $("#btn-cancelar").css("display", "block");
+        }
         $("#start").val(parseDatetimeFromCalendar(info.dateStr));
         $("#end").val(parseDatetimeFromCalendar(info.dateStr));
         let profesional = document.getElementById('profesional').value;
-        let formulario = document.getElementById('form-citas');
         $("#modal-profesional").val(parseInt(profesional));
 
         
-        document.getElementById('btn-submit').addEventListener("click", function() {
+        document.getElementById('btn-guardar').addEventListener("click", function() {
             const datos = new FormData(formulario);            
             
             if($("#identificacion").val().trim() == ""){
@@ -109,13 +117,32 @@
             id: info.event.id,
             title: info.event.title,
         }
-        //Añadir datos del tercero al modal 
+       
         Object.assign(event, info.event.extendedProps);
         $("#evento").modal("show");
+        if(info.event.id == ''){
+            $("#btn-cancelar").css("display", "none");
+        }else{
+            $("#btn-cancelar").css("display", "block");
+        }
+  
+        $("#id_cita").val(info.event.id)
         $("#start").val(parseDateToString(event.start));
         $("#end").val(parseDateToString(event.end));
         $("#modal-profesional").val(event.id_profesional)
         $("#title").val(event.title)
+        $("#tipo_identificacion").val(info.event.extendedProps.tercero.id_dominio_tipo_identificacion)
+        $("#identificacion").val(info.event.extendedProps.tercero.identificacion)
+        $("#nombres").val(info.event.extendedProps.tercero.nombres)
+        $("#apellidos").val(info.event.extendedProps.tercero.apellidos)
+        $("#genero").val(info.event.extendedProps.tercero.id_dominio_sexo)
+        $("#telefono").val(info.event.extendedProps.tercero.telefono)
+        $("#correo").val(info.event.extendedProps.tercero.email)
+        $("#observaciones").val(info.event.extendedProps.observaciones)
+
+
+        
+        
     }
     
     function hoverEvent(info) { 
@@ -123,8 +150,5 @@
             title: info.event.title + ` (Horario: ${parseDateToString(info.event.start)} hasta ${parseDateToString(info.event.end)})` 
         });
     }
-
-
-
 
 </script>
