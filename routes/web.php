@@ -88,10 +88,11 @@ Route::any('reportes/pago-proveedores', 'ReporteController@pago_proveedores')->n
 Route::any('reportes/documentos-asociados-factura/{id_factura}', 'ReporteController@documentos_asociados_factura')->name('reportes/documentos-asociados-factura');
 
 //AGENDA 
-Route::any('citas/calendario/administrar', 'AgendaController@administrar')->name('citas/calendario/administrar');
+Route::any('citas/calendario/agendar', 'AgendaController@agendar')->name('citas/calendario/agendar');
+Route::any('citas/calendario/mostrar/{id}', 'AgendaController@mostrar')->name('citas/calendario/mostrar');
 
 
-
+ 
 Route::get('factura_email', function () {
     return view('email.factura');
 })->name('factura_email');

@@ -346,3 +346,7 @@
         margin-bottom: 5px;
     }
 }
+
+.a.fc-event:hover{
+    color: black;
+}

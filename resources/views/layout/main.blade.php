@@ -59,11 +59,11 @@
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
     <link href="https://cdn.jsdelivr.net/npm/chartist@0.11.0/dist/chartist.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/jqvmap@1.5.1/dist/jqvmap.min.css" rel="stylesheet">
-
+    <link rel="stylesheet" href="{{ asset('datetimepicker/jquery.datetimepicker.min.css') }}">
+    
     <link href="https://cdn.jsdelivr.net/npm/weathericons@2.1.0/css/weather-icons.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@3.9.0/dist/fullcalendar.min.css" rel="stylesheet" />
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>
-
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.0/css/flag-icon.min.css">
     <link rel="stylesheet" href="{{ asset('plantilla/assets/css/cs-skin-elastic.css') }}">
     <link rel="stylesheet" href="{{ asset('plantilla/assets/css/style.css') }}">
@@ -78,8 +78,9 @@
     <script src="https://malsup.github.io/jquery.blockUI.js"></script>
     <script src="{{ asset('TableToExcel.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
+    <script src="{{ asset('datetimepicker/jquery.datetimepicker.full.min.js') }}"></script>
     <script src="{{ asset('blockUI.js') }}"></script>
-    <script src="{{ asset('js-general.js') }}"></script>
+    
     <link rel="stylesheet" type="text/css" href="{{ asset('css-general.css') }}?v=3">
     <style>
         .btn-primary{
@@ -270,7 +271,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <script src="{{ asset('plantilla/assets/js/lib/chosen/chosen.jquery.min.js') }}"></script>
-
+    <script src="{{ asset('js-general.js') }}"></script>
     <script>
         function globalRefreshSelect() {
             let selects = $(".standardSelect").trigger('chosen:updated');
