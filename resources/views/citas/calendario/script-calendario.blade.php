@@ -9,6 +9,32 @@
         
     })
 
+    let botonGuardar = document.getElementById('btn-guardar').addEventListener("click", function() {
+
+        let fechaHoraActual = new Date();            
+        if($("#start").val() < parseDateToString(fechaHoraActual)){
+            toastr.error("La fecha debe ser superior a la actual", "Error")
+            return;
+        }
+
+        if($("#identificacion").val().trim() == ""){
+            toastr.error("La identificacion del paciente es obligatoria", "Error")
+            return;
+        }
+        if($("#nombres").val().trim() == ""){
+            toastr.error("El nombre del paciente es obligatorio", "Error")
+            return;
+        }
+
+        if($("#title").val().trim() == ""){
+            toastr.error("El motivo de cita es obligatorio", "Error")
+            return;
+        }   
+
+        $('#form-citas').submit()
+
+    });
+
     async function consultarAgendas(profesional) {
         try {
             let validacion = await $.get(url+'/'+profesional);
@@ -23,7 +49,7 @@
         }   
     }
 
-    function buscarPersona(caracter) {
+    function buscarPersona(caracter) { 
         if(caracter.length > 6){
             $("#modal-search-loading").css("display", "grid")
             let url = "{{ config('global.url_base') }}/tercero/buscar/" + caracter
@@ -82,30 +108,7 @@
         let profesional = document.getElementById('profesional').value;
         $("#modal-profesional").val(parseInt(profesional));
 
-        
-        document.getElementById('btn-guardar').addEventListener("click", function() {
-            const datos = new FormData(formulario);            
-            
-            if($("#identificacion").val().trim() == ""){
-                toastr.error("La identificacion del paciente es obligatoria", "Error")
-                return;
-            }
-            if($("#nombres").val().trim() == ""){
-                toastr.error("El nombre del paciente es obligatorio", "Error")
-                return;
-            }
-            if($("#apellidos").val().trim() == ""){
-                toastr.error("El apellido del paciente es obligatorio", "Error")
-                return;
-            }
-            if($("#title").val().trim() == ""){
-                toastr.error("El motivo de cita es obligatorio", "Error")
-                return;
-            }
-
-            $('#form-citas').submit()
-    
-        });
+        botonGuardar
 
     }
 
@@ -140,8 +143,18 @@
         $("#correo").val(info.event.extendedProps.tercero.email)
         $("#observaciones").val(info.event.extendedProps.observaciones)
 
-
-        
+        document.getElementById('btn-cancelar').addEventListener("click", function() {
+            if(confirm("¿Esta seguro de cancelar la cita?")){
+                let url = "{{ config('global.url_base') }}/citas/calendario/cancelar/" + info.event.id
+                $.get(url, (response) => {
+                toastr.success(response.message, "Proceso exitoso")
+                $("#evento").modal("hide");
+                consultarAgendas(response.data.id_profesional);                   
+            }).fail((error) => {
+                console.log(error);
+            })
+            }
+        });
         
     }
     

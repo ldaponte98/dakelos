@@ -90,6 +90,7 @@ Route::any('reportes/documentos-asociados-factura/{id_factura}', 'ReporteControl
 //AGENDA 
 Route::any('citas/calendario/agendar', 'AgendaController@agendar')->name('citas/calendario/agendar');
 Route::any('citas/calendario/mostrar/{id}', 'AgendaController@mostrar')->name('citas/calendario/mostrar');
+Route::any('citas/calendario/cancelar/{id}', 'AgendaController@cancelar')->name('citas/calendario/cancelar');
 
 
  

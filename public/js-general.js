@@ -3,6 +3,8 @@ $(document).ready(function() {
         var rex = new RegExp($(this).val(), 'i');
         $('#bodytable tr').hide();
         $('#bodytable tr').filter(function() {
+            console.log(rex.test($(this).text()));
+            
             return rex.test($(this).text());
         }).show();
     })

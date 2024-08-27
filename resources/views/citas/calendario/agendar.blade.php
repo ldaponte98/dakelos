@@ -6,7 +6,7 @@
                 <div class="card-header">
                     <strong class="card-title">Agendamiento de citas</strong>
                 </div>
-                    <div id="pay-invoice">
+                    <div id="pay-invoice"> 
                         <div class="card-body">
                             <div class="card-title">
                                 <h3 class="text-center">Agendamiento de citas</h3>
@@ -71,22 +71,29 @@
                                                 </div>
                                                 <div class="col-12">
                                                     <div class="form-group">
-                                                        <label for="title" class="control-label mb-1"><b>*Motivo</b></label>
-                                                        <input type="text" id="title" name="title" class="form-control">
+                                                        <label for="title" class="control-label mb-1"><b>*Motivo de consulta</b></label>
+                                                        @php
+                                                            $motivo_consulta = \App\Dominio::all()->where('id_padre', 70);
+                                                        @endphp
+                                                        <select id="title" name="title" class="form-control" required>
+                                                            @foreach ($motivo_consulta as $motivo)
+                                                                <option title="{{$motivo->descripcion}}" value="{{ $motivo->nombre }}">{{ $motivo->nombre }}</option>
+                                                            @endforeach
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-12">
                                                     <div class="form-group">
                                                         <label for="start" class="control-label mb-1"><b>Fecha
                                                                 Inicio</b></label>
-                                                        <input type="text" id="start" name="start" class="form-control datetimepicker">
+                                                        <input type="text" id="start" name="start" class="form-control datetimepicker" autocomplete="off">
                                                     </div>
                                                 </div>
                                                 <div class="col-12">
                                                     <div class="form-group">
                                                         <label for="end" class="control-label mb-1"><b>Fecha
                                                                 final</b></label>
-                                                        <input type="text" id="end" name="end"  class="form-control datetimepicker">
+                                                        <input type="text" id="end" name="end"  class="form-control datetimepicker" autocomplete="off">
                                                     </div>
                                                 </div>
                                                 
