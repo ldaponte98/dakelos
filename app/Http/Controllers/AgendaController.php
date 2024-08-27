@@ -40,6 +40,7 @@ class AgendaController extends Controller
                 $agenda->end                     =        $nuevaFechaEnd;
                 $agenda->observaciones           =        $post['observaciones'];
                 $agenda->id_usuario_creacion     =        session('id_usuario');
+                $agenda->enviar_email();
                 $agenda->save();
                 return redirect()->route('citas/calendario/agendar');
             }else{
