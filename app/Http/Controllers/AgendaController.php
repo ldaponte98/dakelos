@@ -7,7 +7,6 @@ use App\Agenda;
 use App\Tercero;
 use Carbon\Carbon;
 
-
 class AgendaController extends Controller
 {
     public function mostrar($id)
@@ -27,8 +26,8 @@ class AgendaController extends Controller
     {
         $post = $request->all();
         if($post){
-            //se le suman 10 min a la fecha fin 
-            $nuevaFechaEnd = Carbon::parse($post['end'])->addMinute(10)->format('Y-m-d H:i');
+            //se le suman 1 min a la fecha fin 
+            $nuevaFechaEnd = Carbon::parse($post['end'])->addMinute(1)->format('Y-m-d H:i');
             $validar_tercero= Tercero::where('identificacion', $post['tercero']['identificacion'])->first();
 
             if($validar_tercero){
@@ -42,7 +41,7 @@ class AgendaController extends Controller
                 $agenda->id_usuario_creacion     =        session('id_usuario');
                 $agenda->enviar_email();
                 $agenda->save();
-                return redirect()->route('citas/calendario/agendar');
+                return redirect()->route('clinica/calendario/agendar');
             }else{
                 $agenda = new Agenda();
                 $tercero = new Tercero();
@@ -60,12 +59,12 @@ class AgendaController extends Controller
                     $agenda->end                     =        $nuevaFechaEnd;
                     $agenda->observaciones           =        $post['observaciones'];
                     $agenda->save();
-                    return redirect()->route('citas/calendario/agendar');
+                    return redirect()->route('clinica/calendario/agendar');
                 }
             }
         }
 
-        return view('citas.calendario.agendar');
+        return view('clinica.calendario.agendar');
     }
 
     public function cancelar($id){

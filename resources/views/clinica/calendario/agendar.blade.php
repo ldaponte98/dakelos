@@ -126,7 +126,7 @@
                                                             @endforeach
                                                         </select>
                                                     </div>
-                                                </div>
+                                                </div> 
                                                 <div class="col-12">
                                                     <div class="form-group">
                                                         <label for="identificacion"
@@ -169,7 +169,7 @@
                                                 <div class="col-12">
                                                     <div class="form-group">
                                                         <label for="telefono"
-                                                            class="control-label mb-1"><b>Telefono</b></label>
+                                                            class="control-label mb-1"><b>Teléfono</b></label>
                                                         <input type="text" id="telefono" name="tercero[telefono]" class="form-control">
                                                     </div>
                                                 </div>
@@ -187,7 +187,7 @@
                                                         <label for="observaciones"
                                                             class="control-label"><b>Observaciones</b></label>
                                                             <textarea class="w-100 form-control" type="text" id="observaciones" name="observaciones"></textarea>
-                                                        </div>
+                                                    </div>
                                                 </div>
 
                                             </div>
@@ -208,5 +208,5 @@
             </div>
         </div>
     </div>
-    {{ view('citas.calendario.script-calendario') }}
+    {{ view('clinica.calendario.script-calendario') }}
 @endsection

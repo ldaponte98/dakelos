@@ -88,9 +88,16 @@ Route::any('reportes/pago-proveedores', 'ReporteController@pago_proveedores')->n
 Route::any('reportes/documentos-asociados-factura/{id_factura}', 'ReporteController@documentos_asociados_factura')->name('reportes/documentos-asociados-factura');
 
 //AGENDA 
-Route::any('citas/calendario/agendar', 'AgendaController@agendar')->name('citas/calendario/agendar');
-Route::any('citas/calendario/mostrar/{id}', 'AgendaController@mostrar')->name('citas/calendario/mostrar');
-Route::any('citas/calendario/cancelar/{id}', 'AgendaController@cancelar')->name('citas/calendario/cancelar');
+Route::any('clinica/calendario/agendar', 'AgendaController@agendar')->name('clinica/calendario/agendar');
+Route::any('clinica/calendario/mostrar/{id}', 'AgendaController@mostrar')->name('clinica/calendario/mostrar');
+Route::any('clinica/calendario/cancelar/{id}', 'AgendaController@cancelar')->name('clinica/calendario/cancelar');
+
+
+//HISTORIA CLINICA
+Route::any('clinica/historiaClinica/administrar', 'HistoriaClinicaController@mostrar')->name('clinica/historiaClinica/administrar');
+Route::any('clinica/historiaClinica/crear', 'HistoriaClinicaController@crear')->name('clinica/historiaClinica/crear');
+
+
 
 
  

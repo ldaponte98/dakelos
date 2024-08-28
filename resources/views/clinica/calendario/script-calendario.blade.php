@@ -1,5 +1,5 @@
 <script>
-    let url = "{{ config('global.url_base') }}/citas/calendario/mostrar" 
+    let url = "{{ config('global.url_base') }}/clinica/calendario/mostrar" 
     
     $(document).ready(() => {
         $('#profesional').on('change', function() {
@@ -30,7 +30,7 @@
             toastr.error("El motivo de cita es obligatorio", "Error")
             return;
         }   
-
+        Loading(true);
         $('#form-citas').submit()
 
     });
@@ -145,7 +145,7 @@
 
         document.getElementById('btn-cancelar').addEventListener("click", function() {
             if(confirm("¿Esta seguro de cancelar la cita?")){
-                let url = "{{ config('global.url_base') }}/citas/calendario/cancelar/" + info.event.id
+                let url = "{{ config('global.url_base') }}/clinica/calendario/cancelar/" + info.event.id
                 $.get(url, (response) => {
                 toastr.success(response.message, "Proceso exitoso")
                 $("#evento").modal("hide");

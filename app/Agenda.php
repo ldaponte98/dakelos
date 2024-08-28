@@ -40,7 +40,6 @@ class Agenda extends Model
                 'imagen_licencia' => $urlImagen.$licencia->imagen,
                 'profesional' => $agenda->id_profesional,
                 'start'      => $agenda->start,
-                'observaciones' => $agenda->observaciones,
                 'licencia' =>  $licencia
             );
             if ($for) {
