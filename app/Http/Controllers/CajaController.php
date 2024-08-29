@@ -7,6 +7,7 @@ use App\Dominio;
 use App\Factura;
 use App\FormaPago;
 use App\ResolucionFactura;
+use App\FormaPagoLicencia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -54,8 +55,7 @@ class CajaController extends Controller
         $caja = Caja::where('id_caja', $id_caja)->where('id_licencia', session('id_licencia'))->first();
         if ($caja) {
             $canales     = Dominio::get_canales(session('id_licencia'));
-            $formas_pago = Dominio::where('id_padre', 19)
-                ->get();
+            $formas_pago = FormaPagoLicencia::getDominios(session('id_licencia'));
             return view('caja.view', compact(['caja', 'canales', 'formas_pago']));
         }
         echo "Direccion no valida";die;
@@ -89,9 +89,9 @@ class CajaController extends Controller
         $post    = $request->all();
         $factura = new Factura;
         $errors  = [];
-        $formas_pago = Dominio::where('id_padre', Dominio::get('Formas de pago'))
-            ->where('id_dominio', '<>', Dominio::get('Credito (Saldo pendiente)'))
-            ->get();
+        $formas_pago_excluidas = [Dominio::get('Credito (Saldo pendiente)')];
+        $formas_pago = FormaPagoLicencia::getDominios(session('id_licencia'), $formas_pago_excluidas);
+        
         if ($post) {
             $post = (object) $post;
             $resolucion = ResolucionFactura::where('id_licencia', session('id_licencia'))->first();
