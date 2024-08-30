@@ -19,12 +19,13 @@
                                         @php
                                             $profesionales = \App\Tercero::all()->where('id_dominio_tipo_tercero', 69);
                                         @endphp
-                                        <select name="profesional" id="profesional" class="form-control" required>
+                                        <select name="id_profesional" id="id_profesional" class="form-control" required>
                                             <option selected disabled value="">Seleccione...</option>
-                                            @foreach ($profesionales as $items)
-                                                <option class="h6" value="{{ $items->id_tercero }}">
-                                                    {{ $items->nombres }}
-                                                    {{ $items->apellidos }}</option>
+                                            @foreach ($profesionales as $item)
+                                                <option
+                                                 class="h6" value="{{ $item->id_tercero }}">
+                                                    {{ $item->nombres }}
+                                                    {{ $item->apellidos }}</option>
                                             @endforeach
                                         </select>
                                     </div>

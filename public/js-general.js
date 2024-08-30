@@ -175,3 +175,12 @@ jQuery('.datepicker').datetimepicker({
     let day = addZero(d.getDate());
     return `${a}-${me}-${day} ${h}:${m}`;
   }
+
+  function parseOnlyDateToString(d) {
+    let h = addZero(d.getHours());
+    let m = addZero(d.getMinutes());
+    let a = addZero(d.getFullYear());
+    let me = addZero(d.getMonth() + 1);
+    let day = addZero(d.getDate());
+    return `${a}-${me}-${day}`;
+  }

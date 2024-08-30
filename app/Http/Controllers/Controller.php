@@ -19,4 +19,9 @@ class Controller extends BaseController
             "data" => $data
         ]);
     }
+
+    public function getDayWeek($date)
+    {
+        return strtolower(date('l', strtotime($date)));
+    }
 }

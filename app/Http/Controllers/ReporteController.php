@@ -9,6 +9,7 @@ use App\Factura;
 use App\Permiso;
 use App\Producto;
 use App\Tercero;
+use App\FormaPagoLicencia;
 use Illuminate\Http\Request;
 
 class ReporteController extends Controller
@@ -83,7 +84,8 @@ class ReporteController extends Controller
         $fecha_desde = date('Y-m-d') . " 00:00";
         $fecha_hasta = date('Y-m-d') . " 23:59";
         $fechas      = date('Y/m/d') . " 00:00 - " . date('Y/m/d') . " 23:59";
-        $formas_pago = Dominio::where('id_padre', 19)->get();
+        $formas_pago = FormaPagoLicencia::getDominios(session('id_licencia'));
+        
         $usuarios    = [];
         if ($post) {
             $post   = (object) $post;
@@ -182,9 +184,9 @@ class ReporteController extends Controller
         $fechas         = date('Y/m/d') . " 00:00 - " . date('Y/m/d') . " 23:59";
         $fechas         = date('Y/m/d') . " 00:00 - " . date('Y/m/d') . " 23:59";
         $search_tercero = "";
-        $formas_pago    = Dominio::where('id_padre', 19)
-            ->where('id_dominio', '<>', Dominio::get('Credito (Saldo pendiente)'))
-            ->get();
+        $formas_pago_excluidas = [Dominio::get('Credito (Saldo pendiente)')];
+        $formas_pago = FormaPagoLicencia::getDominios(session('id_licencia'), $formas_pago_excluidas);
+
 
         $canales = [];
         if ($post) {
@@ -261,9 +263,8 @@ class ReporteController extends Controller
         $fechas         = date('Y/m/d') . " 00:00 - " . date('Y/m/d') . " 23:59";
         $fechas         = date('Y/m/d') . " 00:00 - " . date('Y/m/d') . " 23:59";
         $search_tercero = [];
-        $formas_pago    = Dominio::where('id_padre', Dominio::get("Formas de pago"))
-            ->where('id_dominio', '<>', Dominio::get('Credito (Saldo pendiente)'))
-            ->get();
+        $formas_pago_excluidas = [Dominio::get('Credito (Saldo pendiente)')];
+        $formas_pago = FormaPagoLicencia::getDominios(session('id_licencia'), $formas_pago_excluidas);
 
         $proveedores = Tercero::where("id_licencia", session("id_licencia"))
                               ->where("id_dominio_tipo_tercero", Dominio::get("Proveedor"))
