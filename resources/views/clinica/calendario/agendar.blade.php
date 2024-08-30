@@ -15,16 +15,17 @@
                             <div class="row d-flex justify-content-between align-items-center">
                                 <div class="col-md-8 col-sm-12">
                                     <div class="form-group">
-                                        <label for="profesional" class="control-label"><b>*Profecional</b></label>
+                                        <label for="id_profesional" class="control-label"><b>*Profesional</b></label>
                                         @php
                                             $profesionales = \App\Tercero::all()->where('id_dominio_tipo_tercero', 69);
                                         @endphp
-                                        <select name="profesional" id="profesional" class="form-control" required>
+                                        <select name="id_profesional" id="id_profesional" class="form-control" required>
                                             <option selected disabled value="">Seleccione...</option>
-                                            @foreach ($profesionales as $items)
-                                                <option class="h6" value="{{ $items->id_tercero }}">
-                                                    {{ $items->nombres }}
-                                                    {{ $items->apellidos }}</option>
+                                            @foreach ($profesionales as $item)
+                                                <option
+                                                 class="h6" value="{{ $item->id_tercero }}">
+                                                    {{ $item->nombres }}
+                                                    {{ $item->apellidos }}</option>
                                             @endforeach
                                         </select>
                                     </div>

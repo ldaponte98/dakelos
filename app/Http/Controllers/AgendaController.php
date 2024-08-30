@@ -25,46 +25,55 @@ class AgendaController extends Controller
     public function agendar(Request $request)
     {
         $post = $request->all();
-        if($post){
-            //se le suman 1 min a la fecha fin 
-            $nuevaFechaEnd = Carbon::parse($post['end'])->addMinute(1)->format('Y-m-d H:i');
-            $validar_tercero= Tercero::where('identificacion', $post['tercero']['identificacion'])->first();
-
-            if($validar_tercero){
-                $agenda = new Agenda();
-                $agenda->id_profesional          =        $post['modal-profesional'];
-                $agenda->id_tercero              =        $validar_tercero->id_tercero;
-                $agenda->title                   =        $post['title'];
-                $agenda->start                   =        date('Y-m-d H:i', strtotime($post['start']));
-                $agenda->end                     =        $nuevaFechaEnd;
-                $agenda->observaciones           =        $post['observaciones'];
-                $agenda->id_usuario_creacion     =        session('id_usuario');
-                $agenda->enviar_email();
-                $agenda->save();
-                return redirect()->route('clinica/calendario/agendar');
-            }else{
-                $agenda = new Agenda();
-                $tercero = new Tercero();
-                $tercero->fill($post['tercero']);
-                $tercero->id_dominio_tipo_tercero           =  3;
-                $tercero->id_dominio_tipo_identificacion    =  $post['tercero']['id_dominio_tipo_identificacion'];
-                $tercero->id_licencia = session('id_licencia');
-                $tercero->save();
-
-                if($tercero){
-                    $agenda->id_profesional          =        $post['modal-profesional'];
-                    $agenda->id_tercero              =        $tercero->id_tercero;
-                    $agenda->title                   =        $post['title'];
-                    $agenda->start                   =        date('Y-m-d H:i', strtotime($post['start']));
-                    $agenda->end                     =        $nuevaFechaEnd;
-                    $agenda->observaciones           =        $post['observaciones'];
-                    $agenda->save();
-                    return redirect()->route('clinica/calendario/agendar');
+        $errores = [];
+        $msgExitoso = null;
+        $id_profesional_default = null;
+        if($post != null){
+            try {
+                $post = (object) $post;
+                $id_profesional_default = $post->id_profesional;
+                $dateStart = date('Y-m-d', strtotime($post->start));
+                $dateEnd = date('Y-m-d', strtotime($post->end));
+                $validDates = false;
+                $paciente= Tercero::where('identificacion', $post->tercero['identificacion'])->first();
+                if($paciente == null){
+                    $paciente = new Tercero();
+                    $paciente->fill($post->tercero);
+                    $paciente->id_dominio_tipo_tercero           =  3;
+                    $paciente->id_dominio_tipo_identificacion    =  $post->tercero['id_dominio_tipo_identificacion'];
+                    $paciente->id_licencia = session('id_licencia');
+                    $paciente->save();
                 }
+                while ($dateStart <= $dateEnd) {
+                    $dayWeek = $this->getDayWeek($dateStart);
+                    if(in_array("all", $post->days) || in_array($dayWeek, $post->days)){
+                        $validDates = true;
+                        $timeStart = date('H:i:s', strtotime($post->start));
+                        $timeEnd = date('H:i:s', strtotime($post->end));
+                        $agenda = new Agenda();
+                        $agenda->id_profesional          = $post->id_profesional;
+                        $agenda->id_tercero              = $paciente->id_tercero;
+                        $agenda->title                   = $post->title;
+                        $agenda->start                   = $dateStart . " " . $timeStart;
+                        $agenda->end                     = $dateStart . " " . $timeEnd;
+                        $agenda->observaciones           = $post->observaciones;
+                        $agenda->id_usuario_creacion     = session('id_usuario');
+                        if(!$agenda->save()){
+                            throw new Exception("Ocurrio un error interno al programar la cita, comuniquese con el administrador del sistema");
+                        }
+                        $agenda->enviar_email();
+                    }
+                    $dateStart = date('Y-m-d', strtotime($dateStart . " +1 days"));
+                }
+                if(!$validDates) throw new Exception("No se pudieron programar citas validas porque las fechas y dias de las citas no coincidieron en ningun escenario");
+                return redirect()->route('clinica/calendario/agendar');
+            } catch (Exception $e) {
+                $errores[] = "Ocurrio el siguiente error: " . $e->getMessage();
             }
         }
-
-        return view('clinica.calendario.agendar');
+        return view('clinica.calendario.agendar', 
+            compact(['id_profesional_default'])
+        );
     }
 
     public function cancelar($id){
@@ -80,6 +89,4 @@ class AgendaController extends Controller
         ]);
 
     }
-
-
 }

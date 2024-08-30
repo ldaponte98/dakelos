@@ -2,11 +2,10 @@
     let url = "{{ config('global.url_base') }}/clinica/calendario/mostrar" 
     
     $(document).ready(() => {
-        $('#profesional').on('change', function() {
+        $('#id_profesional').on('change', function() {
             let profesional = $(this).val();            
             consultarAgendas(profesional)
-        }); 
-        
+        });
     })
 
     let botonGuardar = document.getElementById('btn-guardar').addEventListener("click", function() {
@@ -32,19 +31,21 @@
         }   
         Loading(true);
         $('#form-citas').submit()
-
     });
 
     async function consultarAgendas(profesional) {
         try {
+            Loading(true, "Consultando agendas...");
             let validacion = await $.get(url+'/'+profesional);
             if(validacion.error){
+                Loading(false);
                 toastr.error(validacion.message, "Error")
                 return;
             }
             IniciarCalendario(validacion.data)
-            
+            Loading(false);
         } catch (error) {
+            Loading(false);
             console.log(error);
         }   
     }
@@ -94,6 +95,11 @@
     }
 
     function selectedDate(info) {
+        console.log({info: info})
+        if(info.date < new Date()){
+            toastr.error("Solo se permiten fechas mayores a la actual", "Ups")
+            return;
+        }
         let formulario = document.getElementById('form-citas');
         formulario.reset();
         $("#id_cita").val('')          
@@ -106,7 +112,7 @@
         $("#start").val(parseDatetimeFromCalendar(info.dateStr));
         $("#end").val(parseDatetimeFromCalendar(info.dateStr));
         let profesional = document.getElementById('profesional').value;
-        $("#modal-profesional").val(parseInt(profesional));
+        $("#id_profesional").val(parseInt(profesional));
 
         botonGuardar
 
@@ -132,7 +138,7 @@
         $("#id_cita").val(info.event.id)
         $("#start").val(parseDateToString(event.start));
         $("#end").val(parseDateToString(event.end));
-        $("#modal-profesional").val(event.id_profesional)
+        $("#id_profesional").val(event.id_profesional)
         $("#title").val(event.title)
         $("#tipo_identificacion").val(info.event.extendedProps.tercero.id_dominio_tipo_identificacion)
         $("#identificacion").val(info.event.extendedProps.tercero.identificacion)
