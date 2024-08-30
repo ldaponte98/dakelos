@@ -16,6 +16,11 @@ class Agenda extends Model
         return $this->belongsTo(Tercero::class, 'id_tercero');
     }
 
+    public function profesional()
+    {
+        return $this->belongsTo(Tercero::class, 'id_profesional');
+    }
+
     public function licencia()
     {
         return $this->belongsTo(Licencia::class, 'id_licencia');

@@ -22,6 +22,31 @@ class AgendaController extends Controller
         ]);
     }
 
+    public function agendaProfesional()
+    {   
+        $agendas = Agenda::where('id_profesional', session('id_tercero_usuario'))
+        ->where('estado', 'ACTIVO')
+        ->with('tercero')
+        ->get();
+        return response()->json([
+            'error' => false,
+            'message' => 'OK',
+            'data' => $agendas
+        ]);
+        return view('clinica.calendario.agendaProfesional');
+    }
+
+    public function atender(Request $request)
+    {
+        $post = $request->all();
+        if($post){
+            $angenda = Agenda::find($post['id_cita']);
+            dd($angenda);
+        }
+
+        return view('clinica.calendario.agendaProfesional');
+    }
+
     public function agendar(Request $request)
     {
         $post = $request->all();

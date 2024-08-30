@@ -15,7 +15,7 @@
                             <div class="row d-flex justify-content-between align-items-center">
                                 <div class="col-md-8 col-sm-12">
                                     <div class="form-group">
-                                        <label for="profesional" class="control-label"><b>*Profecional</b></label>
+                                        <label for="profesional" class="control-label"><b>*Profesional</b></label>
                                         @php
                                             $profesionales = \App\Tercero::all()->where('id_dominio_tipo_tercero', 69);
                                         @endphp
