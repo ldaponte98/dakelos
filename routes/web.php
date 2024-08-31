@@ -97,6 +97,7 @@ Route::any('clinica/calendario/cancelar/{id}', 'AgendaController@cancelar')->nam
 
 //HISTORIA CLINICA
 Route::any('clinica/historiaClinica/crear/{id}', 'HistoriaClinicaController@crear')->name('clinica/historiaClinica/crear');
+Route::any('clinica/historiaClinica/imprimir/{id_historia_clinica}', 'HistoriaClinicaController@imprimir')->name('clinica/historiaClinica/imprimir');
 
 
 

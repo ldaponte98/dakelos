@@ -31,22 +31,32 @@ class HistoriaClinicaController extends Controller
                 $historiaClinica->antecedente_alergias          =  $post->antecedente['alergias'];
                 $historiaClinica->motivo                        =  $post->motivo;
                 $historiaClinica->plan                          =  $post->plan;
+                $historiaClinica->id_licencia                   =  session('id_licencia');
                 
                 if($historiaClinica->save()){
                     DB::commit();
+                    $historiaClinica->enviar_email();
                     return redirect()->route('clinica/calendario/atender')->with('status', 'Se creo la historia clinica correctamente');
                 }else{
                     DB::rollBack();
                     throw new Exception("Ocurrio un error interno al crear la historia clinica, comuniquese con el administrador del sistema");
                     $errors = $historiaClinica->errors;
                 }
-                if($post->motivo=='') throw new Exception("El paciente debe terner un motivo de consulta");
+                
             } catch (Exception $e) {
                 $errores[] = "Ocurrio el siguiente error: " . $e->getMessage();
             }
         }
         return view('clinica.historiaClinica.crear', compact('agenda','historia_anterior'));
     }
+
+    
+    public function imprimir($id_historia_clinica)
+    {
+        $historia_clinica = HistoriaClinica::find($id_historia_clinica);
+        $pdf     = \PDF::loadView('pdf.historia_clinica', compact('historia_clinica'));
+        return $pdf->stream($historia_clinica->tercero->nombres . ' ' . $historia_clinica->tercero->apellidos . '.pdf');
+    }   
 
 
 }
