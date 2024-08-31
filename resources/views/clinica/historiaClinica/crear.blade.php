@@ -4,7 +4,6 @@
 <div class="row">
     <div class="col-sm-12">
         <div class="card">
-
             <div class="card-header">
                 <strong class="card-title">Nueva historia clinica</strong>
             </div>
@@ -15,26 +14,30 @@
                         <div class="card-title">
                             <h3 class="text-center">Datos personales</h3>
                         </div>
+
                         <div class="row">
                             <div class="col-md-3 form-group">
                                 <label for="identificacion" class="control-label mb-1"><b>Identificación</b></label>
-                                <input disabled type="text" id="identificacion" name="tercero[identificacion]"
+                                <input disabled value="{{$agenda->tercero->identificacion}}"  type="text" id="identificacion" name="tercero[identificacion]"
                                     class="form-control">
                             </div>
 
                             <div class="col-md-3 form-group">
                                 <label for="nombres" class="control-label mb-1"><b>Paciente</b></label>
-                                <input disabled type="text" id="nombres" name="tercero[nombres]" class="form-control">
+                                <input disabled value="{{$agenda->tercero->nombres}} {{$agenda->tercero->apellidos}}" type="text" id="nombres" name="tercero[nombres]" class="form-control">
                             </div>
-
+                            @php
+                                $tipos_sexo = \App\Dominio::all()->where('id_padre', 12)->where('id_dominio', $agenda->tercero->id_dominio_sexo)->first();
+                            @endphp
                             <div class="col-md-3 form-group">
                                 <label for="genero" class="control-label mb-1"><b>Genero</b></label>
-                                <input disabled type="text" id="genero" name="tercero[genero]" class="form-control">
+                                <input disabled value="{{$tipos_sexo->nombre}}" type="text" id="genero" name="tercero[genero]" class="form-control">
+                                
                             </div>
 
                             <div class="col-md-3 form-group">
                                 <label for="telefono" class="control-label mb-1"><b>Teléfono</b></label>
-                                <input disabled type="text" id="telefono" name="tercero[telefono]" class="form-control">
+                                <input disabled value="{{$agenda->tercero->telefono}}" type="text" id="telefono" name="tercero[telefono]" class="form-control">
                             </div>
                         </div>
 
@@ -54,7 +57,6 @@
                                         aria-controls="tab3" aria-selected="false">Plan</a>
                                 </li>
                             </ul>
-
                             <!-- Contenido de las pestañas -->
                             <div class="tab-content mt-4" id="myTabContent">
                                 <div class="tab-pane fade show active" id="antecedentes" role="tabpanel"
@@ -64,37 +66,37 @@
                                             <label for="antecedente_familiar"
                                                 class="control-label"><b>Familiares</b></label>
                                             <textarea class="w-100 form-control" type="text" id="antecedente_familiar"
-                                                name="antecedente[familiar]"></textarea>
+                                                name="antecedente[familiar]">{{$historia_anterior->antecedente_familiar}}</textarea>
                                         </div>
 
                                         <div class="col-md-6 col-sm-6 form-group">
                                             <label for="antecedente_personales"
                                                 class="control-label"><b>Personales</b></label>
                                             <textarea class="w-100 form-control" type="text" id="antecedente_personales"
-                                                name="antecedente[personales]"></textarea>
+                                                name="antecedente[personal]">{{$historia_anterior->antecedente_personal}}</textarea>
                                         </div>
 
                                         <div class="col-md-6 col-sm-6 form-group">
                                             <label for="antecedente_gineco-obstetricos"
                                                 class="control-label"><b>Gineco-obstétricos</b></label>
                                             <textarea class="w-100 form-control" type="text"
-                                                id="antecedente_gineco-obstetricos"
-                                                name="antecedente[gineco-obstetricos]"></textarea>
+                                                id="antecedente_gineco-obstetrico"
+                                                name="antecedente[gineco-obstetrico]">{{$historia_anterior->antecedente_gineco_obstetrico}}</textarea>
                                         </div>
 
                                         <div class="col-md-6 col-sm-6 form-group">
                                             <label for="antecedente_cirugia"
                                                 class="control-label"><b>Cirugia</b></label>
                                             <textarea class="w-100 form-control" type="text" id="antecedente_cirugia"
-                                                name="antecedente[cirugia]"></textarea>
+                                                name="antecedente[cirugia]">{{$historia_anterior->antecedente_cirugia}}</textarea>
                                         </div>
 
                                         <div class="col-md-6 col-sm-6 form-group">
                                             <label for="antecedente_medicamentos"
-                                                class="control-label"><b>Cirugia</b></label>
+                                                class="control-label"><b>Medicamentos</b></label>
                                             <textarea class="w-100 form-control"cols="50" type="text"
                                                 id="antecedente_medicamentos"
-                                                name="antecedente[medicamentos]"></textarea>
+                                                name="antecedente[medicamentos]">{{$historia_anterior->antecedente_medicamentos}}</textarea>
                                         </div>
 
                                         <div class="col-md-6 col-sm-6 form-group">
@@ -102,7 +104,7 @@
                                                 class="control-label"><b>FUM Alergias</b></label>
                                             <textarea class="w-100 form-control" type="text"
                                                 id="antecedente_alergias"
-                                                name="antecedente[alergias]"></textarea>
+                                                name="antecedente[alergias]">{{$historia_anterior->antecedente_alergias}}</textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -112,7 +114,7 @@
                                             <label for="motivo"
                                                 class="control-label"><b>*Motivo</b></label>
                                             <textarea class="w-100 form-control" type="text" id="motivo"
-                                                name="motivo"></textarea>
+                                                name="motivo">{{$historia_anterior->motivo}}</textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -122,7 +124,7 @@
                                             <label for="plan"
                                                 class="control-label"><b>Plan</b></label>
                                             <textarea class="w-100 form-control" type="text" id="plan"
-                                                name="plan"></textarea>
+                                                name="plan">{{$historia_anterior->plan}}</textarea>
                                         </div>
                                     </div>
                                 </div>

@@ -12,6 +12,8 @@
                 toastr.error(validacion.message, "Error")
                 return;
             }            
+            console.log(validacion.data);
+            
             IniciarCalendario(validacion.data)
             
         } catch (error) {
@@ -57,7 +59,7 @@
         $("#evento").modal("show");
         $("#btn-atender").css("display", "block");
         
-        $("#id_cita").val(info.event.id)
+        $("#id_agenda").val(info.event.id)
         $("#start").val(parseDateToString(event.start));
         $("#title").val(event.title)
         $("#identificacion").val(info.event.extendedProps.tercero.identificacion)
@@ -68,9 +70,11 @@
         $("#observaciones").val(info.event.extendedProps.observaciones)
 
         document.getElementById('btn-atender').addEventListener("click", function() {
-            Loading(true);
-            $('#form-agenda-profesional').submit()
+            Loading(true, "Abriendo historia clinica");
+            let url_atender = "{{ config('global.url_base') }}/clinica/historiaClinica/crear/" 
+            return window.location.href= url_atender+info.event.id;
         });
+    
         
     }
     

@@ -92,12 +92,11 @@ Route::any('clinica/calendario/agendar', 'AgendaController@agendar')->name('clin
 Route::any('clinica/calendario/agendaProfesional', 'AgendaController@agendaProfesional')->name('clinica/calendario/agendaProfesional');
 Route::any('clinica/calendario/atender', 'AgendaController@atender')->name('clinica/calendario/atender');
 Route::any('clinica/calendario/mostrar/{id}', 'AgendaController@mostrar')->name('clinica/calendario/mostrar');
-
 Route::any('clinica/calendario/cancelar/{id}', 'AgendaController@cancelar')->name('clinica/calendario/cancelar');
 
 
 //HISTORIA CLINICA
-Route::any('clinica/historiaClinica/administrar', 'HistoriaClinicaController@mostrar')->name('clinica/historiaClinica/administrar');
+Route::any('clinica/historiaClinica/crear/{id}', 'HistoriaClinicaController@crear')->name('clinica/historiaClinica/crear');
 
 
 

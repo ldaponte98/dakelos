@@ -33,17 +33,10 @@ class AgendaController extends Controller
             'message' => 'OK',
             'data' => $agendas
         ]);
-        return view('clinica.calendario.agendaProfesional');
     }
 
-    public function atender(Request $request)
+    public function atender()
     {
-        $post = $request->all();
-        if($post){
-            $angenda = Agenda::find($post['id_cita']);
-            dd($angenda);
-        }
-
         return view('clinica.calendario.agendaProfesional');
     }
 

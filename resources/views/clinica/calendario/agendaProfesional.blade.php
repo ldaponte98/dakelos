@@ -6,8 +6,14 @@
                 <div class="card-header">
                     <strong class="card-title">Mis agendas</strong>
                 </div>
-                    <div id="pay-invoice"> 
 
+            @if (session('status'))
+                <script>
+                    toastr.success(" {{ session('status') }}", "Proceso exitoso");
+                </script>
+            @endif
+
+                    <div id="pay-invoice"> 
                         <!-- Modal -->
                         <div class="modal fade" id="evento" tabindex="-1" role="dialog"
                             aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -23,14 +29,14 @@
                                         </div>
                                         <div class="modal-body">
                                             <div class="row">
-                                                <input id="id_cita" name="id_cita" type="hidden">
+                                                <input id="id_agenda" name="id_agenda" type="hidden">
                                                 <div class="col-12">
                                                     <div class="form-group">
                                                         <label for="profesional" class="control-label"><b>*Profesional</b></label>
                                                         @php
                                                             $profesionales = \App\Tercero::where('id_tercero', session('id_tercero_usuario'))->first();
                                                         @endphp
-                                                        <input readonly value="{{$profesionales->nombres}} {{$profesionales->apellidos}}" type="text" id="modal-profesional" name="modal-profesional" class="form-control" disabled>
+                                                        <input @readonly(true) value="{{$profesionales->nombres}} {{$profesionales->apellidos}}" type="text" id="modal-profesional" name="modal-profesional" class="form-control" disabled>
                                                     </div>
                                                 </div>
                                                 <div class="col-12">
@@ -39,7 +45,7 @@
                                                         @php
                                                             $motivo_consulta = \App\Dominio::all()->where('id_padre', 70);
                                                         @endphp
-                                                        <select id="title" name="title" class="form-control" required>
+                                                        <select @readonly(true) id="title" name="title" class="form-control" required>
                                                             @foreach ($motivo_consulta as $motivo)
                                                                 <option disabled selected title="{{$motivo->descripcion}}" value="{{ $motivo->nombre }}">{{ $motivo->nombre }}</option>
                                                             @endforeach
@@ -61,7 +67,7 @@
                                                     <div class="form-group">
                                                         <label for="identificacion"
                                                             class="control-label mb-1"><b>Identificación</b></label>
-                                                        <input readonly type="text" id="identificacion" name="tercero[identificacion]" class="form-control" disabled>
+                                                        <input @readonly(true) type="text" id="identificacion" name="tercero[identificacion]" class="form-control" disabled>
                                                     </div>
                                                 </div>
 
@@ -112,12 +118,12 @@
                                                             <textarea class="w-100 form-control" type="text" id="observaciones" name="observaciones" disabled></textarea >
                                                     </div>
                                                 </div>
-
                                             </div>
+
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary"
                                                     data-dismiss="modal">Cerrar</button>
-                                                <button style="display: none;" type="button" id="btn-atender" class="btn btn-primary">Atender</button>
+                                                <button  style="display: none;" type="button" id="btn-atender" class="btn btn-primary">Atender</button>
                                             </div>
                                         </div>
                                     </div>
