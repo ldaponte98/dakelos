@@ -87,6 +87,9 @@ Route::any('reportes/facturas_pendientes_pagar', 'ReporteController@creditos_pen
 Route::any('reportes/pago-proveedores', 'ReporteController@pago_proveedores')->name('reportes/pago-proveedores');
 Route::any('reportes/documentos-asociados-factura/{id_factura}', 'ReporteController@documentos_asociados_factura')->name('reportes/documentos-asociados-factura');
 
+//AGENDA JOBS
+Route::any('jobs/agenda/recordatorios', 'AgendaConfiguracionRecordatorioController@job_recordatorios')->name('jobs/agenda/recordatorios');
+
 //AGENDA 
 Route::any('clinica/calendario/agendar', 'AgendaController@agendar')->name('clinica/calendario/agendar');
 Route::any('clinica/calendario/mostrar/{id}', 'AgendaController@mostrar')->name('clinica/calendario/mostrar');

@@ -15,11 +15,11 @@
                             <div class="row d-flex justify-content-between align-items-center">
                                 <div class="col-md-8 col-sm-12">
                                     <div class="form-group">
-                                        <label for="id_profesional" class="control-label"><b>*Profesional</b></label>
+                                        <label for="search_id_profesional" class="control-label"><b>*Profesional</b></label>
                                         @php
                                             $profesionales = \App\Tercero::all()->where('id_dominio_tipo_tercero', 69);
                                         @endphp
-                                        <select name="id_profesional" id="id_profesional" class="form-control" required>
+                                        <select name="search_id_profesional" id="search_id_profesional" class="form-control" required>
                                             <option selected disabled value="">Seleccione...</option>
                                             @foreach ($profesionales as $item)
                                                 <option
@@ -61,7 +61,7 @@
                                                         @php
                                                             $profesionales = \App\Tercero::all()->where('id_dominio_tipo_tercero', 69);
                                                         @endphp
-                                                        <select name="modal-profesional" id="modal-profesional" class="form-control" required>
+                                                        <select name="id_profesional" id="id_profesional" class="form-control" required>
                                                             @foreach ($profesionales as $items)
                                                                 <option  class="h6" value="{{ $items->id_tercero }}">
                                                                     {{ $items->nombres }}

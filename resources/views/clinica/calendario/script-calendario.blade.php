@@ -2,7 +2,7 @@
     let url = "{{ config('global.url_base') }}/clinica/calendario/mostrar" 
     
     $(document).ready(() => {
-        $('#id_profesional').on('change', function() {
+        $('#search_id_profesional').on('change', function() {
             let profesional = $(this).val();            
             consultarAgendas(profesional)
         });
@@ -96,6 +96,7 @@
 
     function selectedDate(info) {
         console.log({info: info})
+
         if(info.date < new Date()){
             toastr.error("Solo se permiten fechas mayores a la actual", "Ups")
             return;
@@ -111,11 +112,9 @@
         }
         $("#start").val(parseDatetimeFromCalendar(info.dateStr));
         $("#end").val(parseDatetimeFromCalendar(info.dateStr));
-        let profesional = document.getElementById('profesional').value;
+        let profesional = document.getElementById('search_id_profesional').value;
         $("#id_profesional").val(parseInt(profesional));
-
         botonGuardar
-
     }
 
     function selectedEvent(info) {
