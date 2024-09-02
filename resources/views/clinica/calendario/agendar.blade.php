@@ -61,7 +61,7 @@
                                                         @php
                                                             $profesionales = \App\Tercero::all()->where('id_dominio_tipo_tercero', 69);
                                                         @endphp
-                                                        <select name="modal-profesional" id="modal-profesional" class="form-control" required>
+                                                        <select name="modal_profesional" id="modal_profesional" class="form-control" required>
                                                             @foreach ($profesionales as $items)
                                                                 <option  class="h6" value="{{ $items->id_tercero }}">
                                                                     {{ $items->nombres }}

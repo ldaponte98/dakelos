@@ -13,6 +13,8 @@ class HistoriaClinicaController extends Controller
     public function crear(Request $request, $id)
     {
         $post = $request->all();
+        $envio_correo = isset($post['envio_correo']);
+        $imprimir_historia = isset($post['imprimir_historia']);
         DB::beginTransaction();
         $agenda = Agenda::find($id);
         $historia_anterior = HistoriaClinica::where('id_tercero', $agenda->id_tercero)->where('estado', 1)->orderBy('id', 'DESC')->limit(1)->first();
@@ -35,7 +37,8 @@ class HistoriaClinicaController extends Controller
                 
                 if($historiaClinica->save()){
                     DB::commit();
-                    $historiaClinica->enviar_email();
+                    if($envio_correo){$historiaClinica->enviar_email();}
+                    if($imprimir_historia){$this->imprimir_historia($historiaClinica->id);}
                     return redirect()->route('clinica/calendario/atender')->with('status', 'Se creo la historia clinica correctamente');
                 }else{
                     DB::rollBack();
@@ -50,13 +53,14 @@ class HistoriaClinicaController extends Controller
         return view('clinica.historiaClinica.crear', compact('agenda','historia_anterior'));
     }
 
-    
-    public function imprimir($id_historia_clinica)
+    public function imprimir_historia($id_historia)
     {
-        $historia_clinica = HistoriaClinica::find($id_historia_clinica);
-        $pdf     = \PDF::loadView('pdf.historia_clinica', compact('historia_clinica'));
-        return $pdf->stream($historia_clinica->tercero->nombres . ' ' . $historia_clinica->tercero->apellidos . '.pdf');
-    }   
+        $historia_clinica = HistoriaClinica::find($id_historia);
+        $customPaper = array(0, 0, 225.80, 767.00);
+        $pdf = \PDF::loadView('pdf.historia_clinica', compact(['historia_clinica']))
+            ->setPaper($customPaper);
+        return $pdf->stream("Historia clinica " . $historia_clinica->id . '.pdf');
+    }
 
 
 }

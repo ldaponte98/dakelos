@@ -157,7 +157,7 @@
     <br><br>
     @if (isset($btn_descargar))
         <center>
-            <a href="{{ route('clinica/historiaClinica/imprimir', $historia_clinica->id) }}"
+            <a href="{{ route('clinica/historiaClinica/imprimir_historia', $historia_clinica->id) }}"
                 style="text-decoration: none;
                 padding-top: 10px !important;
                 padding-bottom:  10px !important;

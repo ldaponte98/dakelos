@@ -131,11 +131,59 @@
                             </div>
                         </div>
 
-                        <div class="col-12 d-flex justify-content-end mt-4">
-                            <button id="btn-guardar" type="button" class="btn btn-primary">
-                                Guardar
-                            </button>
+                        
+                        {{-- Modal envio de historia --}}
+                        
+                        <div class="modal fade" id="confirmar" tabindex="-1" role="dialog"
+                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Enviar Historia</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">x</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label for="correo"
+                                                            class="control-label mb-1"><b>Correo</b></label>
+                                                        <input disabled value="{{$agenda->tercero->email}}" type="email" id="correo" name="tercero[correo]" class="form-control">
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 mb-2">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="envio_correo" name="envio_correo">
+                                                        <label class="form-check-label" for="envio_correo">
+                                                          Enviar al correo
+                                                        </label>
+                                                    </div>
+                                                    {{-- <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="imprimir_historia" name="imprimir_historia">
+                                                        <label class="form-check-label" for="imprimir_historia">
+                                                          Imprimir historia clinica
+                                                        </label>
+                                                    </div> --}}
+                                                </div>
+                            
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Cerrar</button>
+                                                <button type="button" id="btn-guardar" class="btn btn-primary">Guardar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                         </div>
+                    </div>
+
+                    <div class="col-12 d-flex justify-content-end mt-4">
+                        <button id="btn-confirmar" type="button" class="btn btn-primary">
+                            Guardar
+                        </button>
                     </div>
                 </form>
             </div>
@@ -144,7 +192,7 @@
 </div>
 
 <script>
-    document.getElementById('btn-guardar').addEventListener("click", function() {
+    document.getElementById('btn-confirmar').addEventListener("click", function() {
 
         if($("#motivo").val().trim() == ""){
             let posicion = $('#tab2-tab').offset().top;
@@ -154,9 +202,16 @@
             }, 800); // 
             return toastr.error("El motivo de la consulta es obligatoria", "Error");
         }
-
-        $('#form-guardar-historia_clinica').submit()
+        
+        $("#confirmar").modal("show");
 
     });
+
+
+    const btonGuardar=document.getElementById('btn-guardar').addEventListener("click", function() {
+        Loading(true, "Guardando historia clinica");
+        $('#form-guardar-historia_clinica').submit()
+    });
+
 </script>
 @endsection

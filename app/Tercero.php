@@ -54,6 +54,11 @@ class Tercero extends Model
         return $this->hasMany(Factura::class, 'id_tercero');
     }
 
+    public function historia()
+    {
+        return $this->hasMany(HistoriaClinica::class, 'id_tercero');
+    }
+
     public function get_estado()
     {
         switch ($this->estado) {

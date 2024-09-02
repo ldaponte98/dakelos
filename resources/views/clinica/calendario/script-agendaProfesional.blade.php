@@ -11,9 +11,7 @@
             if(validacion.error){
                 toastr.error(validacion.message, "Error")
                 return;
-            }            
-            console.log(validacion.data);
-            
+            }                        
             IniciarCalendario(validacion.data)
             
         } catch (error) {
@@ -68,19 +66,17 @@
         $("#telefono").val(info.event.extendedProps.tercero.telefono)
         $("#correo").val(info.event.extendedProps.tercero.email)
         $("#observaciones").val(info.event.extendedProps.observaciones)
-
         document.getElementById('btn-atender').addEventListener("click", function() {
             Loading(true, "Abriendo historia clinica");
             let url_atender = "{{ config('global.url_base') }}/clinica/historiaClinica/crear/" 
             return window.location.href= url_atender+info.event.id;
         });
     
-        
     }
     
-    function hoverEvent(info) { 
-        $(info.el).tooltip({ 
-            title: info.event.title + ` (Horario: ${parseDateToString(info.event.start)} hasta ${parseDateToString(info.event.end)})` 
+    function hoverEvent(info) {         
+        $(info.el).tooltip({    
+            title: info.event.extendedProps.tercero.nombres + " " + info.event.extendedProps.tercero.apellidos + " " + ` (Horario: ${parseDateToString(info.event.start)} hasta ${parseDateToString(info.event.end)})` 
         });
     }
 

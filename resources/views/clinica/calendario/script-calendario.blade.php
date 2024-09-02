@@ -3,7 +3,9 @@
     
     $(document).ready(() => {
         $('#id_profesional').on('change', function() {
-            let profesional = $(this).val();            
+            let profesional = $(this).val();       
+            console.log(profesional);
+                 
             consultarAgendas(profesional)
         });
     })
@@ -42,6 +44,7 @@
                 toastr.error(validacion.message, "Error")
                 return;
             }
+            
             IniciarCalendario(validacion.data)
             Loading(false);
         } catch (error) {

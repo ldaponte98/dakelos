@@ -25,7 +25,6 @@ class HistoriaClinica extends Model
         return $this->belongsTo(Licencia::class, 'id_licencia');
     }
 
-
     public function enviar_email()
     {
         $mensaje = "";
@@ -62,4 +61,5 @@ class HistoriaClinica extends Model
     {
         return (false !== strpos($str, "@") && false !== strpos($str, "."));
     }
+
 }
