@@ -102,6 +102,11 @@ Route::any('clinica/calendario/cancelar/{id}', 'AgendaController@cancelar')->nam
 Route::any('clinica/historiaClinica/crear/{id}', 'HistoriaClinicaController@crear')->name('clinica/historiaClinica/crear');
 Route::any('clinica/historiaClinica/imprimir_historia/{id_factura}', 'HistoriaClinicaController@imprimir_historia')->name('clinica/historiaClinica/imprimir_historia');
 
+//CONFIGURACION -> AGENDA RECORDATORIO
+Route::any('agenda-recordatorio/administrar', 'AgendaConfiguracionRecordatorioController@administrar')->name('agenda-recordatorio/administrar');
+Route::any('agenda-recordatorio/crear', 'AgendaConfiguracionRecordatorioController@guardar')->name('agenda-recordatorio/crear');
+Route::any('agenda-recordatorio/editar/{id}', 'AgendaConfiguracionRecordatorioController@guardar')->name('agenda-recordatorio/editar');
+
 
  
 Route::get('factura_email', function () {
@@ -129,6 +134,7 @@ Route::get('agenda_email', function () {
     ];
     return view('email.agenda', compact(['tercero', 'title', 'subtitulo', 'imagen_licencia', 'profesional', 'start', 'licencia']));
 })->name('agenda_email');
+
 
 Route::any('licencia/menu_clientes', 'LicenciaController@menu_clientes')->name('licencia/menu_clientes');
 Route::any('licencia/validar_pedidos_nuevos', 'LicenciaController@validar_pedidos_nuevos')->name('licencia/validar_pedidos_nuevos');

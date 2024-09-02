@@ -23,17 +23,17 @@ class AgendaConfiguracionRecordatorioController extends Controller
         $this->current_date = date('Y-m-d H:i');
         $this->log("Ejecutando job para recordatorio de citas agendas...");
         $licencias = Licencia::where('estado', 1)->get();
-        $this->log("Ejecutando job para " . count($licencias) . " activas");
+        $this->log("Ejecutando job para " . count($licencias) . " licencias activas");
         foreach ($licencias as $licencia) {
-            $this->log("----------------------------- [". $licencia->nombre . " (".$licencia->id_licencia.")" ."] -----------------------------");
+            $this->log("----------------------------- INICIO [". $licencia->nombre . " (".$licencia->id_licencia.")" ."] -----------------------------");
             $recordatorios = AgendaConfiguracionRecordatorio::where('id_licencia', $licencia->id_licencia)
                                 ->where('estado', 1)
                                 ->get();
-            $this->log("Aplicando " . count($recordatorios) . " recordatorios activos configurados");
+            $this->log("Aplicando " . count($recordatorios) . " recordatorios activos configurados. <br>");
             foreach ($recordatorios as $recordatorio) {
                 $this->generar_recordatorio($recordatorio);
             }
-            $this->log("-----------------------------------------------------------------------------------------------------------------------");       
+            $this->log("------------------------------ FIN [". $licencia->nombre . " (".$licencia->id_licencia.")" ."] -------------------------------");
         }
     }
 
@@ -45,20 +45,24 @@ class AgendaConfiguracionRecordatorioController extends Controller
         foreach ($agendas_recordar as $agenda) {
             $subtitulo = $this->generar_subtitulo_mensaje($recordatorio);
             Agenda::ejecutar_envio_email($agenda, $subtitulo);
+            $this->log("Enviado recordatorio a agenda #" . $agenda->id . " [".$agenda->email. "]");
         }
-        $this->log("----------------------------- FIN RECORDATORIO ". $recordatorio->tiempo . " ".$recordatorio->unidad_tiempo. "-----------------------------");
+        $this->log("----------------------------- FIN RECORDATORIO ". $recordatorio->tiempo . " ".$recordatorio->unidad_tiempo. "-----------------------------<br><br>");
     }
 
     public function buscar_agendas_por_recordatorio($recordatorio)
     {
         $date = $this->current_date;
+        $id_licencia = $recordatorio->id_licencia;
         $sql = "SELECT a.*, 
+        p.email,
         TIMEDIFF(a.start, '$date:00') AS diferencia
         FROM agenda a 
         INNER JOIN tercero t ON t.id_tercero = a.id_profesional
+        INNER JOIN tercero p ON p.id_tercero = a.id_tercero
         WHERE a.start > '$date:00'
         AND a.estado = 'ACTIVO'
-        AND t.id_licencia = 1";
+        AND t.id_licencia = $id_licencia";
         $agendas_validas = DB::select($sql);
         $agendas_recordar = [];
         foreach ($agendas_validas as $agenda) {
@@ -90,5 +94,47 @@ class AgendaConfiguracionRecordatorioController extends Controller
             "HORA" => "Tu cita empieza en " . $recordatorio->tiempo . " horas"
         ];
         return $mensajes[$recordatorio->unidad_tiempo];
+    }
+
+    public function administrar()
+    {
+        $recordatorios = AgendaConfiguracionRecordatorio::where('id_licencia', session('id_licencia'))->get();
+        return view('configuracion.agenda-recordatorio.administrar', compact(['recordatorios']));
+    }
+
+    public function guardar(Request $request, $id = null)
+    {
+        $post            = $request->all();
+        $recordatorio    = new AgendaConfiguracionRecordatorio;
+        $recordatorio->estado = null;
+        if ($id != null) {
+            $recordatorio  = AgendaConfiguracionRecordatorio::find($id);
+        }
+
+        $unidades_tiempo = [
+            (object) [ "id" => "DIA", "label" => "Día"],
+            (object) [ "id" => "HORA", "label" => "Hora"]
+        ];
+        $errors   = [];
+        if ($post) {
+            $post = (object) $post;
+            $recordatorio->fill($request->except(['_token']));
+            $existe = AgendaConfiguracionRecordatorio::where('id_licencia', session('id_licencia'))
+                ->where('unidad_tiempo', $post->unidad_tiempo)
+                ->where('tiempo', $post->tiempo)
+                ->first();
+            $valid_edit = false;
+            if($id != null && $existe != null){
+                if($existe->id == $id) $valid_edit = true;
+            }
+            if ($existe == null || $valid_edit == true) {
+                $recordatorio->id_licencia = session('id_licencia');
+                $recordatorio->save();
+                return redirect()->route('agenda-recordatorio/administrar');
+            } else {
+                $errors[] = "Ya existe un recordatorio registrado con el mismo tiempo y unidad de tiempo.";
+            }
+        }
+        return view('configuracion.agenda-recordatorio.form', compact(['recordatorio', 'unidades_tiempo', 'errors']));
     }
 }
