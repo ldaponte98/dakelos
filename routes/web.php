@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Log;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -97,3 +97,8 @@ Route::get('factura_pdf', function () {
 
 Route::any('licencia/menu_clientes', 'LicenciaController@menu_clientes')->name('licencia/menu_clientes');
 Route::any('licencia/validar_pedidos_nuevos', 'LicenciaController@validar_pedidos_nuevos')->name('licencia/validar_pedidos_nuevos');
+
+Route::get('test-cron', function () {
+    Log::write("Prueba ejecucion cron", "El cron se ha ejecutado");
+    echo "OK";
+})->name('test-cron');
