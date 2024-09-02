@@ -26,22 +26,27 @@ class Agenda extends Model
         return $this->belongsTo(Licencia::class, 'id_licencia');
     }
 
-
     public function enviar_email()
+    {
+        $agenda = $this;
+        Agenda::ejecutar_envio_email($agenda);
+    }
+
+    public static function ejecutar_envio_email($agenda, $subtitulo = null)
     {
         $mensaje = "";
         $error   = true;
-        $agenda = $this;
         $tercero = Tercero::find($agenda->id_tercero);
-        $licencia = Licencia::find(session('id_licencia'));
+        $licencia = Licencia::find($tercero->id_licencia);
         $urlImagen = config('global.url_base')."/imagenes/licencia/";
 
-        $subject = "Recordatorio de cita" . ' ' . $licencia->nombe;
+        $subject = "Recordatorio de cita " . $licencia->nombe;
         $for     = $tercero->email;
-        if($for != null && $for != "" && $this->is_valid_email($for)){
+        if($for != null && $for != "" && Agenda::is_valid_email($for)){
             $data_email = array(
                 'tercero'     => $tercero,
                 'title'    => $agenda->title,
+                'subtitulo' => $subtitulo,
                 'imagen_licencia' => $urlImagen.$licencia->imagen,
                 'profesional' => $agenda->id_profesional,
                 'start'      => $agenda->start,
@@ -49,8 +54,8 @@ class Agenda extends Model
             );
             if ($for) {
                 try {
-                    Mail::send('email.agenda', $data_email, function ($msj) use ($subject, $for) {
-                        $msj->from(config('global.email_app'), session('nombre_licencia'));
+                    Mail::send('email.agenda', $data_email, function ($msj) use ($subject, $for, $licencia) {
+                        $msj->from(config('global.email_app'), $licencia->nombre);
                         $msj->subject($subject);
                         $msj->to($for);
                     });
@@ -65,7 +70,7 @@ class Agenda extends Model
         return $error;
     }
 
-    public function is_valid_email($str)
+    public static function is_valid_email($str)
     {
         return (false !== strpos($str, "@") && false !== strpos($str, "."));
     }

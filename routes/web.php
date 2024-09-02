@@ -112,5 +112,23 @@ Route::get('factura_pdf', function () {
     return view('pdf.factura');
 })->name('factura_pdf');
 
+Route::get('agenda_email', function () {
+    $tercero = (object) [
+            "nombres" => "test",
+            "apellidos" => "test"
+    ];
+    $title = "Recordatorio de cita DEMO";
+    $subtitulo = "Tu cita empieza en 2 días";
+    $imagen_licencia = "https://dakelos.com/imagenes/licencia/logo.jpg";
+    $profesional = 1;
+    $start       = "2024-09-02 17:00";
+    $licencia = (object) [
+        "direccion" => "Test",
+        "ciudad" => "Test",
+        "nombre" => "Test"
+    ];
+    return view('email.agenda', compact(['tercero', 'title', 'subtitulo', 'imagen_licencia', 'profesional', 'start', 'licencia']));
+})->name('agenda_email');
+
 Route::any('licencia/menu_clientes', 'LicenciaController@menu_clientes')->name('licencia/menu_clientes');
 Route::any('licencia/validar_pedidos_nuevos', 'LicenciaController@validar_pedidos_nuevos')->name('licencia/validar_pedidos_nuevos');

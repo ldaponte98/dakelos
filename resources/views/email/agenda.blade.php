@@ -29,6 +29,13 @@
         .content {
             padding: 20px;
         }
+        .logo{
+            text-align: center;
+        }
+        .logo img{
+            max-width: 100px;
+            height: auto;
+        }
         .footer {
             background-color: #f8f9fa;
             color: #6c757d;
@@ -43,9 +50,11 @@
     <div class="container">
         <div class="header">
             <h2>Recordatorio de Cita</h2>
+            @if ($subtitulo != null)
+                <h3>{{ $subtitulo }}</h3>
+            @endif
         </div>
         <div class="content">
-            <!-- Contenido del recordatorio aquí -->
             <p>Estimado/a {{ $tercero->nombres}} {{ $tercero->apellidos}},</p>
             <p>Este es un recordatorio de su cita programada con nosotros:</p>
             <ul>
@@ -55,6 +64,12 @@
             </ul>
             <p>Por favor, confirme su asistencia o comuníquese con nosotros si necesita reprogramar la cita.</p>
             <p>Gracias,<br>Equipo de {{ $licencia->nombre }}</p>
+
+            @if ($imagen_licencia != null)
+            <div class="logo">
+                <img src="{{$imagen_licencia}}" alt="{{ $licencia->nombre }}">
+            </div>
+            @endif
         </div>
         <div class="footer">
             <p>Este es un mensaje automático. Por favor, no responda a este correo electrónico.</p>
