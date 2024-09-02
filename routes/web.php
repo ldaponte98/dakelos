@@ -92,15 +92,15 @@ Route::any('jobs/agenda/recordatorios', 'AgendaConfiguracionRecordatorioControll
 
 //AGENDA 
 Route::any('clinica/calendario/agendar', 'AgendaController@agendar')->name('clinica/calendario/agendar');
+Route::any('clinica/calendario/agendaProfesional', 'AgendaController@agendaProfesional')->name('clinica/calendario/agendaProfesional');
+Route::any('clinica/calendario/atender', 'AgendaController@atender')->name('clinica/calendario/atender');
 Route::any('clinica/calendario/mostrar/{id}', 'AgendaController@mostrar')->name('clinica/calendario/mostrar');
 Route::any('clinica/calendario/cancelar/{id}', 'AgendaController@cancelar')->name('clinica/calendario/cancelar');
 
 
 //HISTORIA CLINICA
-Route::any('clinica/historiaClinica/administrar', 'HistoriaClinicaController@mostrar')->name('clinica/historiaClinica/administrar');
-Route::any('clinica/historiaClinica/crear', 'HistoriaClinicaController@crear')->name('clinica/historiaClinica/crear');
-
-
+Route::any('clinica/historiaClinica/crear/{id}', 'HistoriaClinicaController@crear')->name('clinica/historiaClinica/crear');
+Route::any('clinica/historiaClinica/imprimir_historia/{id_factura}', 'HistoriaClinicaController@imprimir_historia')->name('clinica/historiaClinica/imprimir_historia');
 
 
  

@@ -192,10 +192,14 @@
                                         <a class="nav-item nav-link" id="nav-cotizaciones-tab" data-toggle="tab"
                                             href="#nav-cotizaciones" role="tab" aria-controls="nav-cotizaciones"
                                             aria-selected="false">Cotizaciones</a>
+                                        <a class="nav-item nav-link" id="nav-historias-tab" data-toggle="tab"
+                                            href="#nav-historias" role="tab" aria-controls="nav-historias"
+                                            aria-selected="false">Historias clinicas</a>
                                     </div>
                                 </nav>
                                 @php
                                     $facturas = $tercero->facturas;
+                                    $historias = $tercero->historia;
                                 @endphp
                                 <div class="tab-content pl-3 pt-2" id="nav-tabContent">
                                     <div class="tab-pane fade active show" id="nav-home" role="tabpanel"
@@ -222,6 +226,11 @@
                                         aria-labelledby="nav-cotizaciones-tab">
                                         {{ view('tercero.lista_cotizaciones', compact('tercero', ['facturas'])) }}
                                     </div>
+
+                                    <div class="tab-pane fade" id="nav-historias" role="tabpanel"
+                                    aria-labelledby="nav-historiasr-tab">
+                                    {{ view('tercero.lista_historias', compact('tercero', ['historias'])) }}
+                                </div>
                                 </div>
                             </div>
                             <br><br>

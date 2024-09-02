@@ -42,6 +42,7 @@
                 toastr.error(validacion.message, "Error")
                 return;
             }
+            
             IniciarCalendario(validacion.data)
             Loading(false);
         } catch (error) {

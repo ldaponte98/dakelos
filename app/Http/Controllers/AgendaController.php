@@ -22,6 +22,24 @@ class AgendaController extends Controller
         ]);
     }
 
+    public function agendaProfesional()
+    {   
+        $agendas = Agenda::where('id_profesional', session('id_tercero_usuario'))
+        ->where('estado', 'ACTIVO')
+        ->with('tercero')
+        ->get();
+        return response()->json([
+            'error' => false,
+            'message' => 'OK',
+            'data' => $agendas
+        ]);
+    }
+
+    public function atender()
+    {
+        return view('clinica.calendario.agendaProfesional');
+    }
+
     public function agendar(Request $request)
     {
         $post = $request->all();
@@ -31,7 +49,7 @@ class AgendaController extends Controller
         if($post != null){
             try {
                 $post = (object) $post;
-                $id_profesional_default = $post->id_profesional;
+                $id_profesional_default = $post->modal_profesional;
                 $dateStart = date('Y-m-d', strtotime($post->start));
                 $dateEnd = date('Y-m-d', strtotime($post->end));
                 $validDates = false;
@@ -51,7 +69,7 @@ class AgendaController extends Controller
                         $timeStart = date('H:i:s', strtotime($post->start));
                         $timeEnd = date('H:i:s', strtotime($post->end));
                         $agenda = new Agenda();
-                        $agenda->id_profesional          = $post->id_profesional;
+                        $agenda->id_profesional          = $post->modal_profesional;
                         $agenda->id_tercero              = $paciente->id_tercero;
                         $agenda->title                   = $post->title;
                         $agenda->start                   = $dateStart . " " . $timeStart;
@@ -67,7 +85,7 @@ class AgendaController extends Controller
                 }
                 if(!$validDates) throw new Exception("No se pudieron programar citas validas porque las fechas y dias de las citas no coincidieron en ningun escenario");
                 return redirect()->route('clinica/calendario/agendar');
-            } catch (Exception $e) {
+            } catch (Exception $e) {    
                 $errores[] = "Ocurrio el siguiente error: " . $e->getMessage();
             }
         }

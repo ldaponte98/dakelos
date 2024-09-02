@@ -16,6 +16,11 @@ class Agenda extends Model
         return $this->belongsTo(Tercero::class, 'id_tercero');
     }
 
+    public function profesional()
+    {
+        return $this->belongsTo(Tercero::class, 'id_profesional');
+    }
+
     public function licencia()
     {
         return $this->belongsTo(Licencia::class, 'id_licencia');
@@ -31,12 +36,12 @@ class Agenda extends Model
         $licencia = Licencia::find(session('id_licencia'));
         $urlImagen = config('global.url_base')."/imagenes/licencia/";
 
-        $subject = $agenda->title;
+        $subject = "Recordatorio de cita" . ' ' . $licencia->nombe;
         $for     = $tercero->email;
         if($for != null && $for != "" && $this->is_valid_email($for)){
             $data_email = array(
                 'tercero'     => $tercero,
-                'tile'    => $agenda->title,
+                'title'    => $agenda->title,
                 'imagen_licencia' => $urlImagen.$licencia->imagen,
                 'profesional' => $agenda->id_profesional,
                 'start'      => $agenda->start,

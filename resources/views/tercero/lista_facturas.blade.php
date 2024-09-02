@@ -1,4 +1,11 @@
 <div class="row">
+    <div class="col-12">
+        <div class="form-group">
+            <label for="correo"
+                class="control-label mb-1"><b>Buscar</b></label>
+            <input id="filtro" type="search" class="form-control">
+        </div>
+    </div>
 	<div class="col-lg-12">
             <div class="card">
                 <div class="table-stats order-table ov-h">
@@ -15,7 +22,7 @@
                                 <th></th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="bodytable">
                         	@php $cont = 1; @endphp
                         	@foreach($facturas as $factura)
                         	@if($factura->id_dominio_tipo_factura == \App\Dominio::get("Factura de venta"))
