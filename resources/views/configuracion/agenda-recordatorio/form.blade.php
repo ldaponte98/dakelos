@@ -35,7 +35,7 @@
                                 <div class="col-sm-4">
                                      <div class="form-group">
                                         <label for="cc-payment" class="control-label mb-1"><b>*Tiempo</b></label>
-                                        <input type="number" autocomplete="off" name="tiempo" class="form-control" aria-required="true"  aria-invalid="false" value="{{ $recordatorio->tiempo }}" required>
+                                        <input type="number" min="1" autocomplete="off" name="tiempo" class="form-control" aria-required="true"  aria-invalid="false" value="{{ $recordatorio->tiempo }}" required>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">

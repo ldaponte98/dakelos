@@ -83,7 +83,12 @@
             eventClick: selectedEvent,
             eventMouseLeave: hoverEvent,
             displayEventTime: false,
-            events: eventos,
+            events: eventos.map((item)=>{
+                if(item.atendida==1){
+                    item.className ='eventGreen'
+                }
+                return item
+            }),
             headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
@@ -96,8 +101,6 @@
     }
 
     function selectedDate(info) {
-        console.log({info: info})
-
         if(info.date < new Date()){
             toastr.error("Solo se permiten fechas mayores a la actual", "Ups")
             return;

@@ -28,7 +28,12 @@
             eventClick: selectedEvent,
             eventMouseLeave: hoverEvent,
             displayEventTime: false,
-            events: eventos,
+            events: eventos.map((item)=>{
+                if(item.atendida==1){
+                    item.className ='eventGreen'
+                }
+                return item
+            }),
             headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
@@ -52,10 +57,14 @@
             id: info.event.id,
             title: info.event.title,
         }
-       
+        
         Object.assign(event, info.event.extendedProps);
         $("#evento").modal("show");
         $("#btn-atender").css("display", "block");
+
+        if(event.atendida == 1){
+            $("#btn-atender").css("display", "none");
+        }
         
         $("#id_agenda").val(info.event.id)
         $("#start").val(parseDateToString(event.start));

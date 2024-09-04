@@ -106,6 +106,7 @@ class AgendaConfiguracionRecordatorioController extends Controller
     {
         $post            = $request->all();
         $recordatorio    = new AgendaConfiguracionRecordatorio;
+        $recordatorio->tiempo = 1;
         $recordatorio->estado = null;
         if ($id != null) {
             $recordatorio  = AgendaConfiguracionRecordatorio::find($id);

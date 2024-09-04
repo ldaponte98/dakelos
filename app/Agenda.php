@@ -40,7 +40,7 @@ class Agenda extends Model
         $licencia = Licencia::find($tercero->id_licencia);
         $urlImagen = config('global.url_base')."/imagenes/licencia/";
 
-        $subject = "Recordatorio de cita " . $licencia->nombe;
+        $subject = "Recordatorio de cita " . $licencia->nombre;
         $for     = $tercero->email;
         if($for != null && $for != "" && Agenda::is_valid_email($for)){
             $data_email = array(

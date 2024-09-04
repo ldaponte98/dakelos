@@ -17,6 +17,9 @@ class HistoriaClinicaController extends Controller
         $imprimir_historia = isset($post['imprimir_historia']);
         DB::beginTransaction();
         $agenda = Agenda::find($id);
+        if($agenda->atendida == 1){
+            echo 'Esta agenda ya ha sido atendida'; die;
+        }
         $historia_anterior = HistoriaClinica::where('id_tercero', $agenda->id_tercero)->where('estado', 1)->orderBy('id', 'DESC')->limit(1)->first();
         $errores = [];
         if($post){
@@ -36,9 +39,10 @@ class HistoriaClinicaController extends Controller
                 $historiaClinica->id_licencia                   =  session('id_licencia');
                 
                 if($historiaClinica->save()){
+                    $agenda->atendida = 1;
+                    $agenda->save();
                     DB::commit();
                     if($envio_correo){$historiaClinica->enviar_email();}
-                    if($imprimir_historia){$this->imprimir_historia($historiaClinica->id);}
                     return redirect()->route('clinica/calendario/atender')->with('status', 'Se creo la historia clinica correctamente');
                 }else{
                     DB::rollBack();

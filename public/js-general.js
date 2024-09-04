@@ -7,7 +7,7 @@ $(document).ready(function() {
             
             return rex.test($(this).text());
         }).show();
-    })
+    }) 
 });
 const format = (number) => new Intl.NumberFormat("de-DE").format(number)
 

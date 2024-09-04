@@ -37,6 +37,7 @@ class AgendaController extends Controller
 
     public function atender()
     {
+        
         return view('clinica.calendario.agendaProfesional');
     }
 
@@ -49,7 +50,7 @@ class AgendaController extends Controller
         if($post != null){
             try {
                 $post = (object) $post;
-                $id_profesional_default = $post->modal_profesional;
+                $id_profesional_default = $post->id_profesional;
                 $dateStart = date('Y-m-d', strtotime($post->start));
                 $dateEnd = date('Y-m-d', strtotime($post->end));
                 $validDates = false;
@@ -66,14 +67,14 @@ class AgendaController extends Controller
                     $dayWeek = $this->getDayWeek($dateStart);
                     if(in_array("all", $post->days) || in_array($dayWeek, $post->days)){
                         $validDates = true;
-                        $timeStart = date('H:i:s', strtotime($post->start));
-                        $timeEnd = date('H:i:s', strtotime($post->end));
+                        $timeStart = date('H:i', strtotime($post->start));
+                        $timeEnd = date('H:i', strtotime($post->end));
                         $agenda = new Agenda();
-                        $agenda->id_profesional          = $post->modal_profesional;
+                        $agenda->id_profesional          = $post->id_profesional;
                         $agenda->id_tercero              = $paciente->id_tercero;
                         $agenda->title                   = $post->title;
-                        $agenda->start                   = $dateStart . " " . $timeStart;
-                        $agenda->end                     = $dateStart . " " . $timeEnd;
+                        $agenda->start                   = $dateStart . " " . $timeStart.':00';
+                        $agenda->end                     = $dateStart . " " . $timeEnd.':59';
                         $agenda->observaciones           = $post->observaciones;
                         $agenda->id_usuario_creacion     = session('id_usuario');
                         if(!$agenda->save()){
