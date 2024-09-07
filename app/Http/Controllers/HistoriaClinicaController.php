@@ -62,11 +62,7 @@ class HistoriaClinicaController extends Controller
     public function imprimir_historia($id_historia)
     {
         $historia_clinica = HistoriaClinica::find($id_historia);
-        $customPaper = array(0, 0, 225.80, 767.00);
-        $pdf = \PDF::loadView('pdf.historia_clinica', compact(['historia_clinica']))
-            ->setPaper($customPaper);
+        $pdf = \PDF::loadView('pdf.historia_clinica', compact(['historia_clinica']));
         return $pdf->stream("Historia clinica " . $historia_clinica->id . '.pdf');
     }
-
-
 }

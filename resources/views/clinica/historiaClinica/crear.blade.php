@@ -66,14 +66,25 @@
                                             <label for="antecedente_familiar"
                                                 class="control-label"><b>Familiares</b></label>
                                             <textarea class="w-100 form-control" type="text" id="antecedente_familiar"
-                                                name="antecedente[familiar]">{{$historia_anterior->antecedente_familiar}}</textarea>
+                                                name="antecedente[familiar]">
+                                                @if ($historia_anterior == null)
+                                                </textarea>
+                                                @else
+                                                {{$historia_anterior->antecedente_familiar}}
+                                                @endif</textarea>
+                                                    
                                         </div>
 
                                         <div class="col-md-6 col-sm-6 form-group">
                                             <label for="antecedente_personales"
                                                 class="control-label"><b>Personales</b></label>
                                             <textarea class="w-100 form-control" type="text" id="antecedente_personales"
-                                                name="antecedente[personal]">{{$historia_anterior->antecedente_personal}}</textarea>
+                                                name="antecedente[personal]">
+                                                @if ($historia_anterior == null)
+                                                </textarea>
+                                                @else
+                                                {{$historia_anterior->antecedente_personal}}
+                                                @endif</textarea>
                                         </div>
 
                                         <div class="col-md-6 col-sm-6 form-group">
@@ -81,14 +92,24 @@
                                                 class="control-label"><b>Gineco-obstétricos</b></label>
                                             <textarea class="w-100 form-control" type="text"
                                                 id="antecedente_gineco-obstetrico"
-                                                name="antecedente[gineco-obstetrico]">{{$historia_anterior->antecedente_gineco_obstetrico}}</textarea>
+                                                name="antecedente[gineco-obstetrico]">
+                                                @if ($historia_anterior == null)
+                                                </textarea>
+                                                @else
+                                                {{$historia_anterior->antecedente_gineco_obstetrico}}
+                                                @endif</textarea>
                                         </div>
 
                                         <div class="col-md-6 col-sm-6 form-group">
                                             <label for="antecedente_cirugia"
                                                 class="control-label"><b>Cirugia</b></label>
                                             <textarea class="w-100 form-control" type="text" id="antecedente_cirugia"
-                                                name="antecedente[cirugia]">{{$historia_anterior->antecedente_cirugia}}</textarea>
+                                            name="antecedente[cirugia]">
+                                            @if ($historia_anterior == null)
+                                            </textarea>
+                                            @else
+                                            {{$historia_anterior->antecedente_cirugia}}
+                                            @endif</textarea>  
                                         </div>
 
                                         <div class="col-md-6 col-sm-6 form-group">
@@ -96,7 +117,12 @@
                                                 class="control-label"><b>Medicamentos</b></label>
                                             <textarea class="w-100 form-control"cols="50" type="text"
                                                 id="antecedente_medicamentos"
-                                                name="antecedente[medicamentos]">{{$historia_anterior->antecedente_medicamentos}}</textarea>
+                                                name="antecedente[medicamentos]">
+                                                @if ($historia_anterior == null)
+                                                </textarea>
+                                                @else
+                                                {{$historia_anterior->antecedente_medicamentos}}
+                                                @endif</textarea>  
                                         </div>
 
                                         <div class="col-md-6 col-sm-6 form-group">
@@ -104,7 +130,12 @@
                                                 class="control-label"><b>FUM Alergias</b></label>
                                             <textarea class="w-100 form-control" type="text"
                                                 id="antecedente_alergias"
-                                                name="antecedente[alergias]">{{$historia_anterior->antecedente_alergias}}</textarea>
+                                                name="antecedente[alergias]">
+                                                @if ($historia_anterior == null)
+                                                </textarea>
+                                                @else
+                                                {{$historia_anterior->antecedente_alergias}}
+                                                @endif</textarea>  
                                         </div>
                                     </div>
                                 </div>
@@ -114,7 +145,12 @@
                                             <label for="motivo"
                                                 class="control-label"><b>*Motivo</b></label>
                                             <textarea class="w-100 form-control" rows="10" type="text" id="motivo"
-                                                name="motivo">{{$historia_anterior->motivo}}</textarea>
+                                                name="motivo">
+                                                @if ($historia_anterior == null)
+                                                </textarea>
+                                                @else
+                                                {{$historia_anterior->motivo}}
+                                                @endif</textarea>  
                                         </div>
                                         <div class="col-md-4 form-group">
                                             <label for="tension"
@@ -141,7 +177,12 @@
                                             <label for="plan"
                                                 class="control-label"><b>Plan</b></label>
                                             <textarea class="w-100 form-control" rows="5" type="text" id="plan"
-                                                name="plan">{{$historia_anterior->plan}}</textarea>
+                                                name="plan">
+                                                @if ($historia_anterior == null)
+                                                </textarea>
+                                                @else
+                                                {{$historia_anterior->plan}}
+                                                @endif</textarea>  
                                         </div>
                                     </div>
                                 </div>

@@ -13,6 +13,7 @@ class AgendaController extends Controller
     {
         $agendas = Agenda::where('id_profesional', $id)
         ->where('estado', 'ACTIVO')
+        ->where('id_licencia', session('id_licencia'))
         ->with('tercero')
         ->get();
         return response()->json([
@@ -26,6 +27,7 @@ class AgendaController extends Controller
     {   
         $agendas = Agenda::where('id_profesional', session('id_tercero_usuario'))
         ->where('estado', 'ACTIVO')
+        ->where('id_licencia', session('id_licencia'))
         ->with('tercero')
         ->get();
         return response()->json([
@@ -71,6 +73,7 @@ class AgendaController extends Controller
                         $timeEnd = date('H:i', strtotime($post->end));
                         $agenda = new Agenda();
                         $agenda->id_profesional          = $post->id_profesional;
+                        $agenda->id_licencia             = session('id_licencia');
                         $agenda->id_tercero              = $paciente->id_tercero;
                         $agenda->title                   = $post->title;
                         $agenda->start                   = $dateStart . " " . $timeStart.':00';

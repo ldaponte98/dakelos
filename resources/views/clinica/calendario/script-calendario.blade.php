@@ -169,7 +169,7 @@
     
     function hoverEvent(info) { 
         $(info.el).tooltip({ 
-            title: info.event.title + ` (Horario: ${parseDateToString(info.event.start)} hasta ${parseDateToString(info.event.end)})` 
+            title: info.event.extendedProps.tercero.nombres + " " + info.event.extendedProps.tercero.apellidos + " " + ` (Horario: ${parseDateToString(info.event.start)} hasta ${parseDateToString(info.event.end)})` 
         });
     }
 

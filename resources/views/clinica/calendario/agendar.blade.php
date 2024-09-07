@@ -17,7 +17,7 @@
                                     <div class="form-group">
                                         <label for="search_id_profesional" class="control-label"><b>*Profesional</b></label>
                                         @php
-                                            $profesionales = \App\Tercero::all()->where('id_dominio_tipo_tercero', 69);
+                                            $profesionales = \App\Tercero::all()->where('id_dominio_tipo_tercero', 69)->where('id_licencia', session('id_licencia'));
                                         @endphp
                                         <select name="search_id_profesional" id="search_id_profesional" class="form-control" required>
                                             <option selected disabled value="">Seleccione...</option>
@@ -43,7 +43,7 @@
                         <div class="modal fade" id="evento" tabindex="-1" role="dialog"
                             aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <form id="form-citas">
-                                {{!! csrf_field() !!}}
+                                {!! csrf_field() !!}
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -58,10 +58,8 @@
                                                 <div class="col-12">
                                                     <div class="form-group">
                                                         <label for="profesional" class="control-label"><b>*Profesional</b></label>
-                                                        @php
-                                                            $profesionales = \App\Tercero::all()->where('id_dominio_tipo_tercero', 69);
-                                                        @endphp
                                                         <select name="id_profesional" id="id_profesional" class="form-control" required>
+                                                            <option selected disabled value="">Seleccione...</option>
                                                             @foreach ($profesionales as $items)
                                                                 <option  class="h6" value="{{ $items->id_tercero }}">
                                                                     {{ $items->nombres }}
@@ -74,11 +72,11 @@
                                                     <div class="form-group">
                                                         <label for="title" class="control-label mb-1"><b>*Motivo de consulta</b></label>
                                                         @php
-                                                            $motivo_consulta = \App\Dominio::all()->where('id_padre', 70);
+                                                            $motivo_consulta = \App\MotivoConsultaLicencia::all()->where('id_licencia', session('id_licencia'));
                                                         @endphp
                                                         <select id="title" name="title" class="form-control" required>
                                                             @foreach ($motivo_consulta as $motivo)
-                                                                <option title="{{$motivo->descripcion}}" value="{{ $motivo->nombre }}">{{ $motivo->nombre }}</option>
+                                                                <option title="{{$motivo->dominio->descripcion}}" value="{{$motivo->dominio->nombre}}">{{$motivo->dominio->nombre}}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>

@@ -22,11 +22,10 @@ function setFiltro(id_input_filtro, id_tabla) {
 }
 
 function buscar(caracteres) {
-    console.log(caracteres)
     if (caracteres.length > 3) {
         url = "/tercero/buscar/" + caracteres
         $.get(url, (response) => {
-            var resultados = ""
+            var resultados = ""                
             if (response.length > 0) {
                 response.forEach((tercero) => {
                     resultados += "<a class='dropdown-item media' href='/tercero/view/" + tercero.id_tercero + "'><b>" + tercero.identificacion + " - " + tercero.nombres + " " + tercero.apellidos + "</b></a>"

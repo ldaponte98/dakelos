@@ -85,7 +85,7 @@ class UsuarioController extends Controller
         }
 
         $empleados = Tercero::all()->where('id_licencia', session('id_licencia'))
-            ->whereIn('id_dominio_tipo_tercero', [2, 18, 69]); //empleado y empresas
+            ->whereIn('id_dominio_tipo_tercero', [2, 18, 69]); //empleado, empresas, especialista
 
         if(session('id_perfil') != 1){
             $perfiles = Perfil::all()->where('id_perfil', '<>', 1);
