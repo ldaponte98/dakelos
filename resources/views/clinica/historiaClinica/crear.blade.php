@@ -110,11 +110,28 @@
                                 </div>
                                 <div class="tab-pane fade" id="historia" role="tabpanel" aria-labelledby="tab2-tab">
                                     <div class="row">
-                                        <div class="col-md-12 col-sm-6 form-group">
+                                        <div class="col-md-12 col-sm-6 form-group mb-25">
                                             <label for="motivo"
                                                 class="control-label"><b>*Motivo</b></label>
-                                            <textarea class="w-100 form-control" type="text" id="motivo"
+                                            <textarea class="w-100 form-control" rows="10" type="text" id="motivo"
                                                 name="motivo">{{$historia_anterior->motivo}}</textarea>
+                                        </div>
+                                        <div class="col-md-4 form-group">
+                                            <label for="tension"
+                                                class="control-label"><b>Tension</b></label>
+                                            <div class="d-flex align-items-center gap-1">
+                                                <input  type="text" id="tension" name="tension" class="form-control">
+                                                <label class="control-label"><b>mmHg</b></label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4 form-group">
+                                            <label for="peso"
+                                                class="control-label"><b>Peso</b></label>
+                                            <div class="d-flex align-items-center gap-1">
+                                                <input  type="number" id="peso" name="peso" min="0"  class="form-control">
+                                                <label class="control-label"><b>kg</b></label>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -123,7 +140,7 @@
                                         <div class="col-md-12 col-sm-6 form-group">
                                             <label for="plan"
                                                 class="control-label"><b>Plan</b></label>
-                                            <textarea class="w-100 form-control" type="text" id="plan"
+                                            <textarea class="w-100 form-control" rows="5" type="text" id="plan"
                                                 name="plan">{{$historia_anterior->plan}}</textarea>
                                         </div>
                                     </div>
@@ -160,12 +177,6 @@
                                                           Enviar al correo
                                                         </label>
                                                     </div>
-                                                    {{-- <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" id="imprimir_historia" name="imprimir_historia">
-                                                        <label class="form-check-label" for="imprimir_historia">
-                                                          Imprimir historia clinica
-                                                        </label>
-                                                    </div> --}}
                                                 </div>
                             
 

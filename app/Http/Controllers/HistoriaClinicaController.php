@@ -35,6 +35,8 @@ class HistoriaClinicaController extends Controller
                 $historiaClinica->antecedente_medicamentos      =  $post->antecedente['medicamentos'];
                 $historiaClinica->antecedente_alergias          =  $post->antecedente['alergias'];
                 $historiaClinica->motivo                        =  $post->motivo;
+                $historiaClinica->tension                       =  $post->tension;
+                $historiaClinica->peso                          =  $post->peso;
                 $historiaClinica->plan                          =  $post->plan;
                 $historiaClinica->id_licencia                   =  session('id_licencia');
                 

@@ -130,8 +130,15 @@
                     <strong>Descripción:</strong>
                     <p>{{$historia_clinica->motivo}}</p>
                 </td>
+                <td colspan="4">{{$historia_clinica->peso}} KG</td>
+                <td colspan="4">{{$historia_clinica->tension}} mmHg</td>
+            </tr>
+            <tr>
+                <td><strong></strong></td>
+                <td colspan="5">{{$historia_clinica->tercero->direccion}}</td>
             </tr>
         </table>
+
 
         <!-- Indicaciones Médicas -->
         <table>
