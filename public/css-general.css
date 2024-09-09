@@ -346,20 +346,14 @@
         margin-bottom: 5px;
     }
 }
+.fc-content, .fc-event-main {
+    cursor: pointer !important;
+}
+
 .fc-daygrid-dot-event:hover{
     background-color: blue !important;
     cursor: pointer;
 }
-/* .fc-daygrid-dot-event.fc-event-mirror, .fc-daygrid-dot-event:hover{
-    background-color: blue !important;
-    cursor: pointer;
-} */
-
-/* .fc-toolbar-title:first-letter {
-    text-transform: uppercase;
-} */
-
-
 .eventGreen{
     background-color: green !important;
 }

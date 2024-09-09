@@ -137,12 +137,14 @@
         }else{
             $("#btn-cancelar").css("display", "block");
         }
+        
+        let motivoConsulta = event.title.split('-')        
   
         $("#id_cita").val(info.event.id)
         $("#start").val(parseDateToString(event.start));
         $("#end").val(parseDateToString(event.end));
         $("#id_profesional").val(event.id_profesional)
-        $("#title").val(event.title)
+        $("#title").val(motivoConsulta[1])
         $("#tipo_identificacion").val(info.event.extendedProps.tercero.id_dominio_tipo_identificacion)
         $("#identificacion").val(info.event.extendedProps.tercero.identificacion)
         $("#nombres").val(info.event.extendedProps.tercero.nombres)
@@ -172,5 +174,7 @@
             title: info.event.extendedProps.tercero.nombres + " " + info.event.extendedProps.tercero.apellidos + " " + ` (Horario: ${parseDateToString(info.event.start)} hasta ${parseDateToString(info.event.end)})` 
         });
     }
+
+
 
 </script>

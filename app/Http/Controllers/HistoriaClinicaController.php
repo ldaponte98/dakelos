@@ -6,12 +6,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Tercero;
 use App\Agenda;
+use App\Dominio;
 use App\HistoriaClinica;
 
 class HistoriaClinicaController extends Controller
 {
     public function crear(Request $request, $id)
     {
+       
+
         $post = $request->all();
         $envio_correo = isset($post['envio_correo']);
         $imprimir_historia = isset($post['imprimir_historia']);
@@ -20,6 +23,8 @@ class HistoriaClinicaController extends Controller
         if($agenda->atendida == 1){
             echo 'Esta agenda ya ha sido atendida'; die;
         }
+        $tipo_sexo = Dominio::all()->where('id_dominio', $agenda->tercero->id_dominio_sexo)->first();
+
         $historia_anterior = HistoriaClinica::where('id_tercero', $agenda->id_tercero)->where('estado', 1)->orderBy('id', 'DESC')->limit(1)->first();
         $errores = [];
         if($post){
@@ -56,7 +61,7 @@ class HistoriaClinicaController extends Controller
                 $errores[] = "Ocurrio el siguiente error: " . $e->getMessage();
             }
         }
-        return view('clinica.historiaClinica.crear', compact('agenda','historia_anterior'));
+        return view('clinica.historiaClinica.crear', compact('agenda','historia_anterior', 'tipo_sexo'));
     }
 
     public function imprimir_historia($id_historia)

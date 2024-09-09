@@ -33,9 +33,6 @@
                                                 <div class="col-12">
                                                     <div class="form-group">
                                                         <label for="profesional" class="control-label"><b>*Profesional</b></label>
-                                                        @php
-                                                            $profesionales = \App\Tercero::where('id_tercero', session('id_tercero_usuario'))->first();
-                                                        @endphp
                                                         <input @readonly(true) value="{{$profesionales->nombres}} {{$profesionales->apellidos}}" type="text" id="modal-profesional" name="modal-profesional" class="form-control" disabled>
                                                     </div>
                                                 </div>
