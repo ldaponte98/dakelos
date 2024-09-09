@@ -9,7 +9,7 @@ class Agenda extends Model
 {
     protected $table      = 'agenda';
 
-    protected $fillable = ['title','star', 'end', 'observaciones'];
+    protected $fillable = ['star', 'end', 'observaciones'];
 
     public function tercero()
     {

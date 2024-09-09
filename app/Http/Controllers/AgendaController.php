@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Agenda;
 use App\Tercero;
+use App\Dominio;
+use App\MotivoConsultaLicencia;
 use Carbon\Carbon;
 
 class AgendaController extends Controller
@@ -39,12 +41,20 @@ class AgendaController extends Controller
 
     public function atender()
     {
-        
-        return view('clinica.calendario.agendaProfesional');
+        $profesionales = Tercero::where('id_tercero', session('id_tercero_usuario'))->first();
+        $motivo_consulta = MotivoConsultaLicencia::all()->where('id_licencia', session('id_licencia'));
+        $tipos_sexo = Dominio::all()->where('id_padre', Dominio::get('Tipos de sexo'));
+
+        return view('clinica.calendario.agendaProfesional', compact(['profesionales','motivo_consulta','tipos_sexo']));
     }
 
     public function agendar(Request $request)
     {
+        $profesionales = Tercero::all()->where('id_dominio_tipo_tercero', Dominio::get('Especialista'))->where('id_licencia', session('id_licencia'));
+        $motivo_consulta = MotivoConsultaLicencia::all()->where('id_licencia', session('id_licencia'));
+        $tipos_sexo = Dominio::all()->where('id_padre', Dominio::get('Tipos de sexo'));
+        $tipos_identificacion = Dominio::all()->where('id_padre', Dominio::get('Tipos de identificacion'));
+
         $post = $request->all();
         $errores = [];
         $msgExitoso = null;
@@ -60,7 +70,7 @@ class AgendaController extends Controller
                 if($paciente == null){
                     $paciente = new Tercero();
                     $paciente->fill($post->tercero);
-                    $paciente->id_dominio_tipo_tercero           =  3;
+                    $paciente->id_dominio_tipo_tercero           =  Dominio::get('Cliente');
                     $paciente->id_dominio_tipo_identificacion    =  $post->tercero['id_dominio_tipo_identificacion'];
                     $paciente->id_licencia = session('id_licencia');
                     $paciente->save();
@@ -75,7 +85,7 @@ class AgendaController extends Controller
                         $agenda->id_profesional          = $post->id_profesional;
                         $agenda->id_licencia             = session('id_licencia');
                         $agenda->id_tercero              = $paciente->id_tercero;
-                        $agenda->title                   = $post->title;
+                        $agenda->title                   = $paciente->nombres .' '. $paciente->apellidos .'-'. $post->title;
                         $agenda->start                   = $dateStart . " " . $timeStart.':00';
                         $agenda->end                     = $dateStart . " " . $timeEnd.':59';
                         $agenda->observaciones           = $post->observaciones;
@@ -88,13 +98,13 @@ class AgendaController extends Controller
                     $dateStart = date('Y-m-d', strtotime($dateStart . " +1 days"));
                 }
                 if(!$validDates) throw new Exception("No se pudieron programar citas validas porque las fechas y dias de las citas no coincidieron en ningun escenario");
-                return redirect()->route('clinica/calendario/agendar');
+                return redirect()->route('clinica/calendario/agendar')->with('status', 'Se agendo al paciente correctamente');
             } catch (Exception $e) {    
                 $errores[] = "Ocurrio el siguiente error: " . $e->getMessage();
             }
         }
         return view('clinica.calendario.agendar', 
-            compact(['id_profesional_default'])
+            compact(['id_profesional_default', 'profesionales', 'motivo_consulta','tipos_sexo', 'tipos_identificacion'])
         );
     }
 

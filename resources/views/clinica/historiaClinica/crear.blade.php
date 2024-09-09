@@ -26,12 +26,9 @@
                                 <label for="nombres" class="control-label mb-1"><b>Paciente</b></label>
                                 <input disabled value="{{$agenda->tercero->nombres}} {{$agenda->tercero->apellidos}}" type="text" id="nombres" name="tercero[nombres]" class="form-control">
                             </div>
-                            @php
-                                $tipos_sexo = \App\Dominio::all()->where('id_padre', 12)->where('id_dominio', $agenda->tercero->id_dominio_sexo)->first();
-                            @endphp
                             <div class="col-md-3 form-group">
                                 <label for="genero" class="control-label mb-1"><b>Genero</b></label>
-                                <input disabled value="{{$tipos_sexo->nombre}}" type="text" id="genero" name="tercero[genero]" class="form-control">
+                                <input disabled value="{{$tipo_sexo->nombre}}" type="text" id="genero" name="tercero[genero]" class="form-control">
                                 
                             </div>
 
@@ -79,12 +76,7 @@
                                             <label for="antecedente_personales"
                                                 class="control-label"><b>Personales</b></label>
                                             <textarea class="w-100 form-control" type="text" id="antecedente_personales"
-                                                name="antecedente[personal]">
-                                                @if ($historia_anterior == null)
-                                                </textarea>
-                                                @else
-                                                {{$historia_anterior->antecedente_personal}}
-                                                @endif</textarea>
+                                            name="antecedente[personal]">@if ($historia_anterior == null)</textarea>@else{{$historia_anterior->antecedente_personal}}@endif</textarea>
                                         </div>
 
                                         <div class="col-md-6 col-sm-6 form-group">
@@ -92,24 +84,14 @@
                                                 class="control-label"><b>Gineco-obstétricos</b></label>
                                             <textarea class="w-100 form-control" type="text"
                                                 id="antecedente_gineco-obstetrico"
-                                                name="antecedente[gineco-obstetrico]">
-                                                @if ($historia_anterior == null)
-                                                </textarea>
-                                                @else
-                                                {{$historia_anterior->antecedente_gineco_obstetrico}}
-                                                @endif</textarea>
+                                                name="antecedente[gineco-obstetrico]">@if ($historia_anterior == null)</textarea>@else{{$historia_anterior->antecedente_gineco_obstetrico}}@endif</textarea>
                                         </div>
 
                                         <div class="col-md-6 col-sm-6 form-group">
                                             <label for="antecedente_cirugia"
                                                 class="control-label"><b>Cirugia</b></label>
                                             <textarea class="w-100 form-control" type="text" id="antecedente_cirugia"
-                                            name="antecedente[cirugia]">
-                                            @if ($historia_anterior == null)
-                                            </textarea>
-                                            @else
-                                            {{$historia_anterior->antecedente_cirugia}}
-                                            @endif</textarea>  
+                                            name="antecedente[cirugia]">@if ($historia_anterior == null)</textarea>@else{{$historia_anterior->antecedente_cirugia}}@endif</textarea>  
                                         </div>
 
                                         <div class="col-md-6 col-sm-6 form-group">
@@ -117,12 +99,7 @@
                                                 class="control-label"><b>Medicamentos</b></label>
                                             <textarea class="w-100 form-control"cols="50" type="text"
                                                 id="antecedente_medicamentos"
-                                                name="antecedente[medicamentos]">
-                                                @if ($historia_anterior == null)
-                                                </textarea>
-                                                @else
-                                                {{$historia_anterior->antecedente_medicamentos}}
-                                                @endif</textarea>  
+                                                name="antecedente[medicamentos]">@if ($historia_anterior == null)</textarea>@else{{$historia_anterior->antecedente_medicamentos}}@endif</textarea>  
                                         </div>
 
                                         <div class="col-md-6 col-sm-6 form-group">
@@ -130,12 +107,7 @@
                                                 class="control-label"><b>FUM Alergias</b></label>
                                             <textarea class="w-100 form-control" type="text"
                                                 id="antecedente_alergias"
-                                                name="antecedente[alergias]">
-                                                @if ($historia_anterior == null)
-                                                </textarea>
-                                                @else
-                                                {{$historia_anterior->antecedente_alergias}}
-                                                @endif</textarea>  
+                                                name="antecedente[alergias]">@if ($historia_anterior == null)</textarea>@else{{$historia_anterior->antecedente_alergias}}@endif</textarea>  
                                         </div>
                                     </div>
                                 </div>
@@ -145,12 +117,7 @@
                                             <label for="motivo"
                                                 class="control-label"><b>*Motivo</b></label>
                                             <textarea class="w-100 form-control" rows="10" type="text" id="motivo"
-                                                name="motivo">
-                                                @if ($historia_anterior == null)
-                                                </textarea>
-                                                @else
-                                                {{$historia_anterior->motivo}}
-                                                @endif</textarea>  
+                                                name="motivo">@if ($historia_anterior == null)</textarea>@else{{$historia_anterior->motivo}}@endif</textarea>  
                                         </div>
                                         <div class="col-md-4 form-group">
                                             <label for="tension"
@@ -177,12 +144,7 @@
                                             <label for="plan"
                                                 class="control-label"><b>Plan</b></label>
                                             <textarea class="w-100 form-control" rows="5" type="text" id="plan"
-                                                name="plan">
-                                                @if ($historia_anterior == null)
-                                                </textarea>
-                                                @else
-                                                {{$historia_anterior->plan}}
-                                                @endif</textarea>  
+                                                name="plan">@if ($historia_anterior == null)</textarea>@else{{$historia_anterior->plan}}@endif</textarea>  
                                         </div>
                                     </div>
                                 </div>

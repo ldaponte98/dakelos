@@ -3,6 +3,13 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="card">
+
+                @if (session('status'))
+                <script>
+                    toastr.success(" {{ session('status') }}", "Proceso exitoso");
+                </script>
+                @endif
+
                 <div class="card-header">
                     <strong class="card-title">Agendamiento de citas</strong>
                 </div>
@@ -16,9 +23,7 @@
                                 <div class="col-md-8 col-sm-12">
                                     <div class="form-group">
                                         <label for="search_id_profesional" class="control-label"><b>*Profesional</b></label>
-                                        @php
-                                            $profesionales = \App\Tercero::all()->where('id_dominio_tipo_tercero', 69)->where('id_licencia', session('id_licencia'));
-                                        @endphp
+
                                         <select name="search_id_profesional" id="search_id_profesional" class="form-control" required>
                                             <option selected disabled value="">Seleccione...</option>
                                             @foreach ($profesionales as $item)
@@ -71,9 +76,6 @@
                                                 <div class="col-12">
                                                     <div class="form-group">
                                                         <label for="title" class="control-label mb-1"><b>*Motivo de consulta</b></label>
-                                                        @php
-                                                            $motivo_consulta = \App\MotivoConsultaLicencia::all()->where('id_licencia', session('id_licencia'));
-                                                        @endphp
                                                         <select id="title" name="title" class="form-control" required>
                                                             @foreach ($motivo_consulta as $motivo)
                                                                 <option title="{{$motivo->dominio->descripcion}}" value="{{$motivo->dominio->nombre}}">{{$motivo->dominio->nombre}}</option>
@@ -116,9 +118,6 @@
                                                     <div class="form-group">
                                                         <label for="id_dominio_tipo_identificacion" class="control-label mb-1"><b>*Tipo de
                                                                 identificación</b></label>
-                                                        @php
-                                                            $tipos_identificacion = \App\Dominio::all()->where('id_padre', 4);
-                                                        @endphp
                                                         <select id="tipo_identificacion" name="tercero[id_dominio_tipo_identificacion]" class="form-control" required>
                                                             @foreach ($tipos_identificacion as $tipo)
                                                                 <option title="{{$tipo->descripcion}}" value="{{ $tipo->id_dominio }}">{{ $tipo->nombre }}</option>
@@ -153,9 +152,6 @@
                                                     <div class="form-group">
                                                         <label for="id_dominio_sexo"
                                                             class="control-label mb-1"><b>*Genero</b></label>
-                                                        @php
-                                                            $tipos_sexo = \App\Dominio::all()->where('id_padre', 12);
-                                                        @endphp
                                                         <select id="genero" name="tercero[id_dominio_sexo]" class="form-control" required>
                                                             @foreach ($tipos_sexo as $tipo_sexo)
                                                                 <option value="{{ $tipo_sexo->id_dominio }}">

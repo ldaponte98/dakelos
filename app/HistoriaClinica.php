@@ -30,8 +30,8 @@ class HistoriaClinica extends Model
         $mensaje = "";
         $error   = true;
         $historia_clinica = $this;
-        $licencia = Licencia::find(session('id_licencia'));
         $tercero = Tercero::find($historia_clinica->id_tercero);
+        $licencia = $tercero->id_licencia;
 
         $subject = "Historia clinica". ' ' . $tercero->nombres . ' ' . $tercero->apellidos . ' - ' . $licencia->nombre;
         $for     = $tercero->email;
@@ -42,7 +42,7 @@ class HistoriaClinica extends Model
             if ($for) {
                 try {
                     Mail::send('email.historia_clinica', $data_email, function ($msj) use ($subject, $for) {
-                        $msj->from(config('global.email_app'), session('nombre_licencia'));
+                        $msj->from(config('global.email_app'), $licencia->nombre);
                         $msj->subject($subject);
                         $msj->to($for);
                     });
