@@ -37,7 +37,7 @@
                                 </div>
                                 <div class="col-md-4 col-sm-12 d-flex justify-content-end mt-2">
                                     <button  type="button" class="btn btn-primary" data-toggle="modal"
-                                        data-target="#evento">
+                                        data-target="#evento" onclick="openModal()">
                                         + Nueva
                                     </button>
                                 </div>

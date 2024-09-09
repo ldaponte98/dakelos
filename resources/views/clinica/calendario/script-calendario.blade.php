@@ -8,11 +8,21 @@
         });
     })
 
+    function openModal() {
+        $("#days").prop("readonly", false)
+        $("#evento").modal('show')
+    }
+
     let botonGuardar = document.getElementById('btn-guardar').addEventListener("click", function() {
 
         let fechaHoraActual = new Date();            
         if($("#start").val() < parseDateToString(fechaHoraActual)){
             toastr.error("La fecha debe ser superior a la actual", "Error")
+            return;
+        }
+
+        if($("#days").val() == null){
+            toastr.error("El día o días de la cita es obligatorio", "Error")
             return;
         }
 
@@ -29,6 +39,18 @@
             toastr.error("El motivo de cita es obligatorio", "Error")
             return;
         }   
+
+        if($("#id_cita").val() != "" && $("#id_cita").val() != null){
+            if($("#days").val().length > 1){
+                toastr.error("Para la edicion de citas, el campo días de ser [Todos los dias]", "Error")
+                return;
+            }
+
+            if($("#days").val()[0] != "all"){
+                toastr.error("Para la edicion de citas, el campo días de ser [Todos los dias]", "Error")
+                return;
+            }
+        }
         Loading(true);
         $('#form-citas').submit()
     });
@@ -109,6 +131,7 @@
         formulario.reset();
         $("#id_cita").val('')          
         $("#evento").modal("show");
+        $("#days").prop("readonly", false)
         if($("#id_cita").val() == ''){
             $("#btn-cancelar").css("display", "none");
         }else{
@@ -138,13 +161,16 @@
             $("#btn-cancelar").css("display", "block");
         }
         
-        let motivoConsulta = event.title.split('-')        
-  
+        let motivoConsulta = event.title.split('-') 
+        console.log({motivoConsulta: motivoConsulta})       
+        $("#days").prop("readonly", true)
         $("#id_cita").val(info.event.id)
         $("#start").val(parseDateToString(event.start));
         $("#end").val(parseDateToString(event.end));
         $("#id_profesional").val(event.id_profesional)
-        $("#title").val(motivoConsulta[1])
+        $("#title option").filter(function() {
+            return $(this).text() == motivoConsulta[1];
+        }).prop("selected", true);
         $("#tipo_identificacion").val(info.event.extendedProps.tercero.id_dominio_tipo_identificacion)
         $("#identificacion").val(info.event.extendedProps.tercero.identificacion)
         $("#nombres").val(info.event.extendedProps.tercero.nombres)

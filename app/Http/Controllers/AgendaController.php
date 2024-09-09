@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Agenda;
 use App\Tercero;
 use App\Dominio;
+use App\MotivoConsultaLicencia;
 use Carbon\Carbon;
 
 class AgendaController extends Controller
