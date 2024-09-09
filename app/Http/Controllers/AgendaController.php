@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Agenda;
 use App\Tercero;
+use App\Dominio;
 use Carbon\Carbon;
 
 class AgendaController extends Controller
@@ -39,7 +40,6 @@ class AgendaController extends Controller
 
     public function atender()
     {
-        
         return view('clinica.calendario.agendaProfesional');
     }
 
@@ -53,6 +53,9 @@ class AgendaController extends Controller
             try {
                 $post = (object) $post;
                 $id_profesional_default = $post->id_profesional;
+                if(isset($post->id_cita) && $post->id_cita != null && !in_array("all", $post->days)){
+                    throw new Exception("Ocurrio un error, para editar la cita debe establecer la opcion Todos los dias");
+                }
                 $dateStart = date('Y-m-d', strtotime($post->start));
                 $dateEnd = date('Y-m-d', strtotime($post->end));
                 $validDates = false;
@@ -60,7 +63,7 @@ class AgendaController extends Controller
                 if($paciente == null){
                     $paciente = new Tercero();
                     $paciente->fill($post->tercero);
-                    $paciente->id_dominio_tipo_tercero           =  3;
+                    $paciente->id_dominio_tipo_tercero           =  Dominio::get('Cliente');
                     $paciente->id_dominio_tipo_identificacion    =  $post->tercero['id_dominio_tipo_identificacion'];
                     $paciente->id_licencia = session('id_licencia');
                     $paciente->save();
@@ -72,6 +75,9 @@ class AgendaController extends Controller
                         $timeStart = date('H:i', strtotime($post->start));
                         $timeEnd = date('H:i', strtotime($post->end));
                         $agenda = new Agenda();
+                        if(isset($post->id_cita) && $post->id_cita != null){
+                            $agenda = Agenda::find($post->id_cita);
+                        }
                         $agenda->id_profesional          = $post->id_profesional;
                         $agenda->id_licencia             = session('id_licencia');
                         $agenda->id_tercero              = $paciente->id_tercero;
