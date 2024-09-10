@@ -17,6 +17,7 @@ use App\Producto;
 use App\ResolucionFactura;
 use App\Tercero;
 use App\FacturaPagoReciboCaja;
+use App\FormaPagoLicencia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Exception;
@@ -292,8 +293,7 @@ class FacturaController extends Controller
             ->orderBy('numero', 'asc')
             ->get();
 
-        $formas_pago = Dominio::where('id_padre', 19)
-            ->get();
+        $formas_pago = FormaPagoLicencia::getDominios(session('id_licencia'));
 
         $canales = Dominio::get_canales(session('id_licencia'));
 

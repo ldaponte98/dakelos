@@ -1,8 +1,15 @@
 <div class="row">
+    <div class="col-12">
+        <div class="form-group">
+            <label for="filtro_creditos"
+                class="control-label mb-1"><b>Buscar</b></label>
+            <input id="filtro_creditos" type="search" class="form-control">
+        </div>
+    </div>
 	<div class="col-lg-12">
             <div class="card">
                 <div class="table-stats order-table ov-h">
-                    <table class="table ">
+                    <table id="tabla_creditos" class="table ">
                         <thead>
                             <tr>
                                 <th class="serial">#</th>
@@ -16,7 +23,7 @@
                                 <th></th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="bodytable">
                         	@php $cont = 1; @endphp
                         	@foreach($facturas as $factura)
                         	@if($factura->id_dominio_tipo_factura == \App\Dominio::get("Factura a credito (Saldo pendiente)"))
@@ -49,3 +56,8 @@
             </div>
     </div>
 </div>
+<script>
+    $(document).ready(()=>{
+        setFiltro('filtro_creditos', 'tabla_creditos');
+    })
+</script>

@@ -83,8 +83,26 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                               <label for="fecha_nacimiento" class="control-label mb-1"><b>Fecha de nacimiento</b></label>
+                                               <input name="fecha_nacimiento" type="date" class="form-control" aria-required="true" aria-invalid="false" value="{{ $tercero->fecha_nacimiento }}">
+                                           </div>
+                                       </div>
+                                       <div class="col-sm-6">
+                                        <div class="form-group">
+                                           <label for="cc-payment" class="control-label mb-1"><b>Dirección</b></label>
+                                           <input name="direccion" type="text" class="form-control" aria-required="true" aria-invalid="false" value="{{ $tercero->direccion }}">
+                                       </div>
+                                   </div>
                                     </div>
                                     <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                               <label for="cc-payment" class="control-label mb-1"><b>Telefono</b></label>
+                                               <input name="telefono" type="text" class="form-control" aria-required="true" aria-invalid="false" value="{{ $tercero->telefono }}">
+                                           </div>
+                                       </div>
                                         <div class="col-sm-6">
                                              <div class="form-group">
                                                 <label for="cc-payment" class="control-label mb-1"><b>*Tipo tercero</b></label>
@@ -100,32 +118,18 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-sm-6">
-                                             <div class="form-group">
-                                                <label class="control-label mb-1"><b>*Estado</b></label>
-                                                <select name="estado" class="form-control" required>
-                                                    <option @if($tercero->estado == 0) selected @endif value="0">Inactivo</option>
-                                                    <option @if($tercero->estado == 1 || $tercero->id_tercero == null) selected @endif value="1">Activo</option>
 
-                                                    
-                                                        
-                                                </select>
-                                            </div>
-                                        </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-sm-6">
-                                             <div class="form-group">
-                                                <label for="cc-payment" class="control-label mb-1"><b>Telefono</b></label>
-                                                <input name="telefono" type="text" class="form-control" aria-required="true" aria-invalid="false" value="{{ $tercero->telefono }}">
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6">
-                                             <div class="form-group">
-                                                <label for="cc-payment" class="control-label mb-1"><b>Dirección</b></label>
-                                                <input name="direccion" type="text" class="form-control" aria-required="true" aria-invalid="false" value="{{ $tercero->direccion }}">
-                                            </div>
-                                        </div>
+                                            <div class="form-group">
+                                               <label class="control-label mb-1"><b>*Estado</b></label>
+                                               <select name="estado" class="form-control" required>
+                                                   <option @if($tercero->estado == 0) selected @endif value="0">Inactivo</option>
+                                                   <option @if($tercero->estado == 1 || $tercero->id_tercero == null) selected @endif value="1">Activo</option>
+                                               </select>
+                                           </div>
+                                       </div>
                                     </div>
                                 <div><center>
                                     <button class="btn btn-primary"><i class="fa fa-save"></i> Guardar</button>

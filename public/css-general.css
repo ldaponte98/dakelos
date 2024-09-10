@@ -346,3 +346,14 @@
         margin-bottom: 5px;
     }
 }
+.fc-content, .fc-event-main {
+    cursor: pointer !important;
+}
+
+.fc-daygrid-dot-event:hover{
+    background-color: blue !important;
+    cursor: pointer;
+}
+.eventGreen{
+    background-color: green !important;
+}
