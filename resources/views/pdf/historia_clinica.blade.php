@@ -82,7 +82,7 @@
         <table class="header-table">
             <tr>
                 <td class="header-left">
-                    {{-- <img height="90" width="90" src="{{ $historia_clinica->licencia->get_imagen() }}"></td> --}}
+                    <img height="90" width="90" src="{{ $historia_clinica->licencia->get_imagen() }}"></td>
                 </td>
                 <td class="header-right">
                     <h3>HISTORIA CLINICA</h3>
