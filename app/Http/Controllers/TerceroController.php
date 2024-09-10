@@ -69,18 +69,21 @@ class TerceroController extends Controller
         if ($tercero) {
             return view('tercero.view', compact(['tercero']));
         }
+        return;
         echo "Acceso denegado";
     }
 
     public function buscar($caracteres)
     {
         if (strlen($caracteres) > 3) {
-            $sql = "select * from tercero where id_tercero = '" . $caracteres . "'" .
-            " or UPPER(nombres) like '%" . strtoupper($caracteres) . "%'" .
-            " or UPPER(apellidos) like '%" . strtoupper($caracteres) . "%'" .
-            " or UPPER(email) like '%" . strtoupper($caracteres) . "%'" .
-            " or UPPER(identificacion) like '%" . strtoupper($caracteres) . "%'" .
-            " and id_licencia = " . session('id_licencia') . " limit 10";
+            $sql = "SELECT * FROM tercero 
+            WHERE (id_tercero = '" . $caracteres . "' 
+            OR UPPER(nombres) LIKE '%" . strtoupper($caracteres) . "%' 
+            OR UPPER(apellidos) LIKE '%" . strtoupper($caracteres) . "%' 
+            OR UPPER(email) LIKE '%" . strtoupper($caracteres) . "%' 
+            OR UPPER(identificacion) LIKE '%" . strtoupper($caracteres) . "%') 
+            AND id_licencia = " . session('id_licencia') . " 
+            LIMIT 10";
             $response = DB::select($sql);
             return response()->json($response);
         }

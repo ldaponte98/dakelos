@@ -245,7 +245,7 @@
                    <select class="form-control hasDatepicker form-control-line" id="id_forma_pago">
                     <option value="0" disabled selected>Forma de pago</option>
                     @php
-                        $formas_pago = \App\Dominio::all()->where('id_padre', 19);
+                        $formas_pago = \App\FormaPagoLicencia::getDominios(session('id_licencia'));
                     @endphp
                     @foreach($formas_pago as $forma)
                        <option value="{{ $forma->id_dominio }}">{{ $forma->nombre }}</option>

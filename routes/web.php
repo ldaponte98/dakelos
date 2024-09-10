@@ -87,6 +87,28 @@ Route::any('reportes/facturas_pendientes_pagar', 'ReporteController@creditos_pen
 Route::any('reportes/pago-proveedores', 'ReporteController@pago_proveedores')->name('reportes/pago-proveedores');
 Route::any('reportes/documentos-asociados-factura/{id_factura}', 'ReporteController@documentos_asociados_factura')->name('reportes/documentos-asociados-factura');
 
+//AGENDA JOBS
+Route::any('jobs/agenda/recordatorios', 'AgendaConfiguracionRecordatorioController@job_recordatorios')->name('jobs/agenda/recordatorios');
+
+//AGENDA 
+Route::any('clinica/calendario/agendar', 'AgendaController@agendar')->name('clinica/calendario/agendar');
+Route::any('clinica/calendario/agendaProfesional', 'AgendaController@agendaProfesional')->name('clinica/calendario/agendaProfesional');
+Route::any('clinica/calendario/atender', 'AgendaController@atender')->name('clinica/calendario/atender');
+Route::any('clinica/calendario/mostrar/{id}', 'AgendaController@mostrar')->name('clinica/calendario/mostrar');
+Route::any('clinica/calendario/cancelar/{id}', 'AgendaController@cancelar')->name('clinica/calendario/cancelar');
+
+
+//HISTORIA CLINICA
+Route::any('clinica/historiaClinica/crear/{id}', 'HistoriaClinicaController@crear')->name('clinica/historiaClinica/crear');
+Route::any('clinica/historiaClinica/imprimir_historia/{id_factura}', 'HistoriaClinicaController@imprimir_historia')->name('clinica/historiaClinica/imprimir_historia');
+
+//CONFIGURACION -> AGENDA RECORDATORIO
+Route::any('agenda-recordatorio/administrar', 'AgendaConfiguracionRecordatorioController@administrar')->name('agenda-recordatorio/administrar');
+Route::any('agenda-recordatorio/crear', 'AgendaConfiguracionRecordatorioController@guardar')->name('agenda-recordatorio/crear');
+Route::any('agenda-recordatorio/editar/{id}', 'AgendaConfiguracionRecordatorioController@guardar')->name('agenda-recordatorio/editar');
+
+
+ 
 Route::get('factura_email', function () {
     return view('email.factura');
 })->name('factura_email');
@@ -94,6 +116,25 @@ Route::get('factura_email', function () {
 Route::get('factura_pdf', function () {
     return view('pdf.factura');
 })->name('factura_pdf');
+
+Route::get('agenda_email', function () {
+    $tercero = (object) [
+            "nombres" => "test",
+            "apellidos" => "test"
+    ];
+    $title = "Recordatorio de cita DEMO";
+    $subtitulo = "Tu cita empieza en 2 días";
+    $imagen_licencia = "https://dakelos.com/imagenes/licencia/logo.jpg";
+    $profesional = 1;
+    $start       = "2024-09-02 17:00";
+    $licencia = (object) [
+        "direccion" => "Test",
+        "ciudad" => "Test",
+        "nombre" => "Test"
+    ];
+    return view('email.agenda', compact(['tercero', 'title', 'subtitulo', 'imagen_licencia', 'profesional', 'start', 'licencia']));
+})->name('agenda_email');
+
 
 Route::any('licencia/menu_clientes', 'LicenciaController@menu_clientes')->name('licencia/menu_clientes');
 Route::any('licencia/validar_pedidos_nuevos', 'LicenciaController@validar_pedidos_nuevos')->name('licencia/validar_pedidos_nuevos');

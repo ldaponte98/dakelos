@@ -12,6 +12,7 @@ use App\InventarioDetalle;
 use App\Licencia;
 use App\Permiso;
 use App\Producto;
+use App\FormaPagoLicencia;
 use App\ResolucionFactura;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -53,8 +54,7 @@ class InventarioController extends Controller
                 $inventario = Inventario::find($id_inventario);
             }
             $id_dominio_forma_pago_inmediato = null;
-            $formas_pago = Dominio::where('id_padre', 19)
-                ->get();
+            $formas_pago = FormaPagoLicencia::getDominios(session('id_licencia'));
             $errors = [];
             if ($post) {
                 $post = (object) $post;
