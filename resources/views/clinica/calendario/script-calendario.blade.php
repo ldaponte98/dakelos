@@ -40,6 +40,11 @@
             return;
         }   
 
+        if($("#fecha_nacimiento").val().trim() == ""){
+            toastr.error("La fecha de nacimiento es obligatorio", "Error")
+            return;
+        }  
+
         if($("#id_cita").val() != "" && $("#id_cita").val() != null){
             if($("#days").val().length > 1){
                 toastr.error("Para la edicion de citas, el campo días de ser [Todos los dias]", "Error")
@@ -87,7 +92,8 @@
                     $("#apellidos").val(data.apellidos)
                     $("#telefono").val(data.telefono)
                     $("#genero").val(data.id_dominio_sexo)
-                    $("#correo").val(data.email)
+                    $("#email").val(data.email)
+                    $("#fecha_nacimiento").val(data.fecha_nacimiento)
                     $("#direccion").val(data.direccion)
                 }
             }).fail((error) => {
@@ -162,7 +168,6 @@
         }
         
         let motivoConsulta = event.title.split('-') 
-        console.log({motivoConsulta: motivoConsulta})       
         $("#days").prop("readonly", true)
         $("#id_cita").val(info.event.id)
         $("#start").val(parseDateToString(event.start));
@@ -177,7 +182,8 @@
         $("#apellidos").val(info.event.extendedProps.tercero.apellidos)
         $("#genero").val(info.event.extendedProps.tercero.id_dominio_sexo)
         $("#telefono").val(info.event.extendedProps.tercero.telefono)
-        $("#correo").val(info.event.extendedProps.tercero.email)
+        $("#fecha_nacimiento").val(info.event.extendedProps.tercero.fecha_nacimiento)
+        $("#email").val(info.event.extendedProps.tercero.email)
         $("#observaciones").val(info.event.extendedProps.observaciones)
 
         document.getElementById('btn-cancelar').addEventListener("click", function() {

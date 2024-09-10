@@ -98,14 +98,12 @@
                 <td><strong>N° Historia Clínica:</strong></td>
                 <td colspan="5">{{$historia_clinica->id}}</td> 
             </tr>
-                @php
-                    $tipos_sexo = \App\Dominio::all()->where('id_padre', 12)->where('id_dominio', $historia_clinica->tercero->id_dominio_sexo)->first();
-                @endphp
+
             <tr>
                 <td><strong>Identificación:</strong></td>
                 <td colspan="3">{{$historia_clinica->tercero->identificacion}}</td>
                 <td><strong>Sexo:</strong></td>
-                <td>{{$tipos_sexo->nombre}}</td>
+                <td>{{$tipo_sexo->nombre}}</td>
             </tr>
             <tr>
                 <td><strong>Nombre Paciente:</strong></td>
@@ -113,9 +111,9 @@
             </tr>
             <tr>
                 <td><strong>Fecha Nacimiento:</strong></td>
-                <td>21/Agosto/1995</td>
+                <td>{{$historia_clinica->tercero->fecha_nacimiento}}</td>
                 <td><strong>Edad:</strong></td>
-                <td colspan="3">27 Años / 4 Meses / 7 Días</td>
+                <td colspan="3">{{$historia_clinica->tercero->get_edad()}}</td>
             </tr>
             <tr>
                 <td><strong>Dirección:</strong></td>
@@ -139,7 +137,6 @@
             </tr>
         </table>
 
-
         <!-- Indicaciones Médicas -->
         <table>
             <tr>
@@ -160,29 +157,5 @@
             </tr>
         </table>
     </div>
-
-    <br><br>
-    @if (isset($btn_descargar))
-        <center>
-            <a href="{{ route('clinica/historiaClinica/imprimir_historia', $historia_clinica->id) }}"
-                style="text-decoration: none;
-                padding-top: 10px !important;
-                padding-bottom:  10px !important;
-                padding-left:  70px !important;
-                padding-right:  70px !important;
-                font-weight: 600 !important;
-                font-size: 20px !important;
-                color: {{ $historia_clinica->licencia->color_letras }} !important;
-                background-color: {{ $historia_clinica->licencia->color_botones }} !important;
-                border-radius: 6px !important;
-                border: 2px solid {{ $historia_clinica->licencia->color_botones }} !important;
-                cursor: pointer !important;
-                ">Descargar
-            </a>
-        </center>
-    @endif
-
-
-
 </body>
 </html>

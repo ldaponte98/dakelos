@@ -30,10 +30,6 @@
 </style>
 
 <body> 
-    @php
-        $btn_descargar = true;
-    @endphp
-
     <div class="container">
         <h1>Envío de Historia Clínica</h1>
 
@@ -47,27 +43,7 @@
             <p><strong>Fecha de la Consulta:</strong> {{$historia_clinica->created_at}} </p>
         </div>
 
-        <p>Para descargar su historia clínica completa, por favor haga clic en el siguiente botón:</p>
-
-        @if (isset($btn_descargar))
-            <center>
-                <a href="{{ route('clinica/historiaClinica/imprimir_historia', $historia_clinica->id) }}"
-                    style="text-decoration: none;
-                    padding-top: 10px !important;
-                    padding-bottom:  10px !important;
-                    padding-left:  70px !important;
-                    padding-right:  70px !important;
-                    font-weight: 600 !important;
-                    font-size: 20px !important;
-                    color: {{ $historia_clinica->licencia->color_letras }} !important;
-                    background-color: {{ $historia_clinica->licencia->color_botones }} !important;
-                    border-radius: 6px !important;
-                    border: 2px solid {{ $historia_clinica->licencia->color_botones }} !important;
-                    cursor: pointer !important;
-                    ">Descargar
-                </a>
-            </center>
-        @endif
+        <p>Para descargar su historia clínica completa, por favor haga clic <a href="{{ route('clinica/historiaClinica/imprimir_historia', $historia_clinica->id) }}">aquí.</a></p>
 
         <p>Si tiene alguna duda o requiere asistencia, no dude en contactarnos.</p>
 

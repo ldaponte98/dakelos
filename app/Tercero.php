@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use DateTime;
 class Tercero extends Model
 {
     protected $table = 'tercero';
@@ -18,6 +19,7 @@ class Tercero extends Model
      	'telefono',
      	'direccion',
         'id_dominio_sexo',
+        'fecha_nacimiento',
         'imagen',
         'id_dominio_tipo_tercero',
         'id_dominio_tipo_identificacion',
@@ -81,6 +83,14 @@ class Tercero extends Model
     	}else{
     		return asset('plantilla/images/app/sinimagen.jpg');
     	}
+    }
+
+    public function get_edad()
+    {
+        $cumpleanos = new DateTime($this->fecha_nacimiento);
+        $hoy = new DateTime();
+        $annos = $hoy->diff($cumpleanos);
+        return $annos->y;
     }
 
     public function get_total_compras()

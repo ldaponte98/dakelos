@@ -41,7 +41,11 @@ class AgendaController extends Controller
 
     public function atender()
     {
-        return view('clinica.calendario.agendaProfesional');
+        $profesionales = Tercero::where('id_tercero', session('id_tercero_usuario'))->first();
+        $motivo_consulta = MotivoConsultaLicencia::all()->where('id_licencia', session('id_licencia'));
+        $tipos_sexo = Dominio::all()->where('id_padre', Dominio::get('Tipos de sexo'));
+
+        return view('clinica.calendario.agendaProfesional', compact(['profesionales','motivo_consulta','tipos_sexo']));
     }
 
     public function agendar(Request $request)

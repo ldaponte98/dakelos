@@ -66,14 +66,16 @@
             $("#btn-atender").css("display", "none");
         }
         
+        let motivoConsulta = event.title.split('-') 
         $("#id_agenda").val(info.event.id)
         $("#start").val(parseDateToString(event.start));
-        $("#title").val(event.title)
+        $("#title option").filter(function() {
+            return $(this).text() == motivoConsulta[1];
+        }).prop("selected", true);
         $("#identificacion").val(info.event.extendedProps.tercero.identificacion)
         $("#nombres").val(info.event.extendedProps.tercero.nombres + " " + info.event.extendedProps.tercero.apellidos)
         $("#genero").val(info.event.extendedProps.tercero.id_dominio_sexo)
         $("#telefono").val(info.event.extendedProps.tercero.telefono)
-        $("#correo").val(info.event.extendedProps.tercero.email)
         $("#observaciones").val(info.event.extendedProps.observaciones)
         document.getElementById('btn-atender').addEventListener("click", function() {
             Loading(true, "Abriendo historia clinica");

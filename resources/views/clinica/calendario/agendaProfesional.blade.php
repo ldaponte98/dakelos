@@ -22,7 +22,7 @@
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Agendar cita</h5>
+                                            <h5 class="modal-title" id="exampleModalLabel">Atender paciente</h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">x</span>
                                             </button>
@@ -32,19 +32,16 @@
                                                 <input id="id_agenda" name="id_agenda" type="hidden">
                                                 <div class="col-12">
                                                     <div class="form-group">
-                                                        <label for="profesional" class="control-label"><b>*Profesional</b></label>
-                                                        <input @readonly(true) value="{{$profesionales->nombres}} {{$profesionales->apellidos}}" type="text" id="modal-profesional" name="modal-profesional" class="form-control" disabled>
+                                                        <label for="profesional" class="control-label"><b>Profesional</b></label>
+                                                        <input value="{{$profesionales->nombres}} {{$profesionales->apellidos}}" type="text" id="modal-profesional" name="modal-profesional" class="form-control" disabled>
                                                     </div>
                                                 </div>
                                                 <div class="col-12">
                                                     <div class="form-group">
-                                                        <label for="title" class="control-label mb-1"><b>*Motivo de consulta</b></label>
-                                                        @php
-                                                            $motivo_consulta = \App\Dominio::all()->where('id_padre', 70);
-                                                        @endphp
-                                                        <select @readonly(true) id="title" name="title" class="form-control" required>
+                                                        <label for="title" class="control-label mb-1"><b>Motivo de consulta</b></label>
+                                                        <select disabled id="title" name="title" class="form-control" required>
                                                             @foreach ($motivo_consulta as $motivo)
-                                                                <option disabled selected title="{{$motivo->descripcion}}" value="{{ $motivo->nombre }}">{{ $motivo->nombre }}</option>
+                                                                <option title="{{$motivo->dominio->descripcion}}" value="{{$motivo->dominio->nombre}}">{{$motivo->dominio->nombre}}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -64,7 +61,7 @@
                                                     <div class="form-group">
                                                         <label for="identificacion"
                                                             class="control-label mb-1"><b>Identificación</b></label>
-                                                        <input @readonly(true) type="text" id="identificacion" name="tercero[identificacion]" class="form-control" disabled>
+                                                        <input type="text" id="identificacion" name="tercero[identificacion]" class="form-control" disabled>
                                                     </div>
                                                 </div>
 
@@ -80,12 +77,9 @@
                                                     <div class="form-group">
                                                         <label for="id_dominio_sexo"
                                                             class="control-label mb-1"><b>Genero</b></label>
-                                                        @php
-                                                            $tipos_sexo = \App\Dominio::all()->where('id_padre', 12);
-                                                        @endphp
-                                                        <select id="genero" name="tercero[id_dominio_sexo]" class="form-control" required>
+                                                        <select disabled id="genero" name="tercero[id_dominio_sexo]" class="form-control" required>
                                                             @foreach ($tipos_sexo as $tipo_sexo)
-                                                                <option disabled selected value="{{ $tipo_sexo->id_dominio }}">
+                                                                <option selected value="{{ $tipo_sexo->id_dominio }}">
                                                                     {{ $tipo_sexo->nombre }}</option>
                                                             @endforeach
                                                         </select>
@@ -97,14 +91,6 @@
                                                         <label for="telefono"
                                                             class="control-label mb-1"><b>Teléfono</b></label>
                                                         <input type="text" id="telefono" name="tercero[telefono]" class="form-control" disabled>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-12">
-                                                    <div class="form-group">
-                                                        <label for="correo"
-                                                            class="control-label mb-1"><b>Correo</b></label>
-                                                        <input type="email" id="correo" name="tercero[correo]" class="form-control" disabled>
                                                     </div>
                                                 </div>
 

@@ -31,9 +31,9 @@ class HistoriaClinica extends Model
         $error   = true;
         $historia_clinica = $this;
         $tercero = Tercero::find($historia_clinica->id_tercero);
-        $licencia = $tercero->id_licencia;
+        $nombre_licencia = $tercero->licencia->nombre;
 
-        $subject = "Historia clinica". ' ' . $tercero->nombres . ' ' . $tercero->apellidos . ' - ' . $licencia->nombre;
+        $subject = "Historia clinica". ' ' . $tercero->nombres . ' ' . $tercero->apellidos . ' - ' . $tercero->licencia->nombre;
         $for     = $tercero->email;
         if($for != null && $for != "" && $this->is_valid_email($for)){
             $data_email = array(
@@ -41,8 +41,8 @@ class HistoriaClinica extends Model
             );
             if ($for) {
                 try {
-                    Mail::send('email.historia_clinica', $data_email, function ($msj) use ($subject, $for) {
-                        $msj->from(config('global.email_app'), $licencia->nombre);
+                    Mail::send('email.historia_clinica', $data_email, function ($msj) use ($subject, $for, $nombre_licencia) {
+                        $msj->from(config('global.email_app'), $nombre_licencia);
                         $msj->subject($subject);
                         $msj->to($for);
                     });

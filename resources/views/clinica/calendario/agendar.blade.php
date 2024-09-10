@@ -168,12 +168,18 @@
                                                         <input type="text" id="telefono" name="tercero[telefono]" class="form-control">
                                                     </div>
                                                 </div>
-
                                                 <div class="col-12">
                                                     <div class="form-group">
-                                                        <label for="correo"
+                                                        <label for="fecha_nacimiento"
+                                                            class="control-label mb-1"><b>*Fecha de nacimiento</b></label>
+                                                        <input type="date" id="fecha_nacimiento" name="tercero[fecha_nacimiento]" class="form-control">
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label for="email"
                                                             class="control-label mb-1"><b>Correo</b></label>
-                                                        <input type="email" id="correo" name="tercero[correo]" class="form-control">
+                                                        <input type="email" id="email" name="tercero[email]" class="form-control">
                                                     </div>
                                                 </div>
 
