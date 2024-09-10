@@ -101,7 +101,7 @@
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label for="edad" class="control-label mb-1"><b>Edad:
-                                                </b>{{ $tercero->get_edad() }}</label>
+                                                </b>{{ $tercero->get_edad() }} Años</label>
                                         </div>
                                     </div>
                                 </div>

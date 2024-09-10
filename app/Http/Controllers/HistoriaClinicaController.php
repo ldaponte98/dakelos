@@ -68,7 +68,6 @@ class HistoriaClinicaController extends Controller
     {
         $historia_clinica = HistoriaClinica::find($id_historia);
         $tipo_sexo = Dominio::all()->where('id_dominio', $historia_clinica->tercero->id_dominio_sexo)->first();
-
         $pdf = \PDF::loadView('pdf.historia_clinica', compact(['historia_clinica','tipo_sexo']));
         return $pdf->stream("Historia clinica " . $historia_clinica->id . '.pdf');
     }

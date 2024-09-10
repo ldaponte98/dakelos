@@ -11,6 +11,8 @@
     function openModal() {
         $("#days").prop("readonly", false)
         $("#evento").modal('show')
+        $("#btn-cancelar").css("display", "none");
+        $("#btn-guardar").css("display", "block");
     }
 
     let botonGuardar = document.getElementById('btn-guardar').addEventListener("click", function() {
@@ -133,6 +135,9 @@
             toastr.error("Solo se permiten fechas mayores a la actual", "Ups")
             return;
         }
+        $("#btn-cancelar").css("display", "block");
+        $("#btn-guardar").css("display", "block");
+
         let formulario = document.getElementById('form-citas');
         formulario.reset();
         $("#id_cita").val('')          
@@ -165,6 +170,14 @@
             $("#btn-cancelar").css("display", "none");
         }else{
             $("#btn-cancelar").css("display", "block");
+        }
+
+        if(event.atendida == 1){
+            $("#btn-cancelar").css("display", "none");
+            $("#btn-guardar").css("display", "none");
+        }else{
+            $("#btn-cancelar").css("display", "block");
+            $("#btn-guardar").css("display", "block");
         }
         
         let motivoConsulta = event.title.split('-') 
