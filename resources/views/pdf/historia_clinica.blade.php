@@ -15,7 +15,6 @@
         }
 
         .nota-medica {
-            width: 80%;
             margin: 20px auto;
             padding: 20px;
             border: 1px solid #000;
@@ -71,6 +70,9 @@
         p {
             margin: 5px 0;
         }
+        .firma{
+            margin-top: 6rem;
+        }
     </style>
 </head>
 
@@ -80,7 +82,7 @@
         <table class="header-table">
             <tr>
                 <td class="header-left">
-                    <img height="90" width="90" src="{{ $historia_clinica->licencia->get_imagen() }}"></td>
+                    {{-- <img height="90" width="90" src="{{ $historia_clinica->licencia->get_imagen() }}"></td> --}}
                 </td>
                 <td class="header-right">
                     <h3>HISTORIA CLINICA</h3>
@@ -92,7 +94,7 @@
         <!-- Datos Personales -->
         <table class="info-table">
             <tr>
-                <td class="fondo"><strong>Datos personales:</strong></td>
+                <td colspan="6" class="fondo"><strong>Datos personales:</strong></td>
             </tr>
             <tr>
                 <td><strong>N° Historia Clínica:</strong></td>
@@ -113,7 +115,7 @@
                 <td><strong>Fecha Nacimiento:</strong></td>
                 <td>{{$historia_clinica->tercero->fecha_nacimiento}}</td>
                 <td><strong>Edad:</strong></td>
-                <td colspan="3">{{$historia_clinica->tercero->get_edad()}}</td>
+                <td colspan="3">{{$historia_clinica->tercero->get_edad()}} Años</td>
             </tr>
             <tr>
                 <td><strong>Dirección:</strong></td>
@@ -122,33 +124,33 @@
         </table>
 
         <!-- Descripción -->
-        <table>
+        <table class="info-table">
             <tr>
-                <td colspan="4" class="fondo">
-                    <strong>Descripción:</strong>
-                    <p>{{$historia_clinica->motivo}}</p>
-                </td>
-                <td colspan="4">{{$historia_clinica->peso}} KG</td>
-                <td colspan="4">{{$historia_clinica->tension}} mmHg</td>
+                <td colspan="6" class="fondo"><strong>Descripción:</strong></td>
             </tr>
             <tr>
-                <td><strong></strong></td>
-                <td colspan="5">{{$historia_clinica->tercero->direccion}}</td>
+                <td colspan="6">{{$historia_clinica->motivo}}
+                <br><br><br>
+                {{$historia_clinica->peso}} Kg -
+                {{$historia_clinica->tension}} mmHg
+                </td>
             </tr>
         </table>
 
         <!-- Indicaciones Médicas -->
-        <table>
+        <table class="info-table">
             <tr>
-                <td colspan="4" class="fondo">
-                    <strong>Indicaciones Medicas</strong>
-                    <p>{{$historia_clinica->plan}}</p>
+                <td colspan="6" class="fondo"><strong>Indicaciones Medicas:</strong></td>
+            </tr>
+            <tr>
+                <td colspan="6">{{$historia_clinica->plan}}
                 </td>
             </tr>
         </table>
 
+
         <!-- Footer -->
-        <table>
+        <table class="firma">
             <tr>
                 <td colspan="4">
                     <strong>Medico: </strong>{{$historia_clinica->profesional->nombres}}
