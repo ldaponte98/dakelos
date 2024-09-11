@@ -63,9 +63,9 @@
                 <li><strong>Cuidad:</strong> {{ $licencia->ciudad }}</li>
             </ul>
             <p>Por favor, comuníquese con nosotros si necesita reprogramar la cita.</p>
-            <p>Gracias,<br>Equipo de <strong>{{$tercero->licencia->nombre}} </strong><br>
-                {{$tercero->licencia->telefonos}}<br>
-                {{$tercero->licencia->email}}</p>
+            <p>Gracias,<br>Equipo de <strong>{{$licencia->nombre}} </strong><br>
+                {{$licencia->telefonos}}<br>
+                {{$licencia->email}}</p>
 
             @if ($imagen_licencia != null)
             <div class="logo">
