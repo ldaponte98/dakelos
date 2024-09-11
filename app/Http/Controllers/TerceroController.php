@@ -65,7 +65,9 @@ class TerceroController extends Controller
 
     public function view($id_tercero)
     {
-        $tercero = Tercero::find($id_tercero);
+        $tercero = Tercero::where('id_tercero', $id_tercero)
+        ->where('id_licencia', session('id_licencia'))
+        ->first();
         if ($tercero) {
             return view('tercero.view', compact(['tercero']));
         }
