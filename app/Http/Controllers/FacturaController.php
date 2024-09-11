@@ -327,7 +327,7 @@ class FacturaController extends Controller
                 $canal = $post->canal;
             }
             if (isset($post->tercero)) {
-                $tercero = Tercero::find($post->tercero);
+                $tercero = Tercero::where('id_tercero', $post->tercero)->where('id_licencia', session('id_licencia'))->first();
                 if($tercero == null) {
                     echo "Url invalida, tercero no existe"; die;
                 } 
