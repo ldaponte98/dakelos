@@ -1,163 +1,128 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historia clinica {{$historia_clinica->tercero->nombres}} {{$historia_clinica->tercero->apellidos}}</title>   
-    <style>
+    <title>Historia clinica {{$historia_clinica->tercero->nombres}} {{$historia_clinica->tercero->apellidos}}</title>
 
+    <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #ffffff;
-            color: #000000;
+            margin: 20px;
         }
 
-        .nota-medica {
-            margin: 20px auto;
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
             padding: 20px;
-            border: 1px solid #000;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
         }
 
-        .header-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
+        .logo { 
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 100px; /* Ajusta el tamaño del logo */
         }
 
-        .header-left {
+        h1,
+        h2,
+        h3 {
+            color: #2c3e50;
+            text-align: center;
+        }
+
+        .section-title {
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px;
             text-align: left;
+            margin-top: 20px;
+            border-radius: 5px;
         }
 
-        .header-left .logo {
-            max-width: 100px;
-        }
-
-        .header-right {
-            text-align: right;
-        }
-
-        .header-right h3, .header-right h4 {
-            margin: 0;
-        }
-
-        .info-table {
+        table {
             width: 100%;
-            border-collapse: collapse;
             margin-bottom: 20px;
+            border-collapse: collapse;
         }
 
-        .info-table td, .info-table th {
-            border: 1px solid #000;
-            padding: 5px;
+        table th,
+        table td {
+            padding: 6px;
             text-align: left;
+            border-bottom: 1px solid #ddd;
         }
 
-        .info-table th {
-            background-color: #f0f0f0;
+        .description {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
         }
 
-        .fondo{
-            background-color: #BFBFBF;"
-        }
-
-        strong {
-            font-weight: bold;
-        }
-
-        p {
-            margin: 5px 0;
-        }
-        .firma{
+        .firma {
             margin-top: 6rem;
         }
+
     </style>
 </head>
 
 <body>
-    <div class="nota-medica">
-        <!-- Header -->
-        <table class="header-table">
-            <tr>
-                <td class="header-left">
-                    <img height="90" width="90" src="{{ $historia_clinica->licencia->get_imagen() }}"></td>
-                </td>
-                <td class="header-right">
-                    <h3>HISTORIA CLINICA</h3>
-                    <p>Fecha de Registro: <strong>{{$historia_clinica->created_at}}</strong></p>
-                </td>
-            </tr>
-        </table>
+    <div class="container">
 
-        <!-- Datos Personales -->
-        <table class="info-table">
-            <tr>
-                <td colspan="6" class="fondo"><strong>Datos personales:</strong></td>
-            </tr>
-            <tr>
-                <td><strong>N° Historia Clínica:</strong></td>
-                <td colspan="5">{{$historia_clinica->id}}</td> 
-            </tr>
+        {{-- <img class="logo" src="{{ $historia_clinica->licencia->get_imagen() }}"></td> --}}
 
+        <h1>Historia Clínica</h1>
+        <h2>{{$historia_clinica->tercero->nombres}} {{$historia_clinica->tercero->apellidos}}</h2>
+        <small>{{$historia_clinica->created_at}}</small><br>
+        <small>N° Historia Clínica: {{$historia_clinica->id}}</small>
+
+        <h3 class="section-title">Datos personales</h3>
+        <table>
             <tr>
-                <td><strong>Identificación:</strong></td>
-                <td colspan="3">{{$historia_clinica->tercero->identificacion}}</td>
-                <td><strong>Sexo:</strong></td>
+                <th>Identificación:</th>
+                <td>{{$historia_clinica->tercero->identificacion}}</td>
+            </tr>
+            <tr>
+                <th>Sexo:</th>
                 <td>{{$tipo_sexo->nombre}}</td>
             </tr>
             <tr>
-                <td><strong>Nombre Paciente:</strong></td>
-                <td colspan="5">{{$historia_clinica->tercero->nombres}} {{$historia_clinica->tercero->apellidos}}</td>
-            </tr>
-            <tr>
-                <td><strong>Fecha Nacimiento:</strong></td>
+                <th>Fecha Nacimiento:</th>
                 <td>{{$historia_clinica->tercero->fecha_nacimiento}}</td>
-                <td><strong>Edad:</strong></td>
-                <td colspan="3">{{$historia_clinica->tercero->get_edad()}} Años</td>
             </tr>
             <tr>
-                <td><strong>Dirección:</strong></td>
-                <td colspan="5">{{$historia_clinica->tercero->direccion}}</td>
+                <th>Edad:</th>
+                <td>{{$historia_clinica->tercero->get_edad()}} Años</td>
+            </tr>
+            <tr>
+                <th>Dirección:</th>
+                <td>{{$historia_clinica->tercero->direccion}}</td>
             </tr>
         </table>
 
-        <!-- Descripción -->
-        <table class="info-table">
-            <tr>
-                <td colspan="6" class="fondo"><strong>Descripción:</strong></td>
-            </tr>
-            <tr>
-                <td colspan="6">{{$historia_clinica->motivo}}
-                <br><br><br>
-                {{$historia_clinica->peso}} Kg -
-                {{$historia_clinica->tension}} mmHg
-                </td>
-            </tr>
-        </table>
+        <h3 class="section-title">Descripción</h3>
+        <p class="description">{{$historia_clinica->motivo}}
+            <br><br>
+            @if($historia_clinica->peso)
+            {{$historia_clinica->peso}} Kg -
+            @endif
+            @if($historia_clinica->tension)
+            {{$historia_clinica->tension}} mmHg-
+            @endif
+        </p>
 
-        <!-- Indicaciones Médicas -->
-        <table class="info-table">
-            <tr>
-                <td colspan="6" class="fondo"><strong>Indicaciones Medicas:</strong></td>
-            </tr>
-            <tr>
-                <td colspan="6">{{$historia_clinica->plan}}
-                </td>
-            </tr>
-        </table>
+        <h3 class="section-title">Indicaciones Médicas</h3>
+        <p class="description">{{$historia_clinica->plan}}</p>
+        <hr>
 
-
-        <!-- Footer -->
-        <table class="firma">
-            <tr>
-                <td colspan="4">
-                    <strong>Medico: </strong>{{$historia_clinica->profesional->nombres}}
-                    <br>
-                </td>
-            </tr>
-        </table>
+        <div class="firma">
+            <p>Médico: {{$historia_clinica->profesional->nombres}}</p>
+        </div>
     </div>
 </body>
+
 </html>
+
