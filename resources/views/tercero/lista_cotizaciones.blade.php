@@ -1,9 +1,7 @@
 <div class="row">
     <div class="col-12">
         <div class="form-group">
-            <label for="filtro_historia"
-                class="control-label mb-1"><b>Buscar</b></label>
-            <input id="filtro_cotizacion" type="search" class="form-control">
+            <input id="filtro_cotizacion" type="search" class="form-control" placeholder="Buscar...">
         </div>
     </div>
 	<div class="col-lg-12">

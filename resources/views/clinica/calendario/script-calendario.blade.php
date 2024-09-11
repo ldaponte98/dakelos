@@ -17,9 +17,36 @@
 
     let botonGuardar = document.getElementById('btn-guardar').addEventListener("click", function() {
 
-        let fechaHoraActual = new Date();            
+        if($("#id_profesional").val() == null || $("#id_profesional").val() == ""){
+            toastr.error("El profesional es obligatorio", "Error")
+            return;
+        }
+
+        if($("#title").val() == null || $("#title").val() == ""){
+            toastr.error("El motivo de consulta es obligatorio", "Error")
+            return;
+        }
+        let dateStart = new Date($("#start").val())
+        if(dateStart == "Invalid Date"){
+            toastr.error("La fecha inicio no tiene un formato valido", "Error")
+            return;
+        }
+        dateStart = new Date($("#start").val() + ":00")
+        let dateEnd = new Date($("#end").val())
+        if(dateEnd == "Invalid Date"){
+            toastr.error("La fecha fin no tiene un formato valido", "Error")
+            return;
+        }
+        dateEnd = new Date($("#end").val() + ":59")
+
+        if(dateStart > dateEnd){
+            toastr.error("La fecha inicio no puede ser mayor a la fecha fin", "Error")
+            return;
+        }
+
+        let fechaHoraActual = new Date();          
         if($("#start").val() < parseDateToString(fechaHoraActual)){
-            toastr.error("La fecha debe ser superior a la actual", "Error")
+            toastr.error("La fecha inicio debe ser superior a la actual", "Error")
             return;
         }
 

@@ -5,18 +5,18 @@
         <i class="fa fa-bars"></i>
     </div>
     <ul class="fab-options">
-        <li onclick="location.href='/factura/crear?tipo=16&id_tercero={{ $tercero->id_tercero }}'">
+        <li onclick="location.href='/factura/facturador?tercero={{ $tercero->id_tercero }}'">
             <span class="fab-label">Facturar</span>
             <div class="fab-icon-holder">
                 <i class="ti-money"></i>
             </div>
         </li>
-        <li onclick="location.href='/factura/crear?tipo=17&id_tercero={{ $tercero->id_tercero }}'">
+        <!--<li onclick="location.href='/factura/crear?tipo=17&id_tercero={{ $tercero->id_tercero }}'">
             <span class="fab-label">Cotizar</span>
             <div class="fab-icon-holder">
                 <i class="ti-shopping-cart"></i>
             </div>
-        </li>
+        </li>-->
         <li onclick="location.href='/tercero/editar/{{ $tercero->id_tercero }}'">
             <span class="fab-label">Modificar</span>
             <div class="fab-icon-holder">
@@ -207,9 +207,9 @@
                                     <a class="nav-item nav-link" id="nav-creditos-deber-tab" data-toggle="tab"
                                         href="#nav-creditos-deber" role="tab" aria-controls="nav-creditos-deber"
                                         aria-selected="false">Creditos a deber</a>
-                                    <a class="nav-item nav-link" id="nav-cotizaciones-tab" data-toggle="tab"
+                                    <!--<a class="nav-item nav-link" id="nav-cotizaciones-tab" data-toggle="tab"
                                         href="#nav-cotizaciones" role="tab" aria-controls="nav-cotizaciones"
-                                        aria-selected="false">Cotizaciones</a>
+                                        aria-selected="false">Cotizaciones</a>-->
                                     <a class="nav-item nav-link" id="nav-historias-tab" data-toggle="tab"
                                         href="#nav-historias" role="tab" aria-controls="nav-historias"
                                         aria-selected="false">Historias clinicas</a>
@@ -239,11 +239,11 @@
                                     aria-labelledby="nav-creditos-deber-tab">
                                     {{ view('tercero.lista_creditos_deber', compact('tercero', ['facturas'])) }}
                                 </div>
-
+                                
                                 <div class="tab-pane fade" id="nav-cotizaciones" role="tabpanel"
                                     aria-labelledby="nav-cotizaciones-tab">
                                     {{ view('tercero.lista_cotizaciones', compact('tercero', ['facturas'])) }}
-                                </div>
+                                </div> 
 
                                 <div class="tab-pane fade" id="nav-historias" role="tabpanel"
                                     aria-labelledby="nav-historiasr-tab">

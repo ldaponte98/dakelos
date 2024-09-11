@@ -447,7 +447,6 @@
             ValidarPermisosFactura()
             LLenarDatosFactura()
             LLenarFormasPago()
-            //$("#div-busqueda-productos").fadeIn()
         })
 
         toastr.options.positionClass = 'toast-bottom-right';
@@ -1214,6 +1213,14 @@
         }
 
         function LLenarDatosFactura() {
+            @if ($tercero)
+                this.factura.cliente.nombre = "{{ $tercero->nombres }}"
+                this.factura.cliente.apellido = "{{ $tercero->apellidos }}"
+                this.factura.cliente.identificacion = "{{ $tercero->identificacion }}"
+                this.factura.cliente.telefono = "{{ $tercero->telefono }}"
+                this.factura.cliente.email = "{{ $tercero->email }}"
+                this.factura.cliente.direccion = "{{ $tercero->direccion }}"
+            @endif
             @if ($factura)
                 Loading(true, "Datos de la factura...")
                 this.factura.id_factura = {{ $factura->id_factura }}

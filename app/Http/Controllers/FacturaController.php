@@ -309,6 +309,7 @@ class FacturaController extends Controller
         $factura              = null;
         $id_mesa              = null;
         $canal                = null;
+        $tercero              = null;
         if ($post) {
             $post = (object) $post;
             if (isset($post->factura)) {
@@ -325,12 +326,19 @@ class FacturaController extends Controller
             if (isset($post->canal)) {
                 $canal = $post->canal;
             }
+            if (isset($post->tercero)) {
+                $tercero = Tercero::find($post->tercero);
+                if($tercero == null) {
+                    echo "Url invalida, tercero no existe"; die;
+                } 
+            }
         }
         sort($mesas);
 
         return view("factura.facturador", compact([
             'categorias', 'productos', 'mesas', 'formas_pago',
-            'formas_pago_selected', 'factura', 'id_mesa', 'canal', 'canales',
+            'formas_pago_selected', 'factura', 'id_mesa', 'canal', 
+            'canales', 'tercero'
         ]));
     }
 
