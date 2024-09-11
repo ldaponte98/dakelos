@@ -1,9 +1,7 @@
 <div class="row">
     <div class="col-12">
         <div class="form-group">
-            <label for="correo"
-                class="control-label mb-1"><b>Buscar</b></label>
-            <input id="filtro" type="search" class="form-control">
+            <input id="filtro" type="search" class="form-control" placeholder="Buscar...">
         </div>
     </div>
 	<div class="col-lg-12">
