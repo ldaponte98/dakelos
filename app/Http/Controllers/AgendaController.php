@@ -69,7 +69,9 @@ class AgendaController extends Controller
                 $dateStart = date('Y-m-d', strtotime($post->start));
                 $dateEnd = date('Y-m-d', strtotime($post->end));
                 $validDates = false;
-                $paciente= Tercero::where('identificacion', $post->tercero['identificacion'])->first();
+                $paciente= Tercero::where('identificacion', $post->tercero['identificacion'])
+                ->where('id_licencia', session('id_licencia'))
+                ->first();
                 if($paciente == null){
                     $paciente = new Tercero();
                     $paciente->fill($post->tercero);

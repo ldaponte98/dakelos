@@ -209,5 +209,5 @@
             </div>
         </div>
     </div>
-    {{ view('clinica.calendario.script-calendario') }}
+    {{ view('clinica.calendario.script-agendar') }}
 @endsection
