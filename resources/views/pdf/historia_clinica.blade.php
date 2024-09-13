@@ -20,11 +20,11 @@
             border-radius: 10px;
         }
 
-        .logo { 
+        .logo {
             position: absolute;
             top: 20px;
             left: 20px;
-            width: 100px; 
+            width: 100px;
         }
 
         h1,
@@ -36,7 +36,7 @@
 
         .fecha_registro {
             width: 100%;
-           text-align: right;
+            text-align: right;
         }
 
         .section-title {
@@ -82,11 +82,10 @@
             margin-top: 6rem;
         }
 
-        .img_firma{
+        .img_firma {
             width: 150px;
             height: 70px;
         }
-
     </style>
 </head>
 
@@ -97,10 +96,10 @@
 
         <h1>Historia Clínica</h1>
         <h2>{{$historia_clinica->tercero->nombres}} {{$historia_clinica->tercero->apellidos}}</h2>
-        
+
         <div class="fecha_registro">
             <div>N° Historia Clínica: {{$historia_clinica->id}} </div>
-            <div>Fecha registro: {{$historia_clinica->created_at}} </div>      
+            <div>Fecha registro: {{$historia_clinica->created_at}} </div>
         </div>
 
         <h3 class="section-title">Datos personales</h3>
@@ -166,7 +165,7 @@
                     <th><b>FUM Alergias:</b></th>
                     <td>{{$historia_clinica->antecedente_alergias}}</td>
                 </tr>
-        </tbody>
+            </tbody>
         </table>
 
         <h3 class="section-title">Indicaciones Médicas</h3>
@@ -174,11 +173,14 @@
         <hr>
 
         <div class="firma">
-        <img class="img_firma" src="{{ $historia_clinica->tercero->get_imagen_firma() }}" alt="Firma">
-        <p>Médico: {{$historia_clinica->profesional->nombres}}</p>
+            <img class="img_firma" src="@if ({{ $historia_clinica->profesional->get_imagen_firma() }} == null || {{ $historia_clinica->profesional->get_imagen_firma() }} == '')
+            {{ $historia_clinica->profesional->get_imagen_firma() }}
+        @else
+            {{ $historia_clinica->licencia->get_imagen() }}
+        @endif" alt="Firma">
+            <p>Médico: {{$historia_clinica->profesional->nombres}}</p>
         </div>
     </div>
 </body>
 
 </html>
-

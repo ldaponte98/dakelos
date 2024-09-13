@@ -91,7 +91,7 @@ class Tercero extends Model
     	if($this->imagen_firma != null and $this->imagen_firma != ''){
     		return asset('imagenes/tercero/' . $this->imagen_firma);
     	}else{
-            return asset('imagenes/licencia/' . $this->imagen);
+            return null;
     	}
     }
 
