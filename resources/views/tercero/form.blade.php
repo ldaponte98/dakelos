@@ -109,7 +109,7 @@
                                                 @php
                                                     $tipos_tercero = \App\Dominio::all()->where('id_padre', 1);
                                                 @endphp
-                                                <select name="id_dominio_tipo_tercero" class="form-control" required>
+                                                <select name="id_dominio_tipo_tercero" id="id_dominio_tipo_tercero" class="form-control" required>
                                                     <option value="">Seleccione...</option>
                                                     @foreach($tipos_tercero as $tipo)
                                                         <option @if($tercero->id_dominio_tipo_tercero == $tipo->id_dominio) selected @endif  
@@ -131,7 +131,23 @@
                                            </div>
                                        </div>
                                     </div>
-                                <div><center>
+
+                                    <div class="row">
+                                        <div class="col-sm-3" id="div-firma" style="display: none">
+                                            <div class="form-group">
+                                                <img src="@if($tercero->imagen_firma == null or $tercero->imagen_firma == '') {{ asset('plantilla/images/app/avatarFirma.png') }} @else {{ asset('imagenes/tercero/'.$tercero->imagen_firma) }} @endif" id="img_imagen_firma" alt="Firma" class="img-thumbnail" width="100%" height="100">
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <div class="custom-file">
+                                                    <input type="file" class="custom-file-input" id="imagen_firma" name="imagen_firma" accept="image/*">
+                                                    <label class="custom-file-label" for="imagen_firma" id="nombre_archivo_firma">Examinar</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>                                        
+                                <div>
+            
+                                <center>
                                     <button class="btn btn-primary"><i class="fa fa-save"></i> Guardar</button>
                                     @if(count($errors) > 0)
                                         <div class="alert alert-danger">
@@ -154,26 +170,67 @@
     </div>
 </div>
  <script>
+
     $(document).ready(function(){
          $('#imagen').change(function(){
             var input = this;
             var url = $(this).val();
             var ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase();
-            if (input.files && input.files[0]&& (ext == "gif" || ext == "png" || ext == "jpeg" || ext == "jpg")) 
-             {
+            if (input.files && input.files[0]&& (ext == "gif" || ext == "png" || ext == "jpeg" || ext == "jpg")){
                 var reader = new FileReader();
 
                 reader.onload = function (e) {
                    $('#img_imagen').attr('src', e.target.result);
                 }
                reader.readAsDataURL(input.files[0]);
-            }
-            else
-            {
+            }else{
               alert("El archivo seleccionado debe ser una imagen")
               $('#img_imagen').attr('src', '{{ asset('imagenes/app/sinimagen.jpg') }}');
             }
             $('#nombre_archivo').html("Examinar")
+          });
+
+
+        if($('#id_dominio_tipo_tercero').val() == 69){
+            $('#div-firma').show()
+        }else{
+            $('#div-firma').hide()
+        }
+
+        $('#id_dominio_tipo_tercero').change(function(){
+            let tipo = $(this).val();
+            if(tipo==69){
+                $('#div-firma').show()
+            }else{
+                $('#div-firma').hide()
+            }
+        })
+
+
+          $('#imagen_firma').change(function(){
+            var input = this;
+            var url = $(this).val();
+            let size = input.size;
+            var ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase();
+            if(size < 2000){
+                if (input.files && input.files[0]&& (ext == "png" || ext == "jpeg" || ext == "jpg")){
+                    var reader = new FileReader();
+    
+                    reader.onload = function (e) {
+                       $('#img_imagen_firma').attr('src', e.target.result);
+                    }
+                   reader.readAsDataURL(input.files[0]);
+                }else{
+                  alert("El archivo seleccionado debe ser una imagen")
+                  $('#img_imagen_firma').attr('src', '{{ asset('imagenes/app/avatarFirma.png') }}');
+                }
+            }else{
+                alert('El tamaño del archivo no debe superar los 2MB');
+                $('#imagen_firma').val('');
+                $('#img_imagen_firma').attr('src', '{{ asset('imagenes/app/avatarFirma.png') }}');
+            }
+
+            $('#nombre_archivo_firma').html("Examinar")
           });
     })
 </script>
