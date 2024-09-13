@@ -29,7 +29,7 @@ class TerceroController extends Controller
         $errors = [];
         if ($post) {
             $post = (object) $post;
-            $tercero->fill($request->except(['_token', 'imagen']));
+            $tercero->fill($request->except(['_token', 'imagen', 'imagen_firma']));
 
             if ($tercero->identificacion == null or $tercero->identificacion == "") {
                 $tercero->identificacion = date('YmdHis') . rand(1000, 9999);
@@ -48,6 +48,15 @@ class TerceroController extends Controller
                     $nombre_archivo = rand(1000, 999999) . "-" . date('Y-m-d-H-i-s') . "." . $extension;
                     Storage::disk('public')->put($ruta . "/" . $nombre_archivo, \File::get($file));
                     $tercero->imagen = $nombre_archivo;
+                }
+
+                $firma                 = $request->file('imagen_firma');
+                if ($firma) {
+                    $ruta           = '/imagenes/tercero';
+                    $extension      = explode('.', $firma->getClientOriginalName())[1];
+                    $nombre_archivo = rand(1000, 999999) . "-" . date('Y-m-d-H-i-s') . "." . $extension;
+                    Storage::disk('public')->put($ruta . "/" . $nombre_archivo, \File::get($firma));
+                    $tercero->imagen_firma = $nombre_archivo;
                 }
                 if ($tercero->save()) {
                     return redirect()->route('tercero/view', $tercero->id_tercero);

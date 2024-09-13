@@ -23,8 +23,8 @@
         .logo { 
             position: absolute;
             top: 20px;
-            right: 20px;
-            width: 100px; /* Ajusta el tamaño del logo */
+            left: 20px;
+            width: 100px; 
         }
 
         h1,
@@ -32,6 +32,11 @@
         h3 {
             color: #2c3e50;
             text-align: center;
+        }
+
+        .fecha_registro {
+            width: 100%;
+           text-align: right;
         }
 
         .section-title {
@@ -43,20 +48,31 @@
             border-radius: 5px;
         }
 
-        table {
+        .datos_personales {
             width: 100%;
             margin-bottom: 20px;
             border-collapse: collapse;
         }
 
-        table th,
-        table td {
+        .datos_personales th,
+        .datos_personales td {
             padding: 6px;
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
 
-        .description {
+        .antecedentes th,
+        .antecedentes td {
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .antecedentes tbody tr th {
+            width: 30%;
+        }
+
+        .description,
+        .fecha_registro {
             font-size: 14px;
             line-height: 1.6;
             color: #333;
@@ -66,21 +82,29 @@
             margin-top: 6rem;
         }
 
+        .img_firma{
+            width: 150px;
+            height: 70px;
+        }
+
     </style>
 </head>
 
 <body>
     <div class="container">
 
-        {{-- <img class="logo" src="{{ $historia_clinica->licencia->get_imagen() }}"></td> --}}
+        <img class="logo" src="{{ $historia_clinica->licencia->get_imagen() }}">
 
         <h1>Historia Clínica</h1>
         <h2>{{$historia_clinica->tercero->nombres}} {{$historia_clinica->tercero->apellidos}}</h2>
-        <small>{{$historia_clinica->created_at}}</small><br>
-        <small>N° Historia Clínica: {{$historia_clinica->id}}</small>
+        
+        <div class="fecha_registro">
+            <div>N° Historia Clínica: {{$historia_clinica->id}} </div>
+            <div>Fecha registro: {{$historia_clinica->created_at}} </div>      
+        </div>
 
         <h3 class="section-title">Datos personales</h3>
-        <table>
+        <table class="datos_personales">
             <tr>
                 <th>Identificación:</th>
                 <td>{{$historia_clinica->tercero->identificacion}}</td>
@@ -107,19 +131,51 @@
         <p class="description">{{$historia_clinica->motivo}}
             <br><br>
             @if($historia_clinica->peso)
-            {{$historia_clinica->peso}} Kg -
+            {{$historia_clinica->peso}} Kg
             @endif
             @if($historia_clinica->tension)
-            {{$historia_clinica->tension}} mmHg-
+            {{$historia_clinica->tension}} mmHg
             @endif
         </p>
+        <hr>
+
+        <h3>Antecedentes</h3>
+        <table class="antecedentes">
+            <tbody class="description">
+                <tr>
+                    <th><b>Familiares:</b></th>
+                    <td>{{$historia_clinica->antecedente_familiar}}</td>
+                </tr>
+                <tr>
+                    <th><b>Personales:</b></th>
+                    <td>{{$historia_clinica->antecedente_personal}}</td>
+                </tr>
+                <tr>
+                    <th><b>Gineco-obstétricos:</b></th>
+                    <td>{{$historia_clinica->antecedente_gineco_obstetrico}}</td>
+                </tr>
+                <tr>
+                    <th><b>Cirugía:</b></th>
+                    <td>{{$historia_clinica->antecedente_cirugia}}</td>
+                </tr>
+                <tr>
+                    <th><b>Recibe medicamentos:</b></th>
+                    <td>{{$historia_clinica->antecedente_medicamentos}}</td>
+                </tr>
+                <tr>
+                    <th><b>FUM Alergias:</b></th>
+                    <td>{{$historia_clinica->antecedente_alergias}}</td>
+                </tr>
+        </tbody>
+        </table>
 
         <h3 class="section-title">Indicaciones Médicas</h3>
         <p class="description">{{$historia_clinica->plan}}</p>
         <hr>
 
         <div class="firma">
-            <p>Médico: {{$historia_clinica->profesional->nombres}}</p>
+        <img class="img_firma" src="{{ $historia_clinica->tercero->get_imagen_firma() }}">
+        <p>Médico: {{$historia_clinica->profesional->nombres}}</p>
         </div>
     </div>
 </body>

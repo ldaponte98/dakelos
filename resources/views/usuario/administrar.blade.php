@@ -47,6 +47,7 @@
                                             <th><center><b>Perfil</b></center></th>
                                             <th><center><b>Nombre de usuario</b></center></th>
                                             <th><center><b>Estado</b></center></th>
+                                            <th><center><b></b></center></th>
                                             <th></th>
                                         </tr>
                                     </thead>
@@ -57,6 +58,7 @@
                                             <td><center>{{ $cont }}</center></td>
                                             <td><center>{{ $usuario->tercero->nombre_completo() }}</center></td>
                                             <td><center>{{ $usuario->perfil->nombre }}</center></td>
+                                            <td><center>{{ $usuario->usuario }}</center></td>
                                             <td><center>{{ $usuario->estado == 1 ? "Activo" : "Inactivo" }}</center></td>
                                             <td><center><a href="{{ route('usuario/editar', $usuario->id_usuario) }}">Editar</a>
                                             </center></td>
