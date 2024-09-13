@@ -174,7 +174,7 @@
         <hr>
 
         <div class="firma">
-        <img class="img_firma" src="{{ $historia_clinica->tercero->get_imagen_firma() }}">
+        <img class="img_firma" src="{{ $historia_clinica->tercero->get_imagen_firma() }}" alt="Firma">
         <p>Médico: {{$historia_clinica->profesional->nombres}}</p>
         </div>
     </div>
