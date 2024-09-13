@@ -21,6 +21,7 @@ class Tercero extends Model
         'id_dominio_sexo',
         'fecha_nacimiento',
         'imagen',
+        'imagen_firma',
         'id_dominio_tipo_tercero',
         'id_dominio_tipo_identificacion',
         'estado',
@@ -82,6 +83,15 @@ class Tercero extends Model
     		return asset('imagenes/tercero/'.$this->imagen);
     	}else{
     		return asset('plantilla/images/app/sinimagen.jpg');
+    	}
+    }
+
+    public function get_imagen_firma()
+    {
+    	if($this->imagen_firma != null and $this->imagen_firma != ''){
+    		return asset('imagenes/tercero/'.$this->imagen_firma);
+    	}else{
+    		return asset('imagenes/licencia/'.$this->imagen);
     	}
     }
 
