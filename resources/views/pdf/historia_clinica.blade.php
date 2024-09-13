@@ -173,11 +173,11 @@
         <hr>
 
         <div class="firma">
-            <img class="img_firma" src="@if ({{ $historia_clinica->profesional->get_imagen_firma() }} == null || {{ $historia_clinica->profesional->get_imagen_firma() }} == '')
-            {{ $historia_clinica->profesional->get_imagen_firma() }}
-        @else
-            {{ $historia_clinica->licencia->get_imagen() }}
-        @endif" alt="Firma">
+            @if ($historia_clinica->profesional->get_imagen_firma() !== null)
+                <img class="img_firma" src="{{ $historia_clinica->profesional->get_imagen_firma() }}">
+            @else
+                <img class="img_firma" src="{{ $historia_clinica->licencia->get_imagen() }}">
+            @endif
             <p>Médico: {{$historia_clinica->profesional->nombres}}</p>
         </div>
     </div>
