@@ -1,7 +1,7 @@
 {
-    "name": "laravel/laravel",
+    "name": "invetko",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "Software para sistema de inventarios.",
     "keywords": [
         "framework",
         "laravel"
