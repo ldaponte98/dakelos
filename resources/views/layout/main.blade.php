@@ -14,8 +14,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Dakelos - Sistema de facturacion</title>
-    <meta name="description" content="Dakelos - Sistema de facturacion">
+    <title>Invetko - Sistema de facturacion</title>
+    <meta name="description" content="Invetko - Sistema de facturacion">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="apple-touch-icon" href="{{ asset('plantilla/images/app/zorax_small.png') }}">
@@ -261,7 +261,7 @@
             <div class="footer-inner bg-white">
                 <div class="row">
                     <div class="col-sm-12 text-center">
-                        Dakelos - Sistema de facturación 
+                        Invetko - Sistema de facturación 
                     </div>
                 </div>
             </div>

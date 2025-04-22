@@ -124,7 +124,7 @@ Route::get('agenda_email', function () {
     ];
     $title = "Recordatorio de cita DEMO";
     $subtitulo = "Tu cita empieza en 2 días";
-    $imagen_licencia = "https://dakelos.com/imagenes/licencia/logo.jpg";
+    $imagen_licencia = "https://invetko.devko.co/imagenes/licencia/logo.jpg";
     $profesional = 1;
     $start       = "2024-09-02 17:00";
     $licencia = (object) [
