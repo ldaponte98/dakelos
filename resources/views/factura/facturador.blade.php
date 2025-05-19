@@ -1124,17 +1124,16 @@
                         "Error")
                     return false;
                 }
-            }
-            
 
-            @if ($factura and $factura->id_dominio_tipo_factura == App\Dominio::get('Factura a credito (Saldo pendiente)'))
-                if (search == null) {
-                    toastr.error(
-                        "Esta factura fue guardada como documento a credito y solo puede tener formas de pago a credito",
-                        "Error")
-                    return false;
-                }
-            @endif
+                @if ($factura and $factura->id_dominio_tipo_factura == App\Dominio::get('Factura a credito (Saldo pendiente)'))
+                    if (search == null) {
+                        toastr.error(
+                            "Esta factura fue guardada como documento a credito y solo puede tener formas de pago a credito",
+                            "Error")
+                        return false;
+                    }
+                @endif
+            }
 
             if (this.factura.esCredito && (this.factura.abono === null || this.factura.abono === "")) {
                 toastr.error(
