@@ -112,12 +112,12 @@ class Caja extends Model
 
     public function total_por_forma_pago($id_dominio_forma_pago)
     {
-        echo "<script>console.log({forma:$id_dominio_forma_pago})</script>";
         return DB::table('factura as f')
             ->join('forma_pago as fp', 'fp.id_factura', '=', 'f.id_factura')
             ->where('f.estado', 1)
             ->where('f.id_caja', $this->id_caja)
             ->where('f.id_dominio_tipo_factura', '<>', 17)
+            ->where('f.id_dominio_tipo_factura', '<>', 53)
             ->where('fp.id_dominio_forma_pago', $id_dominio_forma_pago)
             ->where('f.finalizada', 1)
             ->sum('fp.valor');
