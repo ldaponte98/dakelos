@@ -82,6 +82,7 @@
     <script src="{{ asset('blockUI.js') }}"></script>
     
     <link rel="stylesheet" type="text/css" href="{{ asset('css-general.css') }}?v=3">
+    <script src="{{ asset('js-general.js') }}"></script>
     <style>
         .btn-primary{
             background-color: {{ $licencia->color_botones }};
@@ -271,7 +272,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <script src="{{ asset('plantilla/assets/js/lib/chosen/chosen.jquery.min.js') }}"></script>
-    <script src="{{ asset('js-general.js') }}"></script>
+    
     <script>
         function globalRefreshSelect() {
             let selects = $(".standardSelect").trigger('chosen:updated');
